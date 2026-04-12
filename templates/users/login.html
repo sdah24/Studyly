@@ -44,14 +44,16 @@
     <p>Sign in to your account</p>
   </div>
   <div class="card">
-    <form onsubmit="event.preventDefault(); window.location.href='dashboard.html'">
+    <form method="POST">
+
+    {% csrf_token %}
       <div class="field">
         <label>Email</label>
-        <input type="email" placeholder="you@example.com" required>
+        <input type="email" placeholder="you@example.com" required name="email">
       </div>
       <div class="field">
         <label>Password</label>
-        <input type="password" placeholder="Enter your password" required>
+        <input type="password" placeholder="Enter your password" required name="password">
       </div>
       <button type="submit" class="btn-submit">Login</button>
     </form>
