@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for university in universities %}
+
+<div class="uni-card">
+
+    <h3>{{ university.name }}</h3>
+
+    <p>{{ university.country }}</p>
+
+    <p>{{ university.tuition_range }}</p>
+
+    <p>{{ university.intake }}</p>
+
+</div>
+
+{% endfor %}
+</body>
+</html>
