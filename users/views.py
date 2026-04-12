@@ -7,7 +7,7 @@ from .models import User
 
 
 def register_view(request):
-
+    print("REGISTER VIEW HIT")
     if request.method == "POST":
 
         name = request.POST.get("name")
@@ -35,4 +35,11 @@ def register_view(request):
     return render(
         request,
         "users/register.html"
+    )
+
+def login_view(request):
+
+    return render(
+        request,
+        "users/login.html"
     )
