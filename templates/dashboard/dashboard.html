@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – Studyly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  /* NAV */
+  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
+  .logo-icon svg { width: 22px; height: 22px; color: white; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #111827; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .bell-btn { position: relative; padding: 8px; color: #4b5563; transition: color .15s; }
+  .bell-btn:hover { color: #2563eb; }
+  .bell-btn svg { width: 20px; height: 20px; }
+  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; cursor: pointer; transition: background .15s; }
+  .user-btn:hover { background: #f3f4f6; }
+  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .user-avatar svg { width: 16px; height: 16px; color: white; }
+  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
+  /* SECONDARY NAV */
+  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
+  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; transition: all .15s; }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
+  .nav-link svg { width: 16px; height: 16px; }
+  /* MAIN */
+  main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+  .stat-card { background: white; border-radius: 14px; padding: 1.5rem; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
+  .stat-info p { font-size: .85rem; color: #6b7280; margin-bottom: .25rem; }
+  .stat-info .val { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: #111827; }
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .stat-icon svg { width: 22px; height: 22px; color: white; }
+  /* GRID */
+  .content-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+  .col-2 { grid-column: span 2; }
+  @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } .col-2 { grid-column: span 1; } }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; }
+  .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
+  .card-header h2 { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700; }
+  .card-header a { font-size: .85rem; color: #2563eb; display: flex; align-items: center; gap: 4px; }
+  .card-header a svg { width: 14px; height: 14px; }
+  .app-item { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f3f4f6; transition: background .15s; }
+  .app-item:last-child { border-bottom: none; }
+  .app-item:hover { background: #f9fafb; }
+  .app-item-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .5rem; }
+  .app-item h3 { font-weight: 700; margin-bottom: 3px; }
+  .app-item p { font-size: .875rem; color: #6b7280; }
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
+  .badge-yellow { background: #fef9c3; color: #a16207; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .app-item .deadline { font-size: .8rem; color: #9ca3af; margin-top: .25rem; }
+  /* DEADLINES */
+  .deadline-item { padding: 1rem 1.5rem; border-bottom: 1px solid #f3f4f6; display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
+  .deadline-item:last-child { border-bottom: none; }
+  .deadline-item h4 { font-size: .9rem; font-weight: 600; margin-bottom: 3px; }
+  .deadline-item span { font-size: .75rem; color: #9ca3af; }
+  .priority { padding: 3px 8px; border-radius: 6px; font-size: .72rem; font-weight: 600; white-space: nowrap; }
+  .priority-high { background: #fee2e2; color: #b91c1c; }
+  .priority-med { background: #fef9c3; color: #a16207; }
+  .priority-low { background: #f3f4f6; color: #4b5563; }
+  .card-footer { padding: 1rem 1.5rem; background: #f9fafb; }
+  .card-footer a { font-size: .875rem; color: #2563eb; font-weight: 500; }
+  /* CTA card */
+  .cta-card { background: linear-gradient(135deg, #2563eb, #3b82f6); border-radius: 14px; padding: 1.5rem; color: white; margin-top: 1.5rem; }
+  .cta-card h3 { font-family: 'Fraunces', serif; font-weight: 700; margin-bottom: .5rem; }
+  .cta-card p { font-size: .875rem; color: #bfdbfe; margin-bottom: 1rem; }
+  .cta-card a { display: block; width: 100%; padding: 10px; background: white; color: #2563eb; border-radius: 8px; font-weight: 600; font-size: .9rem; text-align: center; transition: background .15s; }
+  .cta-card a:hover { background: #eff6ff; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <a href="notifications.html" class="bell-btn">
+        <i data-lucide="bell"></i>
+        <span class="bell-dot"></span>
+      </a>
+      <div class="user-btn">
+        <div class="user-avatar"><i data-lucide="user"></i></div>
+        <span class="user-name">John Doe</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="dashboard.html" class="nav-link active"><i data-lucide="home"></i> Dashboard</a>
+    <a href="universities.html" class="nav-link"><i data-lucide="search"></i> Universities</a>
+    <a href="scholarships.html" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
+    <a href="applications.html" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
+    <a href="notifications.html" class="nav-link"><i data-lucide="bell"></i> Notifications</a>
+  </div>
+</div>
+
+<main>
+  <h1 class="page-title">Welcome back, John! 👋</h1>
+  <p class="page-subtitle">Here's what's happening with your applications</p>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-info"><p>Applications</p><div class="val">5</div></div>
+      <div class="stat-icon" style="background:#3b82f6"><i data-lucide="clock"></i></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info"><p>Accepted</p><div class="val">2</div></div>
+      <div class="stat-icon" style="background:#16a34a"><i data-lucide="check-circle"></i></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info"><p>Pending</p><div class="val">3</div></div>
+      <div class="stat-icon" style="background:#ca8a04"><i data-lucide="alert-circle"></i></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info"><p>Scholarships</p><div class="val">8</div></div>
+      <div class="stat-icon" style="background:#9333ea"><i data-lucide="trending-up"></i></div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="card col-2">
+      <div class="card-header">
+        <h2>Recent Applications</h2>
+        <a href="applications.html">View All <i data-lucide="arrow-right"></i></a>
+      </div>
+      <div class="app-item">
+        <div class="app-item-top">
+          <div><h3>Harvard University</h3><p>Master of Computer Science</p></div>
+          <span class="badge badge-yellow">Under Review</span>
+        </div>
+        <div class="deadline">Deadline: March 15, 2026</div>
+      </div>
+      <div class="app-item">
+        <div class="app-item-top">
+          <div><h3>MIT</h3><p>Master of Artificial Intelligence</p></div>
+          <span class="badge badge-green">Accepted</span>
+        </div>
+        <div class="deadline">Deadline: March 1, 2026</div>
+      </div>
+      <div class="app-item">
+        <div class="app-item-top">
+          <div><h3>Stanford University</h3><p>MBA</p></div>
+          <span class="badge badge-blue">Documents Required</span>
+        </div>
+        <div class="deadline">Deadline: April 10, 2026</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-header"><h2>Upcoming Deadlines</h2></div>
+        <div class="deadline-item">
+          <div><h4>Submit SOP for Harvard</h4><span>March 8, 2026</span></div>
+          <span class="priority priority-high">High</span>
+        </div>
+        <div class="deadline-item">
+          <div><h4>Complete Financial Documents</h4><span>March 12, 2026</span></div>
+          <span class="priority priority-med">Medium</span>
+        </div>
+        <div class="deadline-item">
+          <div><h4>Language Test Results</h4><span>March 20, 2026</span></div>
+          <span class="priority priority-low">Low</span>
+        </div>
+        <div class="card-footer"><a href="applications.html">View All Tasks →</a></div>
+      </div>
+      <div class="cta-card">
+        <h3>Ready to explore?</h3>
+        <p>Find your next opportunity</p>
+        <a href="universities.html">Search Universities</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>
