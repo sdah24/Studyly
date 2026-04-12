@@ -37,7 +37,36 @@ def register_view(request):
         "users/register.html"
     )
 
+
+
+
 def login_view(request):
+
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+
+            if user.password == password:
+                return redirect("dashboard")
+
+            else:
+                return render(
+                    request,
+                    "users/login.html",
+                    {"error": "Invalid password"}
+                )
+
+        except User.DoesNotExist:
+
+            return render(
+                request,
+                "users/login.html",
+                {"error": "Email not found"}
+            )
 
     return render(
         request,
