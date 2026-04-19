@@ -66,13 +66,31 @@ Filter by University
 <!-- Results Container -->
 
 <div id="scholarship-results">
-
-<div class="alert alert-info">
-
-Scholarship results will appear here.
-
+{% for scholarship in scholarships %}
+<div class="card mb-3 p-3">
+<h4>
+<a href="{% url 'scholarships:detail' scholarship.id %}">
+{{ scholarship.title }}
+</a>
+</h4>
+<p>
+<strong>University:</strong>
+{{ scholarship.university.name }}
+</p>
+<p>
+<strong>Amount:</strong>
+{{ scholarship.amount }}
+</p>
+<p>
+<strong>Deadline:</strong>
+{{ scholarship.deadline }}
+</p>
 </div>
-
+{% empty %}
+<div class="alert alert-warning">
+No scholarships found.
+</div>
+{% endfor %}
 </div>
 
 </div>
