@@ -1,0 +1,31 @@
+<div id="search-results">
+
+{% for university in universities %}
+
+<div class="card mb-3 p-3">
+
+<h4>
+
+{{ university.name }}
+
+</h4>
+
+<p>
+
+{{ university.country }}
+
+</p>
+
+</div>
+
+{% empty %}
+
+<div class="alert alert-warning">
+
+No universities found.
+
+</div>
+
+{% endfor %}
+
+</div>
