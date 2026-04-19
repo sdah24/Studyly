@@ -16,6 +16,15 @@ urlpatterns = [
         name="search"
 
     ),
+path(
+
+    "detail/<int:pk>/",
+
+    views.university_detail,
+
+    name="detail"
+
+),
 ]
 
 
