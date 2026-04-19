@@ -24,3 +24,8 @@ path(
     delete_scholarship,
     name="delete_scholarship"
 ),
+path(
+    "search/",
+    views.scholarship_search,
+    name="search"
+),

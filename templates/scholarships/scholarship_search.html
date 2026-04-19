@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h2>Scholarship Search</h2>
+
+<!-- Search Bar -->
+
+<form method="get">
+
+<div class="row mb-3">
+
+<div class="col-md-8">
+
+<input
+    type="text"
+    name="query"
+    class="form-control"
+    placeholder="Search scholarships..."
+>
+
+</div>
+
+<div class="col-md-4">
+
+<button
+    type="submit"
+    class="btn btn-primary w-100"
+>
+
+Search
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+<!-- Filters Placeholder -->
+
+<div class="row mb-3">
+
+<div class="col-md-4">
+
+<select
+    name="university"
+    class="form-control"
+>
+
+<option value="">
+
+Filter by University
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<!-- Results Container -->
+
+<div id="scholarship-results">
+
+<div class="alert alert-info">
+
+Scholarship results will appear here.
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

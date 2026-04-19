@@ -1,3 +1,12 @@
 from django.shortcuts import render
 
-# Create yourviews here.
+
+def scholarship_search(request):
+
+    return render(
+
+        request,
+
+        "scholarships/scholarship_search.html"
+
+    )
