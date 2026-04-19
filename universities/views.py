@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from universities.models import University
+from .models import University
+from .forms import UniversitySearchForm
 # Create your views here.
 
 
@@ -25,4 +26,55 @@ def universities_view(request):
 
         return render(request, "universities/universities.html",{"universities": universities}
                       )
+
+
+def university_search(request):
+
+    form = UniversitySearchForm(
+        request.GET or None
+    )
+
+    universities = University.objects.all()
+
+    if form.is_valid():
+
+        query = form.cleaned_data.get(
+            "query"
+        )
+
+        if query:
+
+            universities = universities.filter(
+
+                name__icontains=query
+
+            )
+
+    context = {
+
+        "form": form,
+
+        "universities": universities
+
+    }
+
+    return render(
+
+        request,
+
+        "universities/university_search.html",
+
+        context
+
+    )
+
+
+
+
+
+
+
+
+
+
 
