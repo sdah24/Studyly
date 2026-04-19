@@ -1,69 +1,55 @@
-<div class="row mt-4">
+<div class="mt-4">
 
-{% for university in universities %}
+<nav>
 
-<div class="col-md-6 mb-3">
+<ul class="pagination justify-content-center">
 
-<div class="card p-3">
+{% if page_obj.has_previous %}
 
-<h4>
+<li class="page-item">
 
-<a href="{% url 'universities:detail' university.id %}">
+<a class="page-link"
 
-{{ university.name }}
+href="?page={{ page_obj.previous_page_number }}&query={{ request.GET.query }}">
+
+Previous
 
 </a>
 
-</h4>
-
-<p>
-
-<strong>Country:</strong>
-
-{{ university.country }}
-
-</p>
-
-{% if university.city %}
-
-<p>
-
-<strong>City:</strong>
-
-{{ university.city }}
-
-</p>
+</li>
 
 {% endif %}
 
-{% if university.ranking %}
+<li class="page-item disabled">
 
-<p>
+<span class="page-link">
 
-<strong>Ranking:</strong>
+Page {{ page_obj.number }}
 
-{{ university.ranking }}
+of {{ page_obj.paginator.num_pages }}
 
-</p>
+</span>
+
+</li>
+
+{% if page_obj.has_next %}
+
+<li class="page-item">
+
+<a class="page-link"
+
+href="?page={{ page_obj.next_page_number }}&query={{ request.GET.query }}">
+
+Next
+
+</a>
+
+</li>
 
 {% endif %}
 
-</div>
+</ul>
 
-</div>
-
-{% empty %}
-
-<div class="col-12">
-
-<div class="alert alert-warning">
-
-No universities found.
-
-</div>
-
-</div>
-
-{% endfor %}
+</nav>
 
 </div>
