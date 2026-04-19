@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h2>
+
+{{ university.name }}
+
+</h2>
+
+<p>
+
+<strong>Country:</strong>
+
+{{ university.country }}
+
+</p>
+
+{% if university.city %}
+
+<p>
+
+<strong>City:</strong>
+
+{{ university.city }}
+
+</p>
+
+{% endif %}
+
+{% if university.description %}
+
+<p>
+
+{{ university.description }}
+
+</p>
+
+{% endif %}
+
+{% if university.website %}
+
+<p>
+
+<a href="{{ university.website }}">
+
+Visit Website
+
+</a>
+
+</p>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,28 +1,66 @@
-<div id="search-results">
+<div class="row mt-4">
 
 {% for university in universities %}
 
-<div class="card mb-3 p-3">
+<div class="col-md-6 mb-3">
+
+<div class="card p-3">
 
 <h4>
 
+<a href="{% url 'universities:detail' university.id %}">
+
 {{ university.name }}
+
+</a>
 
 </h4>
 
 <p>
 
+<strong>Country:</strong>
+
 {{ university.country }}
 
 </p>
+
+{% if university.city %}
+
+<p>
+
+<strong>City:</strong>
+
+{{ university.city }}
+
+</p>
+
+{% endif %}
+
+{% if university.ranking %}
+
+<p>
+
+<strong>Ranking:</strong>
+
+{{ university.ranking }}
+
+</p>
+
+{% endif %}
+
+</div>
 
 </div>
 
 {% empty %}
 
+<div class="col-12">
+
 <div class="alert alert-warning">
 
 No universities found.
+
+</div>
 
 </div>
 

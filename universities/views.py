@@ -1,80 +1,26 @@
-from django.shortcuts import render
-
-from .models import University
-from .forms import UniversitySearchForm
-# Create your views here.
+from django.shortcuts import get_object_or_404
 
 
-def universities_view(request):
+def university_detail(request, pk):
 
-        universities =  University.objects.all()
+    university = get_object_or_404(
 
-        search_query = request.GET.get("search")
-        country_query = request.GET.get("country")
+        University,
 
-        # Search by name
-        if search_query:
-            universities = universities.filter(
-                name__icontains=search_query
-            )
+        pk=pk
 
-        # Search by country
-        if country_query:
-            universities = universities.filter(
-                country__icontains=country_query
-            )
-
-        return render(request, "universities/universities.html",{"universities": universities}
-                      )
-
-
-def university_search(request):
-
-    form = UniversitySearchForm(
-        request.GET or None
     )
-
-    universities = University.objects.all()
-
-    if form.is_valid():
-
-        query = form.cleaned_data.get(
-            "query"
-        )
-
-        if query:
-
-            universities = universities.filter(
-
-                name__icontains=query
-
-            )
-
-    context = {
-
-        "form": form,
-
-        "universities": universities
-
-    }
 
     return render(
 
         request,
 
-        "universities/university_search.html",
+        "universities/university_detail.html",
 
-        context
+        {
+
+            "university": university
+
+        }
 
     )
-
-
-
-
-
-
-
-
-
-
-
