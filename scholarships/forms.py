@@ -1,28 +1,34 @@
 from django import forms
 
+from .models import Scholarship
 
-class ScholarshipSearchForm(forms.Form):
 
-    query = forms.CharField(
+class ScholarshipForm(forms.ModelForm):
 
-        max_length=255,
+    class Meta:
 
-        required=False,
+        model = Scholarship
 
-        label="Search",
+        fields = [
 
-        widget=forms.TextInput(
+            "title",
+            "description",
+            "amount",
+            "deadline",
+            "university",
 
-            attrs={
+        ]
 
-                "placeholder":
-                "Search scholarships...",
+        widgets = {
 
-                "class":
-                "form-control",
+            "deadline":
+                forms.DateInput(
+                    attrs={"type": "date"}
+                ),
 
-            }
+            "description":
+                forms.Textarea(
+                    attrs={"rows": 4}
+                ),
 
-        )
-
-    )
+        }

@@ -24,4 +24,42 @@ def scholarship_search(request):
         title__icontains=query
     ) if query else Scholarship.objects.none()
     return render(
-        r
+
+    from django.shortcuts import render, redirect
+
+    from .forms import ScholarshipForm
+
+    def add_scholarship(request):
+
+        if request.method == "POST":
+
+            form = ScholarshipForm(
+
+                request.POST
+
+            )
+
+            if form.is_valid():
+                form.save()
+
+                return redirect(
+                    "scholarships:list"
+                )
+
+        else:
+
+            form = ScholarshipForm()
+
+        return render(
+
+            request,
+
+            "scholarships/add_scholarship.html",
+
+            {
+
+                "form": form
+
+            }
+
+        )

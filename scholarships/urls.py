@@ -38,3 +38,13 @@ path(
     name="detail"
 
 ),
+
+path(
+
+    "add/",
+
+    views.add_scholarship,
+
+    name="add"
+
+),

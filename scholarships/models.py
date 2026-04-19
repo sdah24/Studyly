@@ -1,5 +1,4 @@
 from django.db import models
-
 from universities.models import University
 
 
@@ -19,18 +18,9 @@ class Scholarship(models.Model):
     deadline = models.DateField()
 
     university = models.ForeignKey(
-
         University,
-
         on_delete=models.CASCADE,
-
         related_name="scholarships"
-
-    )
-
-    eligibility = models.TextField(
-        blank=True,
-        null=True
     )
 
     created_at = models.DateTimeField(
@@ -40,10 +30,6 @@ class Scholarship(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True
     )
-
-    class Meta:
-
-        ordering = ["deadline"]
 
     def __str__(self):
 
