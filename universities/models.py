@@ -1,19 +1,49 @@
 from django.db import models
 
-# Create your models here.
-
 
 class University(models.Model):
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(
+        max_length=255
+    )
 
-    country = models.CharField(max_length=100)
+    country = models.CharField(
+        max_length=100
+    )
 
-    tuition_range = models.CharField(max_length=100)
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
 
-    intake = models.CharField(max_length=50)
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
 
-    description = models.TextField()
+    ranking = models.IntegerField(
+        blank=True,
+        null=True
+    )
+
+    website = models.URLField(
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+
+        ordering = ["name"]
 
     def __str__(self):
+
         return self.name
