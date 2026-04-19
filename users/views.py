@@ -72,3 +72,48 @@ def login_view(request):
         request,
         "users/login.html"
     )
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+from .forms import ProfileForm
+
+
+@login_required
+def create_profile(request):
+
+    profile = request.user.profile
+
+    if request.method == "POST":
+
+        form = ProfileForm(
+            request.POST,
+            instance=profile
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Profile saved successfully."
+            )
+
+            return redirect("dashboard:home")
+
+    else:
+
+        form = ProfileForm(
+            instance=profile
+        )
+
+    context = {
+        "form": form
+    }
+
+    return render(
+        request,
+        "users/profile_form.html",
+        context
+    )

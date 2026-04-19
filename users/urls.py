@@ -15,4 +15,10 @@ urlpatterns = [
         name="login"
     ),
 
+    path(
+        "profile/create/",
+        views.create_profile,
+        name="create_profile"
+    ),
+
 ]
