@@ -29,3 +29,12 @@ path(
     views.scholarship_search,
     name="search"
 ),
+path(
+
+    "detail/<int:pk>/",
+
+    views.scholarship_detail,
+
+    name="detail"
+
+),

@@ -1,47 +1,27 @@
+from django.shortcuts import render, get_object_or_404
 from .models import Scholarship
-from .forms import ScholarshipSearchForm
 
+def scholarship_detail(request, pk):
+    scholarship = get_object_or_404(
+        Scholarship.objects.select_related(
+            "university"
+        ),
+        pk=pk
+    )
+    return render(
+        request,
+        "scholarships/scholarship_detail.html",
+        {
+            "scholarship": scholarship
+        }
+    )
 
 def scholarship_search(request):
-
-    form = ScholarshipSearchForm(
-
-        request.GET or None
-
-    )
-
+    query = request.GET.get("query", "")
     scholarships = Scholarship.objects.select_related(
         "university"
-    )
-
-    if form.is_valid():
-
-        query = form.cleaned_data.get(
-            "query"
-        )
-
-        if query:
-
-            scholarships = scholarships.filter(
-
-                title__icontains=query
-
-            )
-
-    context = {
-
-        "form": form,
-
-        "scholarships": scholarships,
-
-    }
-
+    ).filter(
+        title__icontains=query
+    ) if query else Scholarship.objects.none()
     return render(
-
-        request,
-
-        "scholarships/scholarship_search.html",
-
-        context
-
-    )
+        r
