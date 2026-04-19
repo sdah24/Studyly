@@ -48,3 +48,12 @@ path(
     name="add"
 
 ),
+path(
+
+    "edit/<int:pk>/",
+
+    views.edit_scholarship,
+
+    name="edit"
+
+),

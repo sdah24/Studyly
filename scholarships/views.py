@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Scholarship
+from .models import Scholarship
+from .forms import ScholarshipForm
 
 def scholarship_detail(request, pk):
     scholarship = get_object_or_404(
@@ -59,6 +61,59 @@ def scholarship_search(request):
             {
 
                 "form": form
+
+            }
+
+        )
+
+    from django.shortcuts import get_object_or_404
+
+    def edit_scholarship(request, pk):
+
+        scholarship = get_object_or_404(
+
+            Scholarship,
+
+            pk=pk
+
+        )
+
+        if request.method == "POST":
+
+            form = ScholarshipForm(
+
+                request.POST,
+
+                instance=scholarship
+
+            )
+
+            if form.is_valid():
+                form.save()
+
+                return redirect(
+                    "scholarships:list"
+                )
+
+        else:
+
+            form = ScholarshipForm(
+
+                instance=scholarship
+
+            )
+
+        return render(
+
+            request,
+
+            "scholarships/edit_scholarship.html",
+
+            {
+
+                "form": form,
+
+                "scholarship": scholarship
 
             }
 
