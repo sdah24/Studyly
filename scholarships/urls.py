@@ -57,3 +57,12 @@ path(
     name="edit"
 
 ),
+path(
+
+    "delete/<int:pk>/",
+
+    views.delete_scholarship,
+
+    name="delete"
+
+),

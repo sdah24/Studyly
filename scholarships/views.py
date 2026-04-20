@@ -118,3 +118,33 @@ def scholarship_search(request):
             }
 
         )
+
+    from django.shortcuts import get_object_or_404, redirect, render
+
+    from .models import Scholarship
+
+    def delete_scholarship(request, pk):
+
+        scholarship = get_object_or_404(
+            Scholarship,
+            pk=pk
+        )
+
+        if request.method == "POST":
+            scholarship.delete()
+
+            return redirect(
+                "scholarships:list"
+            )
+
+        return render(
+
+            request,
+
+            "scholarships/delete_scholarship.html",
+
+            {
+                "scholarship": scholarship
+            }
+
+        )
