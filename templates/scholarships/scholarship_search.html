@@ -9,59 +9,29 @@
 <!-- Search Bar -->
 
 <form method="get">
-
 <div class="row mb-3">
-
-<div class="col-md-8">
-
-<input
-    type="text"
-    name="query"
-    class="form-control"
-    placeholder="Search scholarships..."
->
-
+<div class="col-md-3">
+{{ form.query }}
 </div>
-
-<div class="col-md-4">
-
+<div class="col-md-3">
+{{ form.university }}
+</div>
+<div class="col-md-2">
+{{ form.min_amount }}
+</div>
+<div class="col-md-2">
+{{ form.deadline_before }}
+</div>
+<div class="col-md-2">
 <button
     type="submit"
     class="btn btn-primary w-100"
 >
-
-Search
-
+Filter
 </button>
-
 </div>
-
 </div>
-
 </form>
-
-<!-- Filters Placeholder -->
-
-<div class="row mb-3">
-
-<div class="col-md-4">
-
-<select
-    name="university"
-    class="form-control"
->
-
-<option value="">
-
-Filter by University
-
-</option>
-
-</select>
-
-</div>
-
-</div>
 
 <!-- Results Container -->
 
@@ -95,4 +65,4 @@ No scholarships found.
 
 </div>
 
-{% endblock %}
+{% endblock %

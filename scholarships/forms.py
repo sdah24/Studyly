@@ -1,34 +1,89 @@
 from django import forms
 
-from .models import Scholarship
+from universities.models import University
 
 
-class ScholarshipForm(forms.ModelForm):
+class ScholarshipSearchForm(forms.Form):
 
-    class Meta:
+    query = forms.CharField(
 
-        model = Scholarship
+        max_length=255,
 
-        fields = [
+        required=False,
 
-            "title",
-            "description",
-            "amount",
-            "deadline",
-            "university",
+        label="Search",
 
-        ]
+        widget=forms.TextInput(
 
-        widgets = {
+            attrs={
 
-            "deadline":
-                forms.DateInput(
-                    attrs={"type": "date"}
-                ),
+                "placeholder":
+                "Search scholarships...",
 
-            "description":
-                forms.Textarea(
-                    attrs={"rows": 4}
-                ),
+                "class":
+                "form-control",
 
-        }
+            }
+
+        )
+
+    )
+
+    university = forms.ModelChoiceField(
+
+        queryset=University.objects.all(),
+
+        required=False,
+
+        empty_label="All Universities",
+
+        widget=forms.Select(
+
+            attrs={
+
+                "class": "form-control"
+
+            }
+
+        )
+
+    )
+
+    min_amount = forms.DecimalField(
+
+        required=False,
+
+        label="Minimum Amount",
+
+        widget=forms.NumberInput(
+
+            attrs={
+
+                "class": "form-control",
+
+                "placeholder":
+                "Minimum Amount"
+
+            }
+
+        )
+
+    )
+
+    deadline_before = forms.DateField(
+
+        required=False,
+
+        widget=forms.DateInput(
+
+            attrs={
+
+                "type": "date",
+
+                "class": "form-control"
+
+            }
+
+        )
+
+    )
