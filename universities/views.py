@@ -23,28 +23,53 @@ def university_detail(request, pk):
 
 
 def university_search(request):
-    form = UniversitySearchForm(request.GET or None)
+
+    form = UniversitySearchForm(
+        request.GET or None
+    )
+
     universities = University.objects.all()
 
-    if form.is_valid():
-        query = form.cleaned_data.get("query")
-        if query:
-            universities = universities.filter(
-                name__icontains=query
-            )
+    # Search
+    query = request.GET.get("query")
 
-    paginator = Paginator(universities, 10)
+    if query:
+        universities = universities.filter(
+            name__icontains=query
+        )
+
+    # Country filter (for pills)
+    country = request.GET.get("country")
+
+    if country:
+        universities = universities.filter(
+            country__icontains=country
+        )
+
+    # Pagination
+    paginator = Paginator(
+        universities,
+        9
+    )
+
     page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+
+    page_obj = paginator.get_page(
+        page_number
+    )
 
     context = {
+
         "form": form,
-        "page_obj": page_obj,
         "universities": page_obj,
+        "page_obj": page_obj,
+
     }
 
     return render(
+
         request,
-        "universities/university_search.html",
+        "universities/universities.html",
         context
+
     )

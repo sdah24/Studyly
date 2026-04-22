@@ -1,31 +1,26 @@
-
 from django.urls import path
 from . import views
 
 app_name = "universities"
+
 urlpatterns = [
-     path("universities/",
-          views.universities_view,
-          name = "universities"),
+
     path(
-
-        "",
-
-        views.university_search,
-
-        name="search"
-
+        "universities/",
+        views.universities_view,
+        name="universities"
     ),
-path(
 
-    "detail/<int:pk>/",
+    path(
+        "universities/search/",
+        views.university_search,
+        name="search"
+    ),
 
-    views.university_detail,
+    path(
+        "universities/detail/<int:pk>/",
+        views.university_detail,
+        name="detail"
+    ),
 
-    name="detail"
-
-),
 ]
-
-
-

@@ -1,6 +1,16 @@
 from django import forms
-
 from universities.models import University
+
+
+CATEGORY_CHOICES = [
+
+    ("", "All Categories"),
+    ("merit", "Merit-Based"),
+    ("need", "Need-Based"),
+    ("sports", "Sports"),
+    ("research", "Research"),
+
+]
 
 
 class ScholarshipSearchForm(forms.Form):
@@ -8,23 +18,13 @@ class ScholarshipSearchForm(forms.Form):
     query = forms.CharField(
 
         max_length=255,
-
         required=False,
 
-        label="Search",
-
         widget=forms.TextInput(
-
             attrs={
-
-                "placeholder":
-                "Search scholarships...",
-
-                "class":
-                "form-control",
-
+                "placeholder": "Search scholarships...",
+                "class": "search-input"
             }
-
         )
 
     )
@@ -32,19 +32,26 @@ class ScholarshipSearchForm(forms.Form):
     university = forms.ModelChoiceField(
 
         queryset=University.objects.all(),
-
         required=False,
-
         empty_label="All Universities",
 
         widget=forms.Select(
-
             attrs={
-
-                "class": "form-control"
-
+                "class": "filter-select"
             }
+        )
 
+    )
+
+    category = forms.ChoiceField(
+
+        choices=CATEGORY_CHOICES,
+        required=False,
+
+        widget=forms.Select(
+            attrs={
+                "class": "filter-select"
+            }
         )
 
     )
@@ -53,19 +60,11 @@ class ScholarshipSearchForm(forms.Form):
 
         required=False,
 
-        label="Minimum Amount",
-
         widget=forms.NumberInput(
-
             attrs={
-
-                "class": "form-control",
-
-                "placeholder":
-                "Minimum Amount"
-
+                "placeholder": "Minimum Amount",
+                "class": "filter-input"
             }
-
         )
 
     )
@@ -75,15 +74,10 @@ class ScholarshipSearchForm(forms.Form):
         required=False,
 
         widget=forms.DateInput(
-
             attrs={
-
                 "type": "date",
-
-                "class": "form-control"
-
+                "class": "filter-input"
             }
-
         )
 
     )
