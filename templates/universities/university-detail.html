@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harvard University – Studyly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; }
+  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
+  .logo-icon svg { width: 22px; height: 22px; color: white; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .bell-btn { position: relative; padding: 8px; color: #4b5563; }
+  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+  .bell-btn svg { width: 20px; height: 20px; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; }
+  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .user-avatar svg { width: 16px; height: 16px; color: white; }
+  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
+  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
+  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
+  .nav-link svg { width: 16px; height: 16px; }
+  main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; color: #2563eb; font-size: .9rem; margin-bottom: 1.5rem; }
+  .back-link svg { width: 16px; height: 16px; }
+  .back-link:hover { text-decoration: underline; }
+  .hero-card { background: white; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 2rem; }
+  .hero-banner { height: 200px; background: linear-gradient(135deg, #fecaca, #fef2f2); display: flex; align-items: center; justify-content: center; }
+  .hero-banner-inner { text-align: center; }
+  .rank-big { font-family: 'Fraunces', serif; font-size: 4rem; font-weight: 900; color: #dc2626; }
+  .rank-label { color: #6b7280; font-size: .95rem; }
+  .hero-body { padding: 2rem; }
+  .hero-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+  .hero-top h1 { font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 900; margin-bottom: .5rem; }
+  .hero-loc { display: flex; align-items: center; gap: 6px; color: #6b7280; margin-bottom: .75rem; }
+  .hero-loc svg { width: 18px; height: 18px; }
+  .rating-row { display: flex; align-items: center; gap: 8px; }
+  .star { color: #facc15; font-size: 1.1rem; }
+  .rating-val { font-weight: 700; }
+  .rating-count { color: #9ca3af; font-size: .9rem; }
+  .apply-btn { padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .95rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,.25); transition: background .15s; white-space: nowrap; }
+  .apply-btn:hover { background: #1d4ed8; }
+  .hero-desc { color: #4b5563; line-height: 1.7; margin-bottom: 2rem; }
+  .quick-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; }
+  .qs-item { display: flex; align-items: flex-start; gap: 10px; }
+  .qs-item svg { width: 18px; height: 18px; color: #2563eb; margin-top: 2px; flex-shrink: 0; }
+  .qs-label { font-size: .8rem; color: #9ca3af; margin-bottom: 2px; }
+  .qs-val { font-weight: 700; font-size: .95rem; }
+  .content-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
+  .col-2 { grid-column: span 2; }
+  @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } .col-2 { grid-column: span 1; } }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem; }
+  .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px; }
+  .card-header h2 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; }
+  .card-header svg { width: 22px; height: 22px; color: #2563eb; }
+  .program-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; background: #f9fafb; border-radius: 0; border-bottom: 1px solid #f3f4f6; transition: background .15s; cursor: pointer; }
+  .program-item:last-child { border-bottom: none; }
+  .program-item:hover { background: #f3f4f6; }
+  .program-name { font-weight: 600; font-size: .95rem; }
+  .program-dur { font-size: .8rem; color: #6b7280; margin-top: 2px; }
+  .program-price { font-weight: 700; color: #2563eb; font-size: .95rem; }
+  .req-list { padding: 1.5rem; }
+  .req-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: .75rem; }
+  .req-dot { width: 8px; height: 8px; background: #2563eb; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .req-item span { color: #374151; line-height: 1.6; }
+  .deadline-item { padding: 1rem 1.5rem; background: #f9fafb; margin: 0 1.5rem 1rem; border-radius: 10px; }
+  .deadline-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .25rem; }
+  .deadline-intake { font-weight: 700; }
+  .status-open { background: #dcfce7; color: #15803d; padding: 2px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
+  .status-upcoming { background: #dbeafe; color: #1d4ed8; padding: 2px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
+  .deadline-date { font-size: .875rem; color: #6b7280; }
+  .cta-blue { background: #2563eb; border-radius: 14px; padding: 1.5rem; color: white; margin-bottom: 1.5rem; }
+  .cta-blue h3 { font-family: 'Fraunces', serif; font-weight: 700; margin-bottom: .5rem; }
+  .cta-blue p { font-size: .875rem; color: #bfdbfe; margin-bottom: 1rem; }
+  .cta-blue a { display: block; padding: 10px; background: white; color: #2563eb; border-radius: 8px; font-weight: 600; text-align: center; transition: background .15s; }
+  .cta-blue a:hover { background: #eff6ff; }
+  .schol-card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 1.5rem; }
+  .schol-card h3 { font-family: 'Fraunces', serif; font-weight: 700; margin-bottom: .5rem; }
+  .schol-card p { font-size: .875rem; color: #6b7280; margin-bottom: 1rem; }
+  .btn-blue-full { display: block; width: 100%; padding: 10px; background: #2563eb; color: white; border-radius: 8px; font-weight: 600; text-align: center; transition: background .15s; }
+  .btn-blue-full:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <a href="notifications.html" class="bell-btn"><i data-lucide="bell"></i><span class="bell-dot"></span></a>
+      <div class="user-btn">
+        <div class="user-avatar"><i data-lucide="user"></i></div>
+        <span class="user-name">John Doe</span>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="dashboard.html" class="nav-link"><i data-lucide="home"></i> Dashboard</a>
+    <a href="universities.html" class="nav-link active"><i data-lucide="search"></i> Universities</a>
+    <a href="scholarships.html" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
+    <a href="applications.html" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
+    <a href="notifications.html" class="nav-link"><i data-lucide="bell"></i> Notifications</a>
+  </div>
+</div>
+
+<main>
+  <a href="universities.html" class="back-link"><i data-lucide="arrow-left"></i> Back to Search</a>
+
+  <div class="hero-card">
+    <div class="hero-banner">
+      <div class="hero-banner-inner">
+        <div class="rank-big">#1</div>
+        <div class="rank-label">World University Ranking</div>
+      </div>
+    </div>
+    <div class="hero-body">
+      <div class="hero-top">
+        <div>
+          <h1>Harvard University</h1>
+          <div class="hero-loc"><i data-lucide="map-pin"></i> Cambridge, Massachusetts, USA</div>
+          <div class="rating-row">
+            <span class="star">★</span>
+            <span class="rating-val">4.9</span>
+            <span class="rating-count">(2,847 reviews)</span>
+          </div>
+        </div>
+        <button class="apply-btn">Apply Now</button>
+      </div>
+      <p class="hero-desc">Harvard University is a private Ivy League research university in Cambridge, Massachusetts. Established in 1636, Harvard is the oldest institution of higher learning in the United States and among the most prestigious in the world.</p>
+      <div class="quick-stats">
+        <div class="qs-item"><i data-lucide="calendar"></i><div><div class="qs-label">Established</div><div class="qs-val">1636</div></div></div>
+        <div class="qs-item"><i data-lucide="users"></i><div><div class="qs-label">Students</div><div class="qs-val">31,000+</div></div></div>
+        <div class="qs-item"><i data-lucide="dollar-sign"></i><div><div class="qs-label">Tuition</div><div class="qs-val">$54,000/year</div></div></div>
+        <div class="qs-item"><i data-lucide="award"></i><div><div class="qs-label">Acceptance</div><div class="qs-val">4.5%</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <div class="col-2">
+      <div class="card">
+        <div class="card-header"><i data-lucide="book-open"></i><h2>Available Programs</h2></div>
+        <div class="program-item"><div><div class="program-name">Master of Computer Science</div><div class="program-dur">2 years</div></div><span class="program-price">$54,000/year</span></div>
+        <div class="program-item"><div><div class="program-name">MBA</div><div class="program-dur">2 years</div></div><span class="program-price">$73,440/year</span></div>
+        <div class="program-item"><div><div class="program-name">Master of Public Health</div><div class="program-dur">1–2 years</div></div><span class="program-price">$65,000/year</span></div>
+        <div class="program-item"><div><div class="program-name">Master of Education</div><div class="program-dur">1 year</div></div><span class="program-price">$52,000/year</span></div>
+        <div class="program-item"><div><div class="program-name">Master of Architecture</div><div class="program-dur">2.5 years</div></div><span class="program-price">$54,000/year</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><i data-lucide="graduation-cap"></i><h2>Admission Requirements</h2></div>
+        <div class="req-list">
+          <div class="req-item"><div class="req-dot"></div><span>Bachelor's degree from accredited institution</span></div>
+          <div class="req-item"><div class="req-dot"></div><span>GPA of 3.5 or higher</span></div>
+          <div class="req-item"><div class="req-dot"></div><span>GRE/GMAT scores</span></div>
+          <div class="req-item"><div class="req-dot"></div><span>TOEFL/IELTS for international students</span></div>
+          <div class="req-item"><div class="req-dot"></div><span>Letters of recommendation (3)</span></div>
+          <div class="req-item"><div class="req-dot"></div><span>Statement of Purpose</span></div>
+          <div class="req-item"><div class="req-dot"></div><span>Resume/CV</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header" style="border-bottom:1px solid #e5e7eb"><h2 style="font-size:1rem;font-weight:700">Application Deadlines</h2></div>
+        <div style="padding:.75rem 0">
+          <div class="deadline-item">
+            <div class="deadline-top">
+              <span class="deadline-intake">Fall 2026</span>
+              <span class="status-open">Open</span>
+            </div>
+            <div class="deadline-date">December 15, 2025</div>
+          </div>
+          <div class="deadline-item">
+            <div class="deadline-top">
+              <span class="deadline-intake">Spring 2027</span>
+              <span class="status-upcoming">Upcoming</span>
+            </div>
+            <div class="deadline-date">September 1, 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-blue">
+        <h3>Check Your Eligibility</h3>
+        <p>Find out if you meet the requirements for this university</p>
+        <a href="eligibility.html">Check Eligibility</a>
+      </div>
+
+      <div class="schol-card">
+        <h3>Available Scholarships</h3>
+        <p>3 scholarships available for this university</p>
+        <a href="scholarships.html" class="btn-blue-full">View Scholarships</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

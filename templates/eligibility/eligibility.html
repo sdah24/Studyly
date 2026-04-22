@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eligibility Assessment – Studyly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; }
+  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
+  .logo-icon svg { width: 22px; height: 22px; color: white; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .bell-btn { position: relative; padding: 8px; color: #4b5563; }
+  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+  .bell-btn svg { width: 20px; height: 20px; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; }
+  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .user-avatar svg { width: 16px; height: 16px; color: white; }
+  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
+  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
+  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
+  .nav-link svg { width: 16px; height: 16px; }
+  main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  .score-banner { background: linear-gradient(135deg, #2563eb, #7c3aed); border-radius: 16px; padding: 2.5rem; color: white; margin-bottom: 2rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2rem; }
+  .score-left p { color: #bfdbfe; margin-bottom: .5rem; font-size: .9rem; }
+  .score-num { display: flex; align-items: flex-end; gap: 4px; }
+  .score-big { font-family: 'Fraunces', serif; font-size: 4rem; font-weight: 900; line-height: 1; }
+  .score-total { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .score-label { color: #bfdbfe; margin-top: .25rem; font-size: .9rem; }
+  .score-stats { display: flex; gap: 2.5rem; text-align: center; }
+  .score-stat .val { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; }
+  .score-stat .lbl { color: #bfdbfe; font-size: .8rem; margin-top: 2px; }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 2rem; }
+  .card h2 { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 1.25rem; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 1rem; background: #f9fafb; border-radius: 10px; margin-bottom: .75rem; }
+  .check-icon svg { width: 22px; height: 22px; margin-top: 1px; }
+  .check-content { flex: 1; }
+  .check-content h3 { font-weight: 600; font-size: .95rem; margin-bottom: .2rem; }
+  .check-content p { font-size: .85rem; color: #6b7280; }
+  .check-badge { padding: 4px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+  .schol-match { border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem; margin-bottom: .75rem; transition: border-color .15s; cursor: pointer; }
+  .schol-match:hover { border-color: #93c5fd; }
+  .schol-match-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .35rem; }
+  .schol-match-name { font-weight: 700; font-size: .95rem; }
+  .match-pct { display: flex; align-items: center; gap: 4px; color: #16a34a; font-weight: 700; font-size: .9rem; }
+  .match-pct svg { width: 14px; height: 14px; }
+  .schol-amount { font-size: .85rem; color: #6b7280; margin-bottom: .5rem; }
+  .schol-link { font-size: .85rem; color: #2563eb; font-weight: 500; }
+  .btn-outline-blue { display: block; width: 100%; padding: 10px; text-align: center; border: 2px solid #2563eb; color: #2563eb; border-radius: 8px; font-weight: 600; margin-top: 1rem; transition: background .15s; }
+  .btn-outline-blue:hover { background: #eff6ff; }
+  .rec-item { display: flex; gap: 10px; padding: .75rem; background: #eff6ff; border-radius: 8px; margin-bottom: .75rem; }
+  .rec-num { width: 24px; height: 24px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; flex-shrink: 0; }
+  .rec-text { font-size: .875rem; color: #374151; line-height: 1.5; }
+  .tip-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: .875rem; color: #14532d; }
+  .action-btns { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+  .btn-primary { padding: 13px 32px; background: #2563eb; color: white; border-radius: 10px; font-weight: 600; transition: background .15s; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary { padding: 13px 32px; background: white; border: 2px solid #d1d5db; color: #374151; border-radius: 10px; font-weight: 600; transition: background .15s; }
+  .btn-secondary:hover { background: #f9fafb; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <a href="notifications.html" class="bell-btn"><i data-lucide="bell"></i><span class="bell-dot"></span></a>
+      <div class="user-btn">
+        <div class="user-avatar"><i data-lucide="user"></i></div>
+        <span class="user-name">John Doe</span>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="dashboard.html" class="nav-link"><i data-lucide="home"></i> Dashboard</a>
+    <a href="universities.html" class="nav-link"><i data-lucide="search"></i> Universities</a>
+    <a href="scholarships.html" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
+    <a href="applications.html" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
+    <a href="notifications.html" class="nav-link"><i data-lucide="bell"></i> Notifications</a>
+  </div>
+</div>
+
+<main>
+  <h1 class="page-title">Eligibility Assessment Results</h1>
+  <p class="page-subtitle">Based on your profile and preferences</p>
+
+  <div class="score-banner">
+    <div class="score-left">
+      <p>Overall Eligibility Score</p>
+      <div class="score-num">
+        <span class="score-big">85</span>
+        <span class="score-total">/100</span>
+      </div>
+      <div class="score-label">Strong Candidate</div>
+    </div>
+    <div class="score-stats">
+      <div class="score-stat"><div class="val">12</div><div class="lbl">Universities Match</div></div>
+      <div class="score-stat"><div class="val">8</div><div class="lbl">Scholarships Available</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Detailed Assessment</h2>
+    <div class="check-item">
+      <div class="check-icon" style="color:#16a34a"><i data-lucide="check-circle"></i></div>
+      <div class="check-content"><h3>Academic Qualifications</h3><p>Bachelor's degree with 3.8 GPA</p></div>
+      <span class="check-badge" style="background:#dcfce7;color:#15803d">Passed</span>
+    </div>
+    <div class="check-item">
+      <div class="check-icon" style="color:#16a34a"><i data-lucide="check-circle"></i></div>
+      <div class="check-content"><h3>English Proficiency</h3><p>IELTS 7.5</p></div>
+      <span class="check-badge" style="background:#dcfce7;color:#15803d">Passed</span>
+    </div>
+    <div class="check-item">
+      <div class="check-icon" style="color:#ca8a04"><i data-lucide="alert-circle"></i></div>
+      <div class="check-content"><h3>Work Experience</h3><p>2 years (3+ recommended)</p></div>
+      <span class="check-badge" style="background:#fffbeb;color:#a16207">Needs Improvement</span>
+    </div>
+    <div class="check-item">
+      <div class="check-icon" style="color:#16a34a"><i data-lucide="check-circle"></i></div>
+      <div class="check-content"><h3>Age Requirement</h3><p>24 years old</p></div>
+      <span class="check-badge" style="background:#dcfce7;color:#15803d">Passed</span>
+    </div>
+    <div class="check-item">
+      <div class="check-icon" style="color:#dc2626"><i data-lucide="x-circle"></i></div>
+      <div class="check-content"><h3>Financial Proof</h3><p>Documentation pending</p></div>
+      <span class="check-badge" style="background:#fef2f2;color:#b91c1c">Action Required</span>
+    </div>
+    <div class="check-item">
+      <div class="check-icon" style="color:#16a34a"><i data-lucide="check-circle"></i></div>
+      <div class="check-content"><h3>Research Proposal</h3><p>Submitted and approved</p></div>
+      <span class="check-badge" style="background:#dcfce7;color:#15803d">Passed</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card" style="margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem">
+        <i data-lucide="award" style="width:22px;height:22px;color:#7c3aed"></i>
+        <h2 style="margin-bottom:0">Best Scholarship Matches</h2>
+      </div>
+      <div class="schol-match">
+        <div class="schol-match-top">
+          <span class="schol-match-name">Fulbright Scholarship</span>
+          <div class="match-pct"><i data-lucide="trending-up"></i> 95%</div>
+        </div>
+        <div class="schol-amount">Full Funding</div>
+        <a href="scholarships.html" class="schol-link">View Details →</a>
+      </div>
+      <div class="schol-match">
+        <div class="schol-match-top">
+          <span class="schol-match-name">Chevening Scholarship</span>
+          <div class="match-pct"><i data-lucide="trending-up"></i> 88%</div>
+        </div>
+        <div class="schol-amount">£30,000</div>
+        <a href="scholarships.html" class="schol-link">View Details →</a>
+      </div>
+      <div class="schol-match">
+        <div class="schol-match-top">
+          <span class="schol-match-name">DAAD Scholarship</span>
+          <div class="match-pct"><i data-lucide="trending-up"></i> 82%</div>
+        </div>
+        <div class="schol-amount">€861/month</div>
+        <a href="scholarships.html" class="schol-link">View Details →</a>
+      </div>
+      <a href="scholarships.html" class="btn-outline-blue">View All Scholarships</a>
+    </div>
+
+    <div class="card" style="margin-bottom:0">
+      <h2>Recommendations to Improve</h2>
+      <div class="rec-item"><div class="rec-num">1</div><div class="rec-text">Submit your financial documentation to improve eligibility</div></div>
+      <div class="rec-item"><div class="rec-num">2</div><div class="rec-text">Consider gaining one more year of work experience for higher scholarship chances</div></div>
+      <div class="rec-item"><div class="rec-num">3</div><div class="rec-text">Update your CV to highlight research experience</div></div>
+      <div class="rec-item"><div class="rec-num">4</div><div class="rec-text">Prepare strong recommendation letters from academic supervisors</div></div>
+      <div class="tip-box">💡 <strong>Tip:</strong> Complete the recommended actions to increase your eligibility score to 95+</div>
+    </div>
+  </div>
+
+  <div class="action-btns">
+    <a href="universities.html" class="btn-primary">Browse Universities</a>
+    <a href="applications.html" class="btn-secondary">Start Application</a>
+  </div>
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

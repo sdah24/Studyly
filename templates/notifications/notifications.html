@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications – Studyly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; }
+  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
+  .logo-icon svg { width: 22px; height: 22px; color: white; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .bell-btn { position: relative; padding: 8px; color: #4b5563; }
+  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+  .bell-btn svg { width: 20px; height: 20px; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; }
+  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .user-avatar svg { width: 16px; height: 16px; color: white; }
+  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
+  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
+  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
+  .nav-link svg { width: 16px; height: 16px; }
+  main { max-width: 800px; margin: 0 auto; padding: 2rem; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; }
+  .mark-all-btn { color: #2563eb; font-weight: 500; font-size: .9rem; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .tab { padding: 8px 18px; border-radius: 8px; font-weight: 500; font-size: .9rem; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; }
+  .tab.active { background: #2563eb; color: white; }
+  .tab:not(.active) { background: #f3f4f6; color: #374151; }
+  .notif-list { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 2rem; }
+  .notif-card { background: white; border: 2px solid #e5e7eb; border-radius: 14px; padding: 1.25rem; transition: box-shadow .2s; display: flex; gap: 1rem; }
+  .notif-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+  .notif-card.unread { border-color: #bfdbfe; background: #f0f8ff; }
+  .notif-icon-wrap { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .notif-icon-wrap svg { width: 20px; height: 20px; }
+  .notif-content { flex: 1; min-width: 0; }
+  .notif-top { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: .25rem; }
+  .notif-title { font-weight: 700; font-size: .95rem; }
+  .unread-dot { width: 8px; height: 8px; background: #2563eb; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .notif-msg { font-size: .875rem; color: #4b5563; line-height: 1.5; margin-bottom: .35rem; }
+  .notif-time { font-size: .78rem; color: #9ca3af; }
+  .notif-trash { color: #d1d5db; cursor: pointer; flex-shrink: 0; padding: 4px; transition: color .15s; }
+  .notif-trash:hover { color: #ef4444; }
+  .notif-trash svg { width: 16px; height: 16px; }
+  .settings-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.5rem; }
+  .settings-card h3 { font-weight: 700; margin-bottom: 1rem; }
+  .pref-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+  .pref-item:last-child { margin-bottom: 0; }
+  .pref-item span { color: #374151; font-size: .9rem; }
+  .toggle { width: 42px; height: 24px; background: #2563eb; border-radius: 12px; position: relative; cursor: pointer; flex-shrink: 0; }
+  .toggle::after { content: ''; position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: transform .2s; }
+  .toggle.off { background: #d1d5db; }
+  .toggle.off::after { right: auto; left: 3px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <a href="notifications.html" class="bell-btn"><i data-lucide="bell"></i><span class="bell-dot"></span></a>
+      <div class="user-btn">
+        <div class="user-avatar"><i data-lucide="user"></i></div>
+        <span class="user-name">John Doe</span>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="dashboard.html" class="nav-link"><i data-lucide="home"></i> Dashboard</a>
+    <a href="universities.html" class="nav-link"><i data-lucide="search"></i> Universities</a>
+    <a href="scholarships.html" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
+    <a href="applications.html" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
+    <a href="notifications.html" class="nav-link active"><i data-lucide="bell"></i> Notifications</a>
+  </div>
+</div>
+
+<main>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-subtitle">3 unread notifications</p>
+    </div>
+    <button class="mark-all-btn">Mark all as read</button>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="tab active">All</button>
+    <button class="tab">Unread</button>
+    <button class="tab">Applications</button>
+    <button class="tab">Scholarships</button>
+  </div>
+
+  <div class="notif-list">
+    <div class="notif-card unread">
+      <div class="notif-icon-wrap" style="background:#dcfce7"><i data-lucide="check-circle" style="color:#16a34a"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">Application Accepted</span><span class="unread-dot"></span></div>
+        <div class="notif-msg">Congratulations! Your application to MIT has been accepted.</div>
+        <div class="notif-time">2 hours ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+
+    <div class="notif-card unread">
+      <div class="notif-icon-wrap" style="background:#ffedd5"><i data-lucide="alert-circle" style="color:#ea580c"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">Document Required</span><span class="unread-dot"></span></div>
+        <div class="notif-msg">Harvard University is requesting your final transcripts. Upload by March 8.</div>
+        <div class="notif-time">5 hours ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+
+    <div class="notif-card unread">
+      <div class="notif-icon-wrap" style="background:#dbeafe"><i data-lucide="info" style="color:#2563eb"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">New Scholarship Available</span><span class="unread-dot"></span></div>
+        <div class="notif-msg">A new Fulbright scholarship matching your profile has been added.</div>
+        <div class="notif-time">1 day ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+
+    <div class="notif-card">
+      <div class="notif-icon-wrap" style="background:#fee2e2"><i data-lucide="calendar" style="color:#dc2626"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">Upcoming Deadline</span></div>
+        <div class="notif-msg">Stanford MBA application deadline is in 7 days (April 10, 2026).</div>
+        <div class="notif-time">1 day ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+
+    <div class="notif-card">
+      <div class="notif-icon-wrap" style="background:#f3e8ff"><i data-lucide="award" style="color:#9333ea"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">Scholarship Match</span></div>
+        <div class="notif-msg">You have an 88% match with Chevening Scholarship. Check eligibility now.</div>
+        <div class="notif-time">2 days ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+
+    <div class="notif-card">
+      <div class="notif-icon-wrap" style="background:#dbeafe"><i data-lucide="info" style="color:#2563eb"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">Profile Updated</span></div>
+        <div class="notif-msg">Your student profile has been successfully updated.</div>
+        <div class="notif-time">3 days ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+
+    <div class="notif-card">
+      <div class="notif-icon-wrap" style="background:#ffedd5"><i data-lucide="alert-circle" style="color:#ea580c"></i></div>
+      <div class="notif-content">
+        <div class="notif-top"><span class="notif-title">Application Incomplete</span></div>
+        <div class="notif-msg">Your Oxford application is missing 3 documents. Complete to avoid rejection.</div>
+        <div class="notif-time">4 days ago</div>
+      </div>
+      <div class="notif-trash"><i data-lucide="trash-2"></i></div>
+    </div>
+  </div>
+
+  <div class="settings-card">
+    <h3>Notification Preferences</h3>
+    <div class="pref-item">
+      <span>Application status updates</span>
+      <div class="toggle"></div>
+    </div>
+    <div class="pref-item">
+      <span>Deadline reminders</span>
+      <div class="toggle"></div>
+    </div>
+    <div class="pref-item">
+      <span>New scholarship matches</span>
+      <div class="toggle"></div>
+    </div>
+    <div class="pref-item">
+      <span>Email notifications</span>
+      <div class="toggle off"></div>
+    </div>
+  </div>
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

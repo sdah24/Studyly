@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Universities – Studyly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; }
+  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
+  .logo-icon svg { width: 22px; height: 22px; color: white; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .bell-btn { position: relative; padding: 8px; color: #4b5563; }
+  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
+  .bell-btn svg { width: 20px; height: 20px; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; }
+  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .user-avatar svg { width: 16px; height: 16px; color: white; }
+  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
+  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
+  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; transition: all .15s; }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
+  .nav-link svg { width: 16px; height: 16px; }
+  main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  .search-card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 2rem; }
+  .search-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .search-input-wrap { flex: 1; min-width: 200px; position: relative; }
+  .search-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #9ca3af; }
+  .search-input-wrap input { width: 100%; padding: 12px 14px 12px 42px; border: 1.5px solid #d1d5db; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: .95rem; outline: none; transition: border .15s; }
+  .search-input-wrap input:focus { border-color: #2563eb; }
+  .filter-btn { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border: 1.5px solid #d1d5db; border-radius: 10px; background: white; color: #374151; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .filter-btn svg { width: 18px; height: 18px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1rem; }
+  .pill { padding: 7px 16px; border-radius: 20px; font-size: .85rem; font-weight: 500; cursor: pointer; transition: all .15s; }
+  .pill.active { background: #2563eb; color: white; }
+  .pill:not(.active) { background: #f3f4f6; color: #374151; }
+  .pill:not(.active):hover { background: #e5e7eb; }
+  .results-count { color: #4b5563; margin-bottom: 1.5rem; font-size: .95rem; }
+  .results-count strong { color: #111827; }
+  .uni-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .uni-card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; display: block; transition: all .2s; }
+  .uni-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.1); transform: translateY(-3px); border-color: #bfdbfe; }
+  .uni-img { height: 160px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #dbeafe, #eff6ff); }
+  .uni-rank { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 900; color: #2563eb; }
+  .uni-rank-label { font-size: .8rem; color: #6b7280; margin-top: 4px; text-align: center; }
+  .uni-body { padding: 1.25rem; }
+  .uni-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .5rem; }
+  .uni-name { font-weight: 700; font-size: 1rem; color: #111827; transition: color .15s; }
+  .uni-card:hover .uni-name { color: #2563eb; }
+  .uni-rating { display: flex; align-items: center; gap: 4px; font-size: .875rem; font-weight: 600; color: #374151; }
+  .star { color: #facc15; }
+  .uni-location { display: flex; align-items: center; gap: 6px; color: #6b7280; font-size: .875rem; margin-bottom: 1rem; }
+  .uni-location svg { width: 14px; height: 14px; }
+  .uni-meta { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+  .uni-meta-item p { font-size: .72rem; color: #9ca3af; margin-bottom: 2px; }
+  .uni-meta-item strong { font-size: .9rem; color: #111827; }
+  .uni-accept { display: flex; align-items: center; gap: 6px; padding-top: .75rem; border-top: 1px solid #f3f4f6; font-size: .85rem; color: #4b5563; }
+  .uni-accept svg { width: 14px; height: 14px; color: #16a34a; }
+  .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 2.5rem; }
+  .page-btn { padding: 9px 16px; border-radius: 8px; border: 1.5px solid #e5e7eb; background: white; color: #374151; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .15s; }
+  .page-btn:hover { background: #f3f4f6; }
+  .page-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="dashboard.html" class="logo">
+      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <a href="notifications.html" class="bell-btn"><i data-lucide="bell"></i><span class="bell-dot"></span></a>
+      <div class="user-btn">
+        <div class="user-avatar"><i data-lucide="user"></i></div>
+        <span class="user-name">John Doe</span>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="dashboard.html" class="nav-link"><i data-lucide="home"></i> Dashboard</a>
+    <a href="universities.html" class="nav-link active"><i data-lucide="search"></i> Universities</a>
+    <a href="scholarships.html" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
+    <a href="applications.html" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
+    <a href="notifications.html" class="nav-link"><i data-lucide="bell"></i> Notifications</a>
+  </div>
+</div>
+
+<main>
+  <h1 class="page-title">University Search</h1>
+  <p class="page-subtitle">Discover universities worldwide that match your goals</p>
+
+  <div class="search-card">
+    <div class="search-row">
+      <div class="search-input-wrap">
+        <i data-lucide="search"></i>
+        <input type="text" placeholder="Search universities, programs, or locations...">
+      </div>
+      <button class="filter-btn"><i data-lucide="filter"></i> Filters</button>
+    </div>
+    <div class="pills">
+      <span class="pill active">All</span>
+      <span class="pill">USA</span>
+      <span class="pill">UK</span>
+      <span class="pill">Europe</span>
+      <span class="pill">Top Ranked</span>
+    </div>
+  </div>
+
+  <p class="results-count">Showing <strong>6</strong> universities</p>
+
+  <div class="uni-grid">
+    <a href="university-detail.html" class="uni-card">
+      <div class="uni-img"><div><div class="uni-rank">#1</div><div class="uni-rank-label">World Ranking</div></div></div>
+      <div class="uni-body">
+        <div class="uni-top">
+          <span class="uni-name">Harvard University</span>
+          <div class="uni-rating"><span class="star">★</span> 4.9</div>
+        </div>
+        <div class="uni-location"><i data-lucide="map-pin"></i> Cambridge, USA</div>
+        <div class="uni-meta">
+          <div class="uni-meta-item"><p>Programs</p><strong>45</strong></div>
+          <div class="uni-meta-item"><p>Tuition</p><strong>$54,000/yr</strong></div>
+        </div>
+        <div class="uni-accept"><i data-lucide="trending-up"></i> 4.5% acceptance rate</div>
+      </div>
+    </a>
+    <a href="university-detail.html" class="uni-card">
+      <div class="uni-img"><div><div class="uni-rank">#2</div><div class="uni-rank-label">World Ranking</div></div></div>
+      <div class="uni-body">
+        <div class="uni-top">
+          <span class="uni-name">University of Oxford</span>
+          <div class="uni-rating"><span class="star">★</span> 4.8</div>
+        </div>
+        <div class="uni-location"><i data-lucide="map-pin"></i> Oxford, UK</div>
+        <div class="uni-meta">
+          <div class="uni-meta-item"><p>Programs</p><strong>52</strong></div>
+          <div class="uni-meta-item"><p>Tuition</p><strong>£28,000/yr</strong></div>
+        </div>
+        <div class="uni-accept"><i data-lucide="trending-up"></i> 17% acceptance rate</div>
+      </div>
+    </a>
+    <a href="university-detail.html" class="uni-card">
+      <div class="uni-img"><div><div class="uni-rank">#3</div><div class="uni-rank-label">World Ranking</div></div></div>
+      <div class="uni-body">
+        <div class="uni-top">
+          <span class="uni-name">MIT</span>
+          <div class="uni-rating"><span class="star">★</span> 4.9</div>
+        </div>
+        <div class="uni-location"><i data-lucide="map-pin"></i> Cambridge, USA</div>
+        <div class="uni-meta">
+          <div class="uni-meta-item"><p>Programs</p><strong>38</strong></div>
+          <div class="uni-meta-item"><p>Tuition</p><strong>$55,000/yr</strong></div>
+        </div>
+        <div class="uni-accept"><i data-lucide="trending-up"></i> 6.7% acceptance rate</div>
+      </div>
+    </a>
+    <a href="university-detail.html" class="uni-card">
+      <div class="uni-img"><div><div class="uni-rank">#4</div><div class="uni-rank-label">World Ranking</div></div></div>
+      <div class="uni-body">
+        <div class="uni-top">
+          <span class="uni-name">Stanford University</span>
+          <div class="uni-rating"><span class="star">★</span> 4.8</div>
+        </div>
+        <div class="uni-location"><i data-lucide="map-pin"></i> Stanford, USA</div>
+        <div class="uni-meta">
+          <div class="uni-meta-item"><p>Programs</p><strong>42</strong></div>
+          <div class="uni-meta-item"><p>Tuition</p><strong>$56,000/yr</strong></div>
+        </div>
+        <div class="uni-accept"><i data-lucide="trending-up"></i> 5.2% acceptance rate</div>
+      </div>
+    </a>
+    <a href="university-detail.html" class="uni-card">
+      <div class="uni-img"><div><div class="uni-rank">#5</div><div class="uni-rank-label">World Ranking</div></div></div>
+      <div class="uni-body">
+        <div class="uni-top">
+          <span class="uni-name">University of Cambridge</span>
+          <div class="uni-rating"><span class="star">★</span> 4.8</div>
+        </div>
+        <div class="uni-location"><i data-lucide="map-pin"></i> Cambridge, UK</div>
+        <div class="uni-meta">
+          <div class="uni-meta-item"><p>Programs</p><strong>48</strong></div>
+          <div class="uni-meta-item"><p>Tuition</p><strong>£27,000/yr</strong></div>
+        </div>
+        <div class="uni-accept"><i data-lucide="trending-up"></i> 21% acceptance rate</div>
+      </div>
+    </a>
+    <a href="university-detail.html" class="uni-card">
+      <div class="uni-img"><div><div class="uni-rank">#8</div><div class="uni-rank-label">World Ranking</div></div></div>
+      <div class="uni-body">
+        <div class="uni-top">
+          <span class="uni-name">ETH Zurich</span>
+          <div class="uni-rating"><span class="star">★</span> 4.7</div>
+        </div>
+        <div class="uni-location"><i data-lucide="map-pin"></i> Zurich, Switzerland</div>
+        <div class="uni-meta">
+          <div class="uni-meta-item"><p>Programs</p><strong>34</strong></div>
+          <div class="uni-meta-item"><p>Tuition</p><strong>CHF 1,500/yr</strong></div>
+        </div>
+        <div class="uni-accept"><i data-lucide="trending-up"></i> 27% acceptance rate</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn">Previous</button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <button class="page-btn">Next</button>
+  </div>
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>
