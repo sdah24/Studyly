@@ -100,7 +100,7 @@ def create_profile(request):
                 "Profile saved successfully."
             )
 
-            return redirect("dashboard:home")
+            return redirect("dashboard")
 
     else:
 
