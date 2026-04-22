@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}My Profile – Studyly{% endblock %}
+
+{% block content %}
+<main style="max-width:860px;margin:0 auto;padding:2rem;">
+
+  <h1 style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;margin-bottom:.25rem;">My Profile</h1>
+  <p style="color:#4b5563;margin-bottom:2rem;">Update your academic information to improve eligibility matching</p>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div style="background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;color:#15803d;font-size:.9rem;">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div style="background:white;border:1px solid #e5e7eb;border-radius:14px;padding:2rem;">
+
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid #f3f4f6;">
+      <div style="width:64px;height:64px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div style="color:#6b7280;font-size:.9rem;">{{ request.user.email }}</div>
+        <div style="color:#2563eb;font-size:.8rem;font-weight:600;margin-top:2px;">{{ request.user.role|capfirst }}</div>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+
+        {% for field in form %}
+          <div style="{% if field.field.widget.attrs.rows %}grid-column:span 2;{% endif %}">
+            <label style="display:block;font-weight:600;font-size:.875rem;color:#374151;margin-bottom:.4rem;">
+              {{ field.label }}
+            </label>
+            {% if field.field.widget|stringformat:"s" contains "Select" %}
+              <select name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;background:white;outline:none;box-sizing:border-box;">
+                {% for val, label in field.field.choices %}
+                  <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            {% elif field.field.widget|stringformat:"s" contains "Textarea" %}
+              <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}" rows="3"
+                style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;resize:vertical;">{{ field.value|default:'' }}</textarea>
+            {% else %}
+              <input
+                type="{{ field.field.widget.input_type }}"
+                name="{{ field.html_name }}"
+                id="{{ field.id_for_label }}"
+                value="{{ field.value|default:'' }}"
+                {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}
+                style="width:100%;padding:10px 14px;border:1.5px solid {% if field.errors %}#ef4444{% else %}#d1d5db{% endif %};border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;"
+              >
+            {% endif %}
+            {% if field.errors %}
+              <p style="color:#ef4444;font-size:.8rem;margin-top:.3rem;">{{ field.errors|join:", " }}</p>
+            {% endif %}
+            {% if field.help_text %}
+              <p style="color:#9ca3af;font-size:.78rem;margin-top:.25rem;">{{ field.help_text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+      </div>
+
+      <div style="margin-top:2rem;display:flex;gap:.75rem;">
+        <button type="submit" style="padding:12px 28px;background:#2563eb;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;">
+          Save Changes
+        </button>
+        <a href="{% url 'dashboard:dashboard' %}" style="padding:12px 28px;background:white;border:2px solid #d1d5db;color:#374151;border-radius:10px;font-weight:600;font-size:.95rem;text-decoration:none;">
+          Cancel
+        </a>
+      </div>
+
+    </form>
+  </div>
+</main>
+{% endblock %}

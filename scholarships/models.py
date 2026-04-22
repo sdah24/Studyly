@@ -23,6 +23,18 @@ class Scholarship(models.Model):
         related_name="scholarships"
     )
 
+    # NEW FIELD
+    category = models.CharField(
+        max_length=50,
+        choices=[
+            ("merit", "Merit-Based"),
+            ("need", "Need-Based"),
+            ("sports", "Sports"),
+            ("research", "Research"),
+        ],
+        default="merit"
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )

@@ -81,3 +81,24 @@ class ScholarshipSearchForm(forms.Form):
         )
 
     )
+
+from django import forms
+from .models import Scholarship
+
+
+class ScholarshipForm(forms.ModelForm):
+
+    class Meta:
+
+        model = Scholarship
+
+        fields = [
+
+            "title",
+            "description",
+            "amount",
+            "deadline",
+            "university",
+            "category",
+
+        ]

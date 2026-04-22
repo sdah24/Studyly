@@ -1,70 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login – Studyly</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--white); color: #111827; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; -webkit-font-smoothing: antialiased; }
-  :root { --blue: #2563eb; --blue-dark: #1d4ed8; --gray-900: #111827; --gray-600: #4b5563; --gray-400: #9ca3af; --gray-300: #d1d5db; --gray-200: #e5e7eb; --white: #ffffff; }
-  a { text-decoration: none; color: inherit; }
-  .container { max-width: 420px; width: 100%; }
-  .logo-wrap { text-align: center; margin-bottom: 2.5rem; }
-  .logo { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
-  .logo-icon { background: var(--blue); padding: 10px; border-radius: 12px; display: flex; }
-  .logo-icon svg { width: 24px; height: 24px; color: white; }
-  .logo-text { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; color: var(--gray-900); }
-  .logo-wrap h1 { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: var(--gray-900); margin-bottom: .5rem; }
-  .logo-wrap p { color: var(--gray-600); }
-  .card { background: white; border: 1.5px solid var(--gray-200); border-radius: 16px; padding: 2rem; }
-  .field { margin-bottom: 1.25rem; }
-  .field label { display: block; font-weight: 600; font-size: .9rem; color: var(--gray-900); margin-bottom: .5rem; }
-  .field input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--gray-300); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--gray-900); outline: none; transition: border .15s, box-shadow .15s; }
-  .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
-  .field input::placeholder { color: var(--gray-400); }
-  .btn-submit { width: 100%; padding: 13px; background: var(--blue); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background .15s; margin-top: .5rem; }
-  .btn-submit:hover { background: var(--blue-dark); }
-  .footer-text { text-align: center; margin-top: 1.25rem; font-size: .9rem; color: var(--gray-600); }
-  .footer-text a { color: var(--blue); font-weight: 600; }
-  .footer-text a:hover { text-decoration: underline; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="logo-wrap">
-    <a href="index.html" class="logo">
-      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
-      <span class="logo-text">Studyly</span>
-    </a>
-    <h1>Welcome Back</h1>
-    <p>Sign in to your account</p>
-  </div>
-  <div class="card">
-      {% if error %}
-<p style="color:red; text-align:center;">
-    {{ error }}
-</p>
-{% endif %}
-    <form method="POST">
+{% extends "base.html" %}
+{% block title %}Login – Studyly{% endblock %}
 
-    {% csrf_token %}
-      <div class="field">
-        <label>Email</label>
-        <input type="email" placeholder="you@example.com" required name="email">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" placeholder="Enter your password" required name="password">
-      </div>
-      <button type="submit" class="btn-submit">Login</button>
-    </form>
-    <p class="footer-text">Don't have an account? <a href="register.html">Sign up</a></p>
+{% block content %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;background:#f9fafb;">
+  <div style="max-width:420px;width:100%;">
+
+    <div style="text-align:center;margin-bottom:2rem;">
+      <a href="/" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:1.25rem;">
+        <div style="background:#2563eb;padding:10px;border-radius:12px;display:flex;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <span style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;color:#111827;">Studyly</span>
+      </a>
+      <h1 style="font-family:'Fraunces',serif;font-size:2rem;font-weight:900;color:#111827;margin-bottom:.5rem;">Welcome Back</h1>
+      <p style="color:#4b5563;">Sign in to your account</p>
+    </div>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;color:#991b1b;font-size:.9rem;">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div style="background:white;border:1.5px solid #e5e7eb;border-radius:16px;padding:2rem;">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block;font-weight:600;font-size:.9rem;color:#111827;margin-bottom:.5rem;">Username</label>
+          <input type="text" name="username" value="{{ form.username.value|default:'' }}"
+            style="width:100%;padding:12px 16px;border:1.5px solid #d1d5db;border-radius:10px;font-size:1rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;"
+            placeholder="Your username">
+          {% if form.username.errors %}
+            <p style="color:#ef4444;font-size:.8rem;margin-top:.3rem;">{{ form.username.errors|join:", " }}</p>
+          {% endif %}
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block;font-weight:600;font-size:.9rem;color:#111827;margin-bottom:.5rem;">Password</label>
+          <input type="password" name="password"
+            style="width:100%;padding:12px 16px;border:1.5px solid #d1d5db;border-radius:10px;font-size:1rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;"
+            placeholder="Enter your password">
+          {% if form.password.errors %}
+            <p style="color:#ef4444;font-size:.8rem;margin-top:.3rem;">{{ form.password.errors|join:", " }}</p>
+          {% endif %}
+        </div>
+
+        {% if form.non_field_errors %}
+          <p style="color:#ef4444;font-size:.85rem;margin-bottom:.75rem;">{{ form.non_field_errors|join:", " }}</p>
+        {% endif %}
+
+        <button type="submit" style="width:100%;padding:13px;background:#2563eb;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;margin-top:.5rem;">
+          Login
+        </button>
+      </form>
+
+      <p style="text-align:center;margin-top:1.25rem;font-size:.9rem;color:#4b5563;">
+        Don't have an account? <a href="{% url 'users:register' %}" style="color:#2563eb;font-weight:600;">Sign up</a>
+      </p>
+    </div>
+
   </div>
 </div>
-<script>lucide.createIcons();</script>
-</body>
-</html>
+{% endblock %}

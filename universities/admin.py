@@ -1,31 +1,23 @@
 from django.contrib import admin
+from .models import University, Program
 
-from .models import University
 
-# Register your models here.
+class ProgramInline(admin.TabularInline):
+    model = Program
+    extra = 1
 
-admin.site.register(University)
 
+@admin.register(University)
 class UniversityAdmin(admin.ModelAdmin):
+    inlines = [ProgramInline]
+    list_display = ['name', 'country', 'city', 'ranking', 'acceptance_rate', 'rating']
+    list_filter = ['country']
+    search_fields = ['name', 'city', 'country']
+    ordering = ['ranking']
 
-    list_display = [
 
-        "name",
-        "country",
-        "city",
-        "ranking",
-
-    ]
-
-    search_fields = [
-
-        "name",
-        "country",
-
-    ]
-
-    list_filter = [
-
-        "country",
-
-    ]
+@admin.register(Program)
+class ProgramAdmin(admin.ModelAdmin):
+    list_display = ['name', 'university', 'level', 'duration', 'tuition_per_year']
+    list_filter = ['level', 'university']
+    search_fields = ['name', 'university__name']

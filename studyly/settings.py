@@ -132,3 +132,18 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+# ── ADD these lines to your existing settings.py ──────────────────────────────
+
+# Tell Django to use our custom User model
+AUTH_USER_MODEL = 'users.User'
+
+# After login/logout, redirect here
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/users/login/'
+
+# Media files (profile pictures etc.)
+import os
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

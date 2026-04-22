@@ -1,12 +1,6 @@
 from django.urls import path
 from . import views
 
-urlpatterns = [
-
-    path(
-        "adminpanel/",
-        views.admin_dashboard_view,
-        name="adminpanel"
-    ),
-
-]
+from django.urls import path
+app_name = 'adminpanel'
+urlpatterns = []

@@ -106,3 +106,102 @@ def scholarship_detail(request, pk):
         }
 
     )
+
+from django.shortcuts import redirect
+from .forms import ScholarshipForm
+
+
+def add_scholarship(request):
+
+    if request.method == "POST":
+
+        form = ScholarshipForm(request.POST)
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect("scholarships:list")
+
+    else:
+
+        form = ScholarshipForm()
+
+    return render(
+
+        request,
+        "scholarships/add_scholarship.html",
+
+        {
+            "form": form
+        }
+
+    )
+
+
+def edit_scholarship(request, pk):
+
+    scholarship = get_object_or_404(
+        Scholarship,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        form = ScholarshipForm(
+            request.POST,
+            instance=scholarship
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                "scholarships:detail",
+                pk=pk
+            )
+
+    else:
+
+        form = ScholarshipForm(
+            instance=scholarship
+        )
+
+    return render(
+
+        request,
+        "scholarships/edit_scholarship.html",
+
+        {
+            "form": form
+        }
+
+    )
+
+
+def delete_scholarship(request, pk):
+
+    scholarship = get_object_or_404(
+        Scholarship,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        scholarship.delete()
+
+        return redirect(
+            "scholarships:list"
+        )
+
+    return render(
+
+        request,
+        "scholarships/delete_scholarship.html",
+
+        {
+            "scholarship": scholarship
+        }
+
+    )

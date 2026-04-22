@@ -14,55 +14,41 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path,include
+from django.urls import path
+from . import views
 
-from . views import delete_schola
+app_name = "scholarships"
 
-path(
-    "delete/<int:id>/",
-    delete_scholarship,
-    name="delete_scholarship"
-),
-path(
-    "search/",
-    views.scholarship_search,
-    name="search"
-),
-path(
+urlpatterns = [
 
-    "detail/<int:pk>/",
+    path(
+        "scholarships/",
+        views.scholarships_view,
+        name="list"
+    ),
 
-    views.scholarship_detail,
+    path(
+        "scholarships/detail/<int:pk>/",
+        views.scholarship_detail,
+        name="detail"
+    ),
 
-    name="detail"
+    path(
+        "scholarships/add/",
+        views.add_scholarship,
+        name="add"
+    ),
 
-),
+    path(
+        "scholarships/edit/<int:pk>/",
+        views.edit_scholarship,
+        name="edit"
+    ),
 
-path(
+    path(
+        "scholarships/delete/<int:pk>/",
+        views.delete_scholarship,
+        name="delete"
+    ),
 
-    "add/",
-
-    views.add_scholarship,
-
-    name="add"
-
-),
-path(
-
-    "edit/<int:pk>/",
-
-    views.edit_scholarship,
-
-    name="edit"
-
-),
-path(
-
-    "delete/<int:pk>/",
-
-    views.delete_scholarship,
-
-    name="delete"
-
-),
+]
