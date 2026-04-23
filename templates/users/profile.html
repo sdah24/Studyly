@@ -36,14 +36,14 @@
             <label style="display:block;font-weight:600;font-size:.875rem;color:#374151;margin-bottom:.4rem;">
               {{ field.label }}
             </label>
-            {% if field.field.widget|stringformat:"s" contains "Select" %}
+            {% if "Select" in field.field.widget|stringformat:"s" %}
               <select name="{{ field.html_name }}" id="{{ field.id_for_label }}"
                 style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;background:white;outline:none;box-sizing:border-box;">
                 {% for val, label in field.field.choices %}
                   <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
               </select>
-            {% elif field.field.widget|stringformat:"s" contains "Textarea" %}
+            {% elif "Textarea" in field.field.widget|stringformat:"s" %}
               <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}" rows="3"
                 style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;resize:vertical;">{{ field.value|default:'' }}</textarea>
             {% else %}

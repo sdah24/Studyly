@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
-from django.urls import path
 app_name = 'eligibility'
-urlpatterns = []
+
+urlpatterns = [
+    path('check/', views.check, name='check'),
+]
