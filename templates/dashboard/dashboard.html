@@ -1,199 +1,236 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard – Studyly</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+{% extends "base.html" %}
+{% block title %}Dashboard – Studyly{% endblock %}
+
+{% block content %}
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; }
   a { text-decoration: none; color: inherit; }
-  /* NAV */
   .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
   .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
   .logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
-  .logo-icon svg { width: 22px; height: 22px; color: white; }
   .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: #111827; }
   .nav-right { display: flex; align-items: center; gap: 12px; }
-  .bell-btn { position: relative; padding: 8px; color: #4b5563; transition: color .15s; }
+  .bell-btn { position: relative; padding: 8px; color: #4b5563; }
   .bell-btn:hover { color: #2563eb; }
-  .bell-btn svg { width: 20px; height: 20px; }
-  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; }
-  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; cursor: pointer; transition: background .15s; }
+  .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border-radius: 50%; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; cursor: pointer; }
   .user-btn:hover { background: #f3f4f6; }
   .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .user-avatar svg { width: 16px; height: 16px; color: white; }
   .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
-  /* SECONDARY NAV */
   .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
   .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
   .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; transition: all .15s; }
   .nav-link:hover { color: #111827; }
   .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
-  .nav-link svg { width: 16px; height: 16px; }
-  /* MAIN */
   main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
   h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
   .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
-  /* STATS */
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
   .stat-card { background: white; border-radius: 14px; padding: 1.5rem; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
   .stat-info p { font-size: .85rem; color: #6b7280; margin-bottom: .25rem; }
   .stat-info .val { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: #111827; }
-  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .stat-icon svg { width: 22px; height: 22px; color: white; }
-  /* GRID */
+  .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.3rem; }
   .content-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
   .col-2 { grid-column: span 2; }
   @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } .col-2 { grid-column: span 1; } }
   .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; }
   .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
   .card-header h2 { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700; }
-  .card-header a { font-size: .85rem; color: #2563eb; display: flex; align-items: center; gap: 4px; }
-  .card-header a svg { width: 14px; height: 14px; }
+  .card-header a { font-size: .85rem; color: #2563eb; }
   .app-item { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f3f4f6; transition: background .15s; }
   .app-item:last-child { border-bottom: none; }
   .app-item:hover { background: #f9fafb; }
   .app-item-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .5rem; }
-  .app-item h3 { font-weight: 700; margin-bottom: 3px; }
+  .app-item h3 { font-weight: 700; margin-bottom: 3px; font-size: .95rem; }
   .app-item p { font-size: .875rem; color: #6b7280; }
-  .badge { padding: 4px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
-  .badge-yellow { background: #fef9c3; color: #a16207; }
-  .badge-green { background: #dcfce7; color: #15803d; }
-  .badge-blue { background: #dbeafe; color: #1d4ed8; }
   .app-item .deadline { font-size: .8rem; color: #9ca3af; margin-top: .25rem; }
-  /* DEADLINES */
+  .badge { padding: 4px 10px; border-radius: 20px; font-size: .75rem; font-weight: 600; white-space: nowrap; }
+  .badge-yellow  { background: #fef9c3; color: #a16207; }
+  .badge-green   { background: #dcfce7; color: #15803d; }
+  .badge-blue    { background: #dbeafe; color: #1d4ed8; }
+  .badge-red     { background: #fee2e2; color: #b91c1c; }
+  .badge-gray    { background: #f3f4f6; color: #374151; }
   .deadline-item { padding: 1rem 1.5rem; border-bottom: 1px solid #f3f4f6; display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; }
   .deadline-item:last-child { border-bottom: none; }
   .deadline-item h4 { font-size: .9rem; font-weight: 600; margin-bottom: 3px; }
-  .deadline-item span { font-size: .75rem; color: #9ca3af; }
+  .deadline-item .date { font-size: .75rem; color: #9ca3af; }
   .priority { padding: 3px 8px; border-radius: 6px; font-size: .72rem; font-weight: 600; white-space: nowrap; }
   .priority-high { background: #fee2e2; color: #b91c1c; }
-  .priority-med { background: #fef9c3; color: #a16207; }
-  .priority-low { background: #f3f4f6; color: #4b5563; }
+  .priority-med  { background: #fef9c3; color: #a16207; }
+  .priority-low  { background: #f3f4f6; color: #4b5563; }
   .card-footer { padding: 1rem 1.5rem; background: #f9fafb; }
   .card-footer a { font-size: .875rem; color: #2563eb; font-weight: 500; }
-  /* CTA card */
   .cta-card { background: linear-gradient(135deg, #2563eb, #3b82f6); border-radius: 14px; padding: 1.5rem; color: white; margin-top: 1.5rem; }
   .cta-card h3 { font-family: 'Fraunces', serif; font-weight: 700; margin-bottom: .5rem; }
   .cta-card p { font-size: .875rem; color: #bfdbfe; margin-bottom: 1rem; }
-  .cta-card a { display: block; width: 100%; padding: 10px; background: white; color: #2563eb; border-radius: 8px; font-weight: 600; font-size: .9rem; text-align: center; transition: background .15s; }
+  .cta-card a { display: block; width: 100%; padding: 10px; background: white; color: #2563eb; border-radius: 8px; font-weight: 600; font-size: .9rem; text-align: center; }
   .cta-card a:hover { background: #eff6ff; }
+  .empty-msg { padding: 2rem 1.5rem; text-align: center; color: #9ca3af; font-size: .9rem; }
+  .profile-bar { background: white; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .profile-bar-left { display: flex; align-items: center; gap: 12px; }
+  .profile-avatar { width: 48px; height: 48px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .profile-name { font-weight: 700; font-size: 1rem; }
+  .profile-role { font-size: .8rem; color: #6b7280; margin-top: 2px; }
+  .profile-actions { display: flex; gap: .75rem; }
+  .btn-sm { padding: 7px 16px; border-radius: 8px; font-size: .85rem; font-weight: 600; text-decoration: none; }
+  .btn-blue { background: #2563eb; color: white; }
+  .btn-outline { background: white; color: #374151; border: 1.5px solid #d1d5db; }
 </style>
-</head>
-<body>
 
 <nav class="top-nav">
   <div class="top-nav-inner">
-    <a href="dashboard.html" class="logo">
-      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+    <a href="{% url 'dashboard:dashboard' %}" class="logo">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
       <span class="logo-text">Studyly</span>
     </a>
     <div class="nav-right">
-      <a href="notifications.html" class="bell-btn">
-        <i data-lucide="bell"></i>
-        <span class="bell-dot"></span>
+      <a href="{% url 'notifications:list' %}" class="bell-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        {% if unread_notifications %}<span class="bell-dot"></span>{% endif %}
       </a>
-      <div class="user-btn">
-        <div class="user-avatar"><i data-lucide="user"></i></div>
-        <span class="user-name">John Doe</span>
-      </div>
+      <a href="{% url 'users:profile' %}" class="user-btn">
+        <div class="user-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+      </a>
     </div>
   </div>
 </nav>
 
 <div class="sec-nav">
   <div class="sec-nav-inner">
-    <a href="dashboard.html" class="nav-link active"><i data-lucide="home"></i> Dashboard</a>
-    <a href="universities.html" class="nav-link"><i data-lucide="search"></i> Universities</a>
-    <a href="scholarships.html" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
-    <a href="applications.html" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
-    <a href="notifications.html" class="nav-link"><i data-lucide="bell"></i> Notifications</a>
+    <a href="{% url 'dashboard:dashboard' %}"  class="nav-link active">🏠 Dashboard</a>
+    <a href="{% url 'universities:list' %}"    class="nav-link">🔍 Universities</a>
+    <a href="{% url 'scholarships:list' %}"    class="nav-link">💰 Scholarships</a>
+    <a href="{% url 'applications:list' %}"    class="nav-link">📋 Applications</a>
+    <a href="{% url 'notifications:list' %}"   class="nav-link">🔔 Notifications</a>
   </div>
 </div>
 
 <main>
-  <h1 class="page-title">Welcome back, John! 👋</h1>
+
+  <!-- Profile bar -->
+  <div class="profile-bar">
+    <div class="profile-bar-left">
+      <div class="profile-avatar">
+        {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+      </div>
+      <div>
+        <div class="profile-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="profile-role">{{ request.user.email }} · {{ request.user.role|capfirst }}</div>
+      </div>
+    </div>
+    <div class="profile-actions">
+      <a href="{% url 'users:profile' %}" class="btn-sm btn-outline">Edit Profile</a>
+      <a href="{% url 'universities:list' %}" class="btn-sm btn-blue">Browse Universities</a>
+    </div>
+  </div>
+
+  <h1 class="page-title">Welcome back, {{ request.user.first_name|default:request.user.username }}! 👋</h1>
   <p class="page-subtitle">Here's what's happening with your applications</p>
 
+  <!-- Stats -->
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-info"><p>Applications</p><div class="val">5</div></div>
-      <div class="stat-icon" style="background:#3b82f6"><i data-lucide="clock"></i></div>
+      <div class="stat-info"><p>Applications</p><div class="val">{{ total_apps }}</div></div>
+      <div class="stat-icon" style="background:#3b82f6;">🕐</div>
     </div>
     <div class="stat-card">
-      <div class="stat-info"><p>Accepted</p><div class="val">2</div></div>
-      <div class="stat-icon" style="background:#16a34a"><i data-lucide="check-circle"></i></div>
+      <div class="stat-info"><p>Accepted</p><div class="val">{{ accepted_apps }}</div></div>
+      <div class="stat-icon" style="background:#16a34a;">✅</div>
     </div>
     <div class="stat-card">
-      <div class="stat-info"><p>Pending</p><div class="val">3</div></div>
-      <div class="stat-icon" style="background:#ca8a04"><i data-lucide="alert-circle"></i></div>
+      <div class="stat-info"><p>Pending</p><div class="val">{{ pending_apps }}</div></div>
+      <div class="stat-icon" style="background:#ca8a04;">⏳</div>
     </div>
     <div class="stat-card">
-      <div class="stat-info"><p>Scholarships</p><div class="val">8</div></div>
-      <div class="stat-icon" style="background:#9333ea"><i data-lucide="trending-up"></i></div>
+      <div class="stat-info"><p>Scholarships</p><div class="val">{{ scholarships_count }}</div></div>
+      <div class="stat-icon" style="background:#9333ea;">🏆</div>
     </div>
   </div>
 
   <div class="content-grid">
+
+    <!-- Recent Applications -->
     <div class="card col-2">
       <div class="card-header">
         <h2>Recent Applications</h2>
-        <a href="applications.html">View All <i data-lucide="arrow-right"></i></a>
+        <a href="{% url 'applications:list' %}">View All →</a>
       </div>
-      <div class="app-item">
-        <div class="app-item-top">
-          <div><h3>Harvard University</h3><p>Master of Computer Science</p></div>
-          <span class="badge badge-yellow">Under Review</span>
+      {% if recent_apps %}
+        {% for app in recent_apps %}
+          <div class="app-item">
+            <div class="app-item-top">
+              <div>
+                <h3>{{ app.university.name }}</h3>
+                <p>{{ app.program.name|default:"—" }}</p>
+              </div>
+              {% if app.status == 'accepted' %}
+                <span class="badge badge-green">Accepted</span>
+              {% elif app.status == 'rejected' %}
+                <span class="badge badge-red">Rejected</span>
+              {% elif app.status == 'under_review' %}
+                <span class="badge badge-yellow">Under Review</span>
+              {% elif app.status == 'incomplete' %}
+                <span class="badge badge-blue">Incomplete</span>
+              {% else %}
+                <span class="badge badge-gray">{{ app.get_status_display }}</span>
+              {% endif %}
+            </div>
+            {% if app.deadline %}
+              <div class="deadline">Deadline: {{ app.deadline|date:"F j, Y" }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-msg">
+          No applications yet. <a href="{% url 'universities:list' %}" style="color:#2563eb;">Browse universities</a> to get started.
         </div>
-        <div class="deadline">Deadline: March 15, 2026</div>
-      </div>
-      <div class="app-item">
-        <div class="app-item-top">
-          <div><h3>MIT</h3><p>Master of Artificial Intelligence</p></div>
-          <span class="badge badge-green">Accepted</span>
-        </div>
-        <div class="deadline">Deadline: March 1, 2026</div>
-      </div>
-      <div class="app-item">
-        <div class="app-item-top">
-          <div><h3>Stanford University</h3><p>MBA</p></div>
-          <span class="badge badge-blue">Documents Required</span>
-        </div>
-        <div class="deadline">Deadline: April 10, 2026</div>
-      </div>
+      {% endif %}
     </div>
 
+    <!-- Right column -->
     <div>
+      <!-- Upcoming Deadlines -->
       <div class="card">
         <div class="card-header"><h2>Upcoming Deadlines</h2></div>
-        <div class="deadline-item">
-          <div><h4>Submit SOP for Harvard</h4><span>March 8, 2026</span></div>
-          <span class="priority priority-high">High</span>
-        </div>
-        <div class="deadline-item">
-          <div><h4>Complete Financial Documents</h4><span>March 12, 2026</span></div>
-          <span class="priority priority-med">Medium</span>
-        </div>
-        <div class="deadline-item">
-          <div><h4>Language Test Results</h4><span>March 20, 2026</span></div>
-          <span class="priority priority-low">Low</span>
-        </div>
-        <div class="card-footer"><a href="applications.html">View All Tasks →</a></div>
+        {% if upcoming %}
+          {% for app in upcoming %}
+            <div class="deadline-item">
+              <div>
+                <h4>{{ app.university.name }}</h4>
+                <span class="date">{{ app.deadline|date:"F j, Y" }}</span>
+              </div>
+              {% with days_left=app.deadline|timeuntil %}
+                {% if "day" in days_left and days_left|slice:":2"|add:"0" < "8 " %}
+                  <span class="priority priority-high">High</span>
+                {% elif "week" in days_left %}
+                  <span class="priority priority-med">Medium</span>
+                {% else %}
+                  <span class="priority priority-low">Low</span>
+                {% endif %}
+              {% endwith %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-msg">No upcoming deadlines.</div>
+        {% endif %}
+        <div class="card-footer"><a href="{% url 'applications:list' %}">View All Tasks →</a></div>
       </div>
+
+      <!-- CTA -->
       <div class="cta-card">
         <h3>Ready to explore?</h3>
         <p>Find your next opportunity</p>
-        <a href="universities.html">Search Universities</a>
+        <a href="{% url 'universities:list' %}">Search Universities</a>
       </div>
     </div>
+
   </div>
 </main>
-
-<script>lucide.createIcons();</script>
-</body>
-</html>
+{% endblock %}

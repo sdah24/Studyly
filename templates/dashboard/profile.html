@@ -1,10 +1,174 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}My Profile – Studyly{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; }
+  a { text-decoration: none; color: inherit; }
+  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; }
+  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
+  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; }
+  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
+  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
+  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; }
+  .nav-link:hover { color: #111827; }
+  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 2rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
+  .field { margin-bottom: 0; }
+  .field label { display: block; font-weight: 600; font-size: .875rem; color: #374151; margin-bottom: .4rem; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db; border-radius: 8px;
+    font-size: .95rem; font-family: 'DM Sans', sans-serif; color: #111827; outline: none; box-sizing: border-box;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: #2563eb; }
+  .field-full { grid-column: span 2; }
+  @media (max-width: 600px) { .field-full { grid-column: span 1; } }
+  .section-title { font-weight: 700; font-size: .95rem; color: #374151; margin: 1.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid #f3f4f6; grid-column: span 2; }
+  .btn-primary { padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .95rem; cursor: pointer; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-cancel { padding: 12px 28px; background: white; border: 1.5px solid #d1d5db; color: #374151; border-radius: 10px; font-weight: 600; font-size: .95rem; text-decoration: none; display: inline-block; }
+  .msg-success { background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; color: #15803d; font-size: .9rem; }
+  .msg-error { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; color: #991b1b; font-size: .9rem; }
+  .avatar-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f3f4f6; }
+  .avatar-circle { width: 64px; height: 64px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; flex-shrink: 0; }
+  .avatar-info .name { font-weight: 700; font-size: 1.05rem; }
+  .avatar-info .email { color: #6b7280; font-size: .875rem; }
+  .avatar-info .role { color: #2563eb; font-size: .8rem; font-weight: 600; margin-top: 2px; }
+</style>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="{% url 'dashboard:dashboard' %}" class="logo">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <div class="user-btn">
+        <div class="user-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="{% url 'dashboard:dashboard' %}"  class="nav-link">🏠 Dashboard</a>
+    <a href="{% url 'universities:list' %}"    class="nav-link">🔍 Universities</a>
+    <a href="{% url 'scholarships:list' %}"    class="nav-link">💰 Scholarships</a>
+    <a href="{% url 'applications:list' %}"    class="nav-link">📋 Applications</a>
+    <a href="{% url 'notifications:list' %}"   class="nav-link">🔔 Notifications</a>
+  </div>
+</div>
+
+<main>
+  <h1 class="page-title">My Profile</h1>
+  <p class="page-subtitle">Update your academic information to improve eligibility matching</p>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="{% if msg.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card">
+    <div class="avatar-row">
+      <div class="avatar-circle">
+        {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+      </div>
+      <div class="avatar-info">
+        <div class="name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="email">{{ request.user.email }}</div>
+        <div class="role">{{ request.user.role|capfirst }}</div>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="field-grid">
+
+        <div class="section-title">Personal Information</div>
+
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="text" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+880...">
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date" name="date_of_birth" value="{{ form.date_of_birth.value|default:'' }}">
+        </div>
+        <div class="field field-full">
+          <label>Address</label>
+          <textarea name="address" rows="2" placeholder="Your address">{{ form.address.value|default:'' }}</textarea>
+        </div>
+
+        <div class="section-title">Academic Information</div>
+
+        <div class="field">
+          <label>GPA</label>
+          <input type="number" step="0.01" min="0" max="4" name="GPA" value="{{ form.GPA.value|default:'' }}" placeholder="e.g. 3.8">
+        </div>
+        <div class="field">
+          <label>Degree Level</label>
+          <select name="degree_level">
+            <option value="">-- Select --</option>
+            <option value="bachelor" {% if form.degree_level.value == 'bachelor' %}selected{% endif %}>Bachelor's</option>
+            <option value="master"   {% if form.degree_level.value == 'master'   %}selected{% endif %}>Master's</option>
+            <option value="phd"      {% if form.degree_level.value == 'phd'      %}selected{% endif %}>PhD</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>English Proficiency</label>
+          <select name="english_proficiency">
+            <option value="">-- Select --</option>
+            <option value="ielts" {% if form.english_proficiency.value == 'ielts' %}selected{% endif %}>IELTS</option>
+            <option value="toefl" {% if form.english_proficiency.value == 'toefl' %}selected{% endif %}>TOEFL</option>
+            <option value="none"  {% if form.english_proficiency.value == 'none'  %}selected{% endif %}>None</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>English Score</label>
+          <input type="number" step="0.5" name="english_score" value="{{ form.english_score.value|default:'' }}" placeholder="e.g. 7.5">
+        </div>
+        <div class="field">
+          <label>Work Experience (Years)</label>
+          <input type="number" min="0" name="work_experience_years" value="{{ form.work_experience_years.value|default:'0' }}">
+        </div>
+
+        <div class="section-title">Preferences</div>
+
+        <div class="field field-full">
+          <label>Preferred Countries</label>
+          <input type="text" name="preferred_countries" value="{{ form.preferred_countries.value|default:'' }}" placeholder="e.g. USA, UK, Germany">
+        </div>
+        <div class="field">
+          <label>Budget (USD/year)</label>
+          <input type="number" name="budget" value="{{ form.budget.value|default:'' }}" placeholder="e.g. 30000">
+        </div>
+
+      </div>
+
+      <div style="margin-top:2rem;display:flex;gap:.75rem;">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="{% url 'dashboard:dashboard' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
