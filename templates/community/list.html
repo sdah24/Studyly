@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}Community — Studyly{% endblock %}
+
+{% block content %}
+<div class="community-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Community</h1>
+      <p class="page-subtitle">Connect with students and consultants on Studyly</p>
+    </div>
+    <div class="header-stats">
+      <span class="stat-pill"><i data-lucide="users" style="width:14px;height:14px;"></i> {{ total_count }} members</span>
+    </div>
+  </div>
+
+  <!-- Search + Filter Bar -->
+  <div class="search-filter-bar">
+    <form method="GET" class="search-form">
+      <div class="search-input-wrap">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by name, username or location…" class="search-input" autofocus>
+        {% if query %}<a href="?role={{ role_filter }}" class="clear-search"><i data-lucide="x" style="width:14px;height:14px;"></i></a>{% endif %}
+      </div>
+      <!-- preserve role filter on search submit -->
+      <input type="hidden" name="role" value="{{ role_filter }}">
+    </form>
+
+    <div class="filter-pills">
+      <a href="?q={{ query }}&role=all" class="pill {% if role_filter == 'all' %}pill--active{% endif %}">All ({{ total_count }})</a>
+      <a href="?q={{ query }}&role=student" class="pill {% if role_filter == 'student' %}pill--active{% endif %}">Students ({{ students_count }})</a>
+      <a href="?q={{ query }}&role=consultant" class="pill {% if role_filter == 'consultant' %}pill--active{% endif %}">Consultants ({{ consultants_count }})</a>
+    </div>
+  </div>
+
+  <!-- Results -->
+  {% if users %}
+  <div class="users-grid">
+    {% for u in users %}
+    <div class="user-card">
+      <div class="user-card__top">
+        <div class="avatar avatar--lg">{{ u.first_name|first|upper }}{{ u.last_name|first|upper }}</div>
+        <span class="role-badge role-badge--{{ u.role }}">{{ u.get_role_display }}</span>
+      </div>
+      <div class="user-card__body">
+        <h3 class="user-name">{{ u.get_full_name|default:u.username }}</h3>
+        <p class="user-username">@{{ u.username }}</p>
+        {% if u.profile.address %}
+        <p class="user-meta"><i data-lucide="map-pin" style="width:13px;height:13px;"></i> {{ u.profile.address }}</p>
+        {% endif %}
+        {% if u.role == 'student' and u.profile.degree_level %}
+        <p class="user-meta"><i data-lucide="graduation-cap" style="width:13px;height:13px;"></i> {{ u.profile.get_degree_level_display }}</p>
+        {% endif %}
+        {% if u.profile.preferred_countries %}
+        <p class="user-meta"><i data-lucide="globe" style="width:13px;height:13px;"></i> {{ u.profile.preferred_countries }}</p>
+        {% endif %}
+      </div>
+      <div class="user-card__actions">
+        <a href="{% url 'community:profile' u.pk %}" class="btn btn--outline btn--sm">View Profile</a>
+        {% if u.role != 'admin' %}
+        <a href="{% url 'messaging:conversation' u.pk %}" class="btn btn--primary btn--sm">
+          <i data-lucide="message-circle" style="width:14px;height:14px;"></i> Message
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <i data-lucide="users" style="width:48px;height:48px;color:#d1d5db;"></i>
+    <h3>No members found</h3>
+    <p>{% if query %}Try a different search term.{% else %}No other members yet.{% endif %}</p>
+  </div>
+  {% endif %}
+
+</div>
+
+<style>
+.community-page { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.page-title { font-family: 'Fraunces', serif; font-size: 28px; color: #111827; margin: 0 0 4px; }
+.page-subtitle { color: #6b7280; font-size: 14px; margin: 0; }
+.stat-pill { display: inline-flex; align-items: center; gap: 6px; background: #eff6ff; color: #2563eb; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+
+.search-filter-bar { display: flex; gap: 16px; align-items: center; margin-bottom: 28px; flex-wrap: wrap; }
+.search-form { flex: 1; min-width: 260px; }
+.search-input-wrap { position: relative; display: flex; align-items: center; }
+.search-icon { position: absolute; left: 12px; width: 16px; height: 16px; color: #9ca3af; pointer-events: none; }
+.search-input { width: 100%; padding: 10px 36px 10px 38px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #fff; outline: none; transition: border-color .2s; }
+.search-input:focus { border-color: #2563eb; }
+.clear-search { position: absolute; right: 10px; color: #9ca3af; display: flex; align-items: center; }
+
+.filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1px solid #e5e7eb; background: #fff; color: #374151; text-decoration: none; transition: all .15s; }
+.pill:hover { border-color: #2563eb; color: #2563eb; }
+.pill--active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+.users-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 20px; }
+
+.user-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; transition: box-shadow .2s; }
+.user-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+
+.user-card__top { display: flex; align-items: center; justify-content: space-between; }
+.avatar { display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 50%; background: #eff6ff; color: #2563eb; }
+.avatar--lg { width: 52px; height: 52px; font-size: 18px; }
+
+.role-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.role-badge--student { background: #dcfce7; color: #16a34a; }
+.role-badge--consultant { background: #fef3c7; color: #d97706; }
+.role-badge--admin { background: #fee2e2; color: #dc2626; }
+
+.user-card__body { flex: 1; }
+.user-name { font-size: 16px; font-weight: 600; color: #111827; margin: 0 0 2px; }
+.user-username { font-size: 13px; color: #9ca3af; margin: 0 0 8px; }
+.user-meta { font-size: 12px; color: #6b7280; margin: 4px 0 0; display: flex; align-items: center; gap: 5px; }
+
+.user-card__actions { display: flex; gap: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: all .15s; }
+.btn--sm { padding: 6px 12px; font-size: 12px; }
+.btn--primary { background: #2563eb; color: #fff; }
+.btn--primary:hover { background: #1d4ed8; }
+.btn--outline { border: 1px solid #e5e7eb; color: #374151; background: #fff; }
+.btn--outline:hover { border-color: #2563eb; color: #2563eb; }
+
+.empty-state { text-align: center; padding: 80px 20px; color: #6b7280; }
+.empty-state h3 { font-size: 18px; color: #374151; margin: 16px 0 8px; }
+</style>
+{% endblock %}
