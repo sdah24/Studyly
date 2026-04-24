@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dashboard',
     'adminpanel',
     'eligibility',
+    'community'
 ]
 
 MIDDLEWARE = [

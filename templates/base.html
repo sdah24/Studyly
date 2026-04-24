@@ -122,6 +122,7 @@
     <a href="{% url 'scholarships:list' %}"    class="nav-link {% block nav_scholarships %}{% endblock %}">💰 Scholarships</a>
     <a href="{% url 'applications:list' %}"    class="nav-link {% block nav_applications %}{% endblock %}">📋 Applications</a>
     <a href="{% url 'notifications:list' %}"   class="nav-link {% block nav_notifications %}{% endblock %}">🔔 Notifications</a>
+      <a href="{% url 'community:list' %}" class="nav-link {% if active_nav == 'community' %}nav-link--active{% endif %}">👥 Community</a>
   </div>
 </div>
 {% endif %}

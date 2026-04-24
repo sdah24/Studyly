@@ -31,4 +31,5 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('eligibility/',   include('eligibility.urls')),
     path('adminpanel/',    include('adminpanel.urls')),
+    path('community/', include('community.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
