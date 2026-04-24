@@ -1,40 +1,43 @@
 from django import forms
 from .models import Application
-from universities.models import University, Program
 
 
 class ApplicationForm(forms.ModelForm):
+
     class Meta:
         model = Application
         fields = [
-            'university', 'program', 'status', 'deadline',
+            'university', 'program', 'deadline', 'notes',
             'personal_statement', 'transcripts', 'recommendations',
-            'english_test', 'financial_docs', 'cv_resume', 'notes',
+            'english_test', 'financial_docs', 'cv_resume',
         ]
+        # NOTE: 'status' is intentionally excluded — set automatically by model.save()
         widgets = {
-            'deadline': forms.DateInput(attrs={'type': 'date'}),
-            'notes': forms.Textarea(attrs={'rows': 3}),
+            'university': forms.Select(attrs={'class': 'form-select'}),
+            'program':    forms.Select(attrs={'class': 'form-select'}),
+            'deadline':   forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
+            'notes':      forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'form-input',
+                'placeholder': 'Any notes about this application…'
+            }),
+            # File fields — accept PDF and common image types
+            'personal_statement': forms.ClearableFileInput(attrs={'accept': '.pdf,.doc,.docx,.jpg,.png', 'class': 'file-input'}),
+            'transcripts':        forms.ClearableFileInput(attrs={'accept': '.pdf,.jpg,.png',            'class': 'file-input'}),
+            'recommendations':    forms.ClearableFileInput(attrs={'accept': '.pdf,.doc,.docx,.jpg,.png', 'class': 'file-input'}),
+            'english_test':       forms.ClearableFileInput(attrs={'accept': '.pdf,.jpg,.png',            'class': 'file-input'}),
+            'financial_docs':     forms.ClearableFileInput(attrs={'accept': '.pdf,.jpg,.png',            'class': 'file-input'}),
+            'cv_resume':          forms.ClearableFileInput(attrs={'accept': '.pdf,.doc,.docx',           'class': 'file-input'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['program'].queryset = Program.objects.none()
-        if 'university' in self.data:
-            try:
-                uni_id = int(self.data.get('university'))
-                self.fields['program'].queryset = Program.objects.filter(
-                    university_id=uni_id
-                )
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk and self.instance.university:
-            self.fields['program'].queryset = Program.objects.filter(
-                university=self.instance.university
-            )
-
-
-class ApplicationStatusForm(forms.ModelForm):
-    """Lightweight form just for updating status."""
-    class Meta:
-        model = Application
-        fields = ['status']
+        self.fields['university'].empty_label = '— Select a University —'
+        self.fields['program'].empty_label    = '— Select a Program (optional) —'
+        self.fields['program'].required       = False
+        self.fields['deadline'].required      = False
+        self.fields['notes'].required         = False
+        # All document fields are optional individually
+        for doc_field in ['personal_statement', 'transcripts', 'recommendations',
+                          'english_test', 'financial_docs', 'cv_resume']:
+            self.fields[doc_field].required = False

@@ -1,0 +1,523 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} – Studyly{% endblock %}
+{% block content %}
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#f9fafb;color:#111827}
+  a{text-decoration:none;color:inherit}
+  .top-nav{background:white;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:100}
+  .top-nav-inner{max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-icon{background:#2563eb;padding:8px;border-radius:10px;display:flex}
+  .logo-text{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .bell-btn{padding:8px;color:#4b5563}
+  .user-btn{display:flex;align-items:center;gap:8px;padding:6px 12px}
+  .user-avatar{width:32px;height:32px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .user-name{font-size:.9rem;font-weight:500;color:#374151}
+  .sec-nav{background:white;border-bottom:1px solid #e5e7eb}
+  .sec-nav-inner{max-width:1280px;margin:0 auto;padding:0 2rem;display:flex;gap:4px;overflow-x:auto}
+  .nav-link{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:2px solid transparent;color:#4b5563;font-weight:500;font-size:.92rem;white-space:nowrap}
+  .nav-link:hover{color:#111827}
+  .nav-link.active{border-bottom-color:#2563eb;color:#2563eb}
+
+  main{max-width:800px;margin:0 auto;padding:2rem}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:#2563eb;font-size:.9rem;margin-bottom:1.5rem}
+  .back-link:hover{text-decoration:underline}
+  h1.page-title{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;margin-bottom:.25rem}
+  .page-subtitle{color:#4b5563;margin-bottom:2rem}
+
+  /* Status Notice */
+  .status-notice{display:flex;align-items:center;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.875rem 1.25rem;margin-bottom:2rem;font-size:.875rem;color:#1d4ed8}
+  .status-notice svg{width:18px;height:18px;flex-shrink:0}
+
+  /* Progress bar */
+  .progress-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:1.5rem;margin-bottom:1.5rem}
+  .progress-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+  .progress-card-top h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700}
+  .progress-count{font-size:.9rem;color:#6b7280}
+  .progress-count span{font-weight:700;color:#2563eb}
+  .progress-bar{height:10px;background:#e5e7eb;border-radius:10px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:10px;background:#2563eb;transition:width .4s ease}
+  .progress-label{font-size:.8rem;color:#6b7280;margin-top:.5rem}
+
+  /* Form cards */
+  .form-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:1.75rem;margin-bottom:1.5rem}
+  .form-card-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;margin-bottom:1.25rem;padding-bottom:.875rem;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:8px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  .form-full{grid-column:1/-1}
+  @media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:5px}
+  label.field-label{font-size:.85rem;font-weight:600;color:#374151}
+  .form-select,.form-input{padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:#111827;width:100%;background:white}
+  .form-select:focus,.form-input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+  textarea.form-input{resize:vertical;min-height:80px}
+  .error-msg{font-size:.8rem;color:#dc2626;margin-top:3px}
+
+  /* Document upload slots */
+  .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:580px){.doc-grid{grid-template-columns:1fr}}
+
+  .doc-slot{border:2px dashed #d1d5db;border-radius:12px;padding:1.25rem;transition:all .2s;position:relative;background:#fafafa}
+  .doc-slot.has-file{border-color:#2563eb;border-style:solid;background:#eff6ff}
+  .doc-slot.has-file .doc-slot-icon{color:#2563eb}
+  .doc-slot-top{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+  .doc-slot-icon{font-size:1.3rem;flex-shrink:0}
+  .doc-slot-name{font-weight:600;font-size:.9rem;color:#374151}
+  .doc-slot-type{font-size:.75rem;color:#9ca3af;margin-top:1px}
+
+  /* Current file badge */
+  .current-file{display:flex;align-items:center;gap:6px;background:#dbeafe;border-radius:6px;padding:5px 10px;margin-bottom:.75rem;font-size:.8rem;color:#1d4ed8;font-weight:500;word-break:break-all}
+  .current-file svg{width:14px;height:14px;flex-shrink:0}
+
+  /* Custom file input */
+  .file-upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px 14px;background:white;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:#374151;cursor:pointer;transition:all .15s;overflow:hidden}
+  .file-upload-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+  .file-upload-btn svg{width:15px;height:15px;flex-shrink:0}
+  .file-input-real{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+  /* Uploaded filename shown after JS pick */
+  .picked-name{font-size:.78rem;color:#4b5563;margin-top:5px;text-align:center;display:none;word-break:break-all}
+  .picked-name.visible{display:block}
+
+  /* Clear checkbox from Django */
+  .clear-wrap{font-size:.78rem;color:#9ca3af;margin-top:4px;display:flex;align-items:center;gap:4px}
+  .clear-wrap input{width:13px;height:13px;accent-color:#dc2626}
+
+  /* Messages */
+  .alert{padding:.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem}
+  .alert-error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+
+  /* Actions */
+  .form-actions{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+  .btn-primary{padding:13px 32px;background:#2563eb;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem;transition:background .15s}
+  .btn-primary:hover{background:#1d4ed8}
+  .btn-cancel{padding:13px 32px;background:white;color:#374151;border:1.5px solid #d1d5db;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem;text-decoration:none;display:inline-block;transition:background .15s}
+  .btn-cancel:hover{background:#f9fafb}
+</style>
+
+<!-- Top Nav -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="{% url 'dashboard:dashboard' %}" class="logo">
+      <div class="logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <span class="logo-text">Studyly</span>
+    </a>
+    <div class="nav-right">
+      <a href="{% url 'notifications:list' %}" class="bell-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </a>
+      <a href="{% url 'users:profile' %}" class="user-btn">
+        <div class="user-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Secondary Nav -->
+<div class="sec-nav">
+  <div class="sec-nav-inner">
+    <a href="{% url 'dashboard:dashboard' %}" class="nav-link">🏠 Dashboard</a>
+    <a href="{% url 'universities:list' %}"   class="nav-link">🔍 Universities</a>
+    <a href="{% url 'scholarships:list' %}"   class="nav-link">💰 Scholarships</a>
+    <a href="{% url 'applications:list' %}"   class="nav-link active">📋 Applications</a>
+    <a href="{% url 'notifications:list' %}"  class="nav-link">🔔 Notifications</a>
+  </div>
+</div>
+
+<main>
+  <a href="{% url 'applications:list' %}" class="back-link">← Back to Applications</a>
+  <h1 class="page-title">{{ title }}</h1>
+  <p class="page-subtitle">{% if app %}Update your application details and documents{% else %}Add a university application and upload your documents{% endif %}</p>
+
+  <!-- Status info notice -->
+  <div class="status-notice">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>Your application status is set <strong>automatically</strong> — it becomes <strong>Submitted</strong> once all 6 documents are uploaded.</span>
+  </div>
+
+  {% if form.errors %}
+    <div class="alert alert-error">Please fix the errors below before saving.</div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Live progress bar (counts existing + newly picked files) -->
+    {% if app %}
+      {% with count=app.documents_submitted pct=app.progress_percent %}
+      <div class="progress-card">
+        <div class="progress-card-top">
+          <h3>📎 Upload Progress</h3>
+          <div class="progress-count">
+            <span id="doc-count">{{ count }}</span> / 6 documents uploaded
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:{{ pct }}%"></div>
+        </div>
+        <div class="progress-label" id="progress-label">
+          {% if count == 6 %}✅ All documents uploaded — status will be set to Submitted{% elif count > 0 %}{{ count }} of 6 uploaded — upload remaining documents to submit{% else %}No documents yet — upload all 6 to submit your application{% endif %}
+        </div>
+      </div>
+      {% endwith %}
+    {% else %}
+      <div class="progress-card">
+        <div class="progress-card-top">
+          <h3>📎 Upload Progress</h3>
+          <div class="progress-count"><span id="doc-count">0</span> / 6 documents uploaded</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="progress-label" id="progress-label">Upload all 6 documents to automatically submit your application</div>
+      </div>
+    {% endif %}
+
+    <!-- University & Program -->
+    <div class="form-card">
+      <div class="form-card-title">
+        🏛️ University & Program
+      </div>
+      <div class="form-grid">
+        <div class="field form-full">
+          <label class="field-label" for="{{ form.university.id_for_label }}">University *</label>
+          {{ form.university }}
+          {% if form.university.errors %}<div class="error-msg">{{ form.university.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="field form-full">
+          <label class="field-label" for="{{ form.program.id_for_label }}">Program <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
+          {{ form.program }}
+          {% if form.program.errors %}<div class="error-msg">{{ form.program.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="field">
+          <label class="field-label" for="{{ form.deadline.id_for_label }}">Application Deadline</label>
+          {{ form.deadline }}
+          {% if form.deadline.errors %}<div class="error-msg">{{ form.deadline.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="field">
+          <label class="field-label">Current Status</label>
+          <div style="padding:10px 12px;background:#f3f4f6;border-radius:8px;font-size:.9rem;color:#374151;border:1.5px solid #e5e7eb">
+            {% if app %}
+              <span style="
+                padding:3px 10px;border-radius:20px;font-size:.8rem;font-weight:600;
+                background:{{ app.status_color.bg }};color:{{ app.status_color.color }}
+              ">{{ app.get_status_display }}</span>
+              <span style="font-size:.8rem;color:#9ca3af;margin-left:8px">auto-managed</span>
+            {% else %}
+              <span style="padding:3px 10px;border-radius:20px;font-size:.8rem;font-weight:600;background:#fff7ed;color:#c2410c">Incomplete</span>
+              <span style="font-size:.8rem;color:#9ca3af;margin-left:8px">auto-managed</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="field form-full">
+          <label class="field-label" for="{{ form.notes.id_for_label }}">Notes <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
+          {{ form.notes }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Uploads -->
+    <div class="form-card">
+      <div class="form-card-title">
+        📄 Document Uploads
+        <span style="font-size:.8rem;font-weight:400;color:#9ca3af;margin-left:auto">PDF, DOC, JPG, PNG accepted</span>
+      </div>
+
+      <div class="doc-grid">
+
+        <!-- Personal Statement -->
+        <div class="doc-slot {% if app and app.personal_statement %}has-file{% endif %}" id="slot-personal_statement">
+          <div class="doc-slot-top">
+            <div class="doc-slot-icon">📝</div>
+            <div>
+              <div class="doc-slot-name">Personal Statement</div>
+              <div class="doc-slot-type">SOP / Cover Letter</div>
+            </div>
+          </div>
+          {% if app and app.personal_statement %}
+            <div class="current-file">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {{ app.personal_statement.name|slice:"35:" }}
+            </div>
+          {% endif %}
+          <label class="file-upload-btn" for="id_personal_statement">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            {% if app and app.personal_statement %}Replace file{% else %}Upload file{% endif %}
+          </label>
+          <input type="file" id="id_personal_statement" name="personal_statement"
+                 accept=".pdf,.doc,.docx,.jpg,.png" class="file-input-real"
+                 data-slot="personal_statement" onchange="handleFileChange(this)">
+          <div class="picked-name" id="picked-personal_statement"></div>
+          {% if app and app.personal_statement %}
+            <div class="clear-wrap">
+              <input type="checkbox" name="personal_statement-clear" id="personal_statement-clear">
+              <label for="personal_statement-clear">Remove current file</label>
+            </div>
+          {% endif %}
+          {% if form.personal_statement.errors %}<div class="error-msg">{{ form.personal_statement.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Transcripts -->
+        <div class="doc-slot {% if app and app.transcripts %}has-file{% endif %}" id="slot-transcripts">
+          <div class="doc-slot-top">
+            <div class="doc-slot-icon">🎓</div>
+            <div>
+              <div class="doc-slot-name">Academic Transcripts</div>
+              <div class="doc-slot-type">Official grade records</div>
+            </div>
+          </div>
+          {% if app and app.transcripts %}
+            <div class="current-file">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {{ app.transcripts.name|slice:"35:" }}
+            </div>
+          {% endif %}
+          <label class="file-upload-btn" for="id_transcripts">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            {% if app and app.transcripts %}Replace file{% else %}Upload file{% endif %}
+          </label>
+          <input type="file" id="id_transcripts" name="transcripts"
+                 accept=".pdf,.jpg,.png" class="file-input-real"
+                 data-slot="transcripts" onchange="handleFileChange(this)">
+          <div class="picked-name" id="picked-transcripts"></div>
+          {% if app and app.transcripts %}
+            <div class="clear-wrap">
+              <input type="checkbox" name="transcripts-clear" id="transcripts-clear">
+              <label for="transcripts-clear">Remove current file</label>
+            </div>
+          {% endif %}
+          {% if form.transcripts.errors %}<div class="error-msg">{{ form.transcripts.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Recommendations -->
+        <div class="doc-slot {% if app and app.recommendations %}has-file{% endif %}" id="slot-recommendations">
+          <div class="doc-slot-top">
+            <div class="doc-slot-icon">✉️</div>
+            <div>
+              <div class="doc-slot-name">Recommendation Letters</div>
+              <div class="doc-slot-type">From professors / employers</div>
+            </div>
+          </div>
+          {% if app and app.recommendations %}
+            <div class="current-file">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {{ app.recommendations.name|slice:"35:" }}
+            </div>
+          {% endif %}
+          <label class="file-upload-btn" for="id_recommendations">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            {% if app and app.recommendations %}Replace file{% else %}Upload file{% endif %}
+          </label>
+          <input type="file" id="id_recommendations" name="recommendations"
+                 accept=".pdf,.doc,.docx,.jpg,.png" class="file-input-real"
+                 data-slot="recommendations" onchange="handleFileChange(this)">
+          <div class="picked-name" id="picked-recommendations"></div>
+          {% if app and app.recommendations %}
+            <div class="clear-wrap">
+              <input type="checkbox" name="recommendations-clear" id="recommendations-clear">
+              <label for="recommendations-clear">Remove current file</label>
+            </div>
+          {% endif %}
+          {% if form.recommendations.errors %}<div class="error-msg">{{ form.recommendations.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- English Test -->
+        <div class="doc-slot {% if app and app.english_test %}has-file{% endif %}" id="slot-english_test">
+          <div class="doc-slot-top">
+            <div class="doc-slot-icon">🌐</div>
+            <div>
+              <div class="doc-slot-name">English Test Score</div>
+              <div class="doc-slot-type">IELTS / TOEFL result</div>
+            </div>
+          </div>
+          {% if app and app.english_test %}
+            <div class="current-file">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {{ app.english_test.name|slice:"35:" }}
+            </div>
+          {% endif %}
+          <label class="file-upload-btn" for="id_english_test">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            {% if app and app.english_test %}Replace file{% else %}Upload file{% endif %}
+          </label>
+          <input type="file" id="id_english_test" name="english_test"
+                 accept=".pdf,.jpg,.png" class="file-input-real"
+                 data-slot="english_test" onchange="handleFileChange(this)">
+          <div class="picked-name" id="picked-english_test"></div>
+          {% if app and app.english_test %}
+            <div class="clear-wrap">
+              <input type="checkbox" name="english_test-clear" id="english_test-clear">
+              <label for="english_test-clear">Remove current file</label>
+            </div>
+          {% endif %}
+          {% if form.english_test.errors %}<div class="error-msg">{{ form.english_test.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- Financial Docs -->
+        <div class="doc-slot {% if app and app.financial_docs %}has-file{% endif %}" id="slot-financial_docs">
+          <div class="doc-slot-top">
+            <div class="doc-slot-icon">💳</div>
+            <div>
+              <div class="doc-slot-name">Financial Documents</div>
+              <div class="doc-slot-type">Bank statements / sponsorship</div>
+            </div>
+          </div>
+          {% if app and app.financial_docs %}
+            <div class="current-file">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {{ app.financial_docs.name|slice:"35:" }}
+            </div>
+          {% endif %}
+          <label class="file-upload-btn" for="id_financial_docs">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            {% if app and app.financial_docs %}Replace file{% else %}Upload file{% endif %}
+          </label>
+          <input type="file" id="id_financial_docs" name="financial_docs"
+                 accept=".pdf,.jpg,.png" class="file-input-real"
+                 data-slot="financial_docs" onchange="handleFileChange(this)">
+          <div class="picked-name" id="picked-financial_docs"></div>
+          {% if app and app.financial_docs %}
+            <div class="clear-wrap">
+              <input type="checkbox" name="financial_docs-clear" id="financial_docs-clear">
+              <label for="financial_docs-clear">Remove current file</label>
+            </div>
+          {% endif %}
+          {% if form.financial_docs.errors %}<div class="error-msg">{{ form.financial_docs.errors.0 }}</div>{% endif %}
+        </div>
+
+        <!-- CV / Resume -->
+        <div class="doc-slot {% if app and app.cv_resume %}has-file{% endif %}" id="slot-cv_resume">
+          <div class="doc-slot-top">
+            <div class="doc-slot-icon">📋</div>
+            <div>
+              <div class="doc-slot-name">CV / Resume</div>
+              <div class="doc-slot-type">Latest curriculum vitae</div>
+            </div>
+          </div>
+          {% if app and app.cv_resume %}
+            <div class="current-file">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {{ app.cv_resume.name|slice:"35:" }}
+            </div>
+          {% endif %}
+          <label class="file-upload-btn" for="id_cv_resume">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            {% if app and app.cv_resume %}Replace file{% else %}Upload file{% endif %}
+          </label>
+          <input type="file" id="id_cv_resume" name="cv_resume"
+                 accept=".pdf,.doc,.docx" class="file-input-real"
+                 data-slot="cv_resume" onchange="handleFileChange(this)">
+          <div class="picked-name" id="picked-cv_resume"></div>
+          {% if app and app.cv_resume %}
+            <div class="clear-wrap">
+              <input type="checkbox" name="cv_resume-clear" id="cv_resume-clear">
+              <label for="cv_resume-clear">Remove current file</label>
+            </div>
+          {% endif %}
+          {% if form.cv_resume.errors %}<div class="error-msg">{{ form.cv_resume.errors.0 }}</div>{% endif %}
+        </div>
+
+      </div><!-- /.doc-grid -->
+    </div><!-- /.form-card -->
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">
+        {% if app %}Save Changes{% else %}Create Application{% endif %}
+      </button>
+      <a href="{% url 'applications:list' %}" class="btn-cancel">Cancel</a>
+    </div>
+
+  </form>
+</main>
+
+<script>
+  // Track which slots already have a server-side file
+  const serverFiles = {
+    personal_statement: {{ app.personal_statement|yesno:"true,false" }},
+    transcripts:        {{ app.transcripts|yesno:"true,false" }},
+    recommendations:    {{ app.recommendations|yesno:"true,false" }},
+    english_test:       {{ app.english_test|yesno:"true,false" }},
+    financial_docs:     {{ app.financial_docs|yesno:"true,false" }},
+    cv_resume:          {{ app.cv_resume|yesno:"true,false" }},
+  };
+
+  // Track newly picked files
+  const pickedFiles = {
+    personal_statement: false,
+    transcripts: false,
+    recommendations: false,
+    english_test: false,
+    financial_docs: false,
+    cv_resume: false,
+  };
+
+  function countDocs() {
+    let count = 0;
+    for (const key of Object.keys(serverFiles)) {
+      // Count if server has file AND not being cleared, OR new file picked
+      const clearBox = document.getElementById(key + '-clear');
+      const isCleared = clearBox && clearBox.checked;
+      if ((serverFiles[key] && !isCleared) || pickedFiles[key]) count++;
+    }
+    return count;
+  }
+
+  function updateProgress() {
+    const count = countDocs();
+    const pct   = Math.round((count / 6) * 100);
+    document.getElementById('doc-count').textContent    = count;
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    const label = document.getElementById('progress-label');
+    if (count === 6) {
+      label.textContent = '✅ All documents uploaded — status will be set to Submitted';
+      document.getElementById('progress-fill').style.background = '#16a34a';
+    } else if (count > 0) {
+      label.textContent = count + ' of 6 uploaded — upload remaining documents to submit';
+      document.getElementById('progress-fill').style.background = '#2563eb';
+    } else {
+      label.textContent = 'Upload all 6 documents to automatically submit your application';
+    }
+  }
+
+  function handleFileChange(input) {
+    const slot     = input.dataset.slot;
+    const nameEl   = document.getElementById('picked-' + slot);
+    const slotEl   = document.getElementById('slot-' + slot);
+
+    if (input.files && input.files[0]) {
+      const fname = input.files[0].name;
+      nameEl.textContent = '📎 ' + fname;
+      nameEl.classList.add('visible');
+      slotEl.classList.add('has-file');
+      pickedFiles[slot] = true;
+    } else {
+      nameEl.textContent = '';
+      nameEl.classList.remove('visible');
+      pickedFiles[slot] = false;
+      if (!serverFiles[slot]) slotEl.classList.remove('has-file');
+    }
+    updateProgress();
+  }
+
+  document.querySelectorAll('[id$="-clear"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const slot  = cb.id.replace('-clear', '');
+      const slotEl = document.getElementById('slot-' + slot);
+      if (cb.checked) slotEl.classList.remove('has-file');
+      else if (serverFiles[slot]) slotEl.classList.add('has-file');
+      updateProgress();
+    });
+  });
+
+  // Init on page load
+  updateProgress();
+</script>
+
+{% endblock %}
