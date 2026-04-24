@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Scholarship – Studyly Admin{% endblock %}
+{% block content %}
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#f9fafb;color:#111827;display:flex;min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  .sidebar{width:240px;background:#111827;color:white;padding:1.5rem 1rem;display:flex;flex-direction:column;min-height:100vh;position:fixed;top:0;left:0;z-index:200}
+  .sidebar-logo{display:flex;align-items:center;gap:10px;margin-bottom:2rem;padding:.5rem}
+  .sidebar-logo-icon{background:#2563eb;padding:8px;border-radius:10px;display:flex}
+  .sidebar-logo-text{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700}
+  .sidebar-nav{flex:1;display:flex;flex-direction:column;gap:4px}
+  .sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:#9ca3af;font-weight:500;font-size:.9rem;transition:all .15s}
+  .sidebar-link:hover{background:rgba(255,255,255,.06);color:white}
+  .sidebar-link.active{background:#2563eb;color:white}
+  .sidebar-link svg{width:18px;height:18px}
+  .sidebar-footer{padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)}
+  .main-content{margin-left:240px;flex:1}
+  .top-bar{background:white;border-bottom:1px solid #e5e7eb;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+  .top-bar h1{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900}
+  .admin-badge{background:#eff6ff;color:#2563eb;padding:4px 12px;border-radius:20px;font-size:.8rem;font-weight:600}
+  .content{padding:2rem;max-width:760px}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:#2563eb;font-size:.9rem;margin-bottom:1.5rem}
+  .back-link:hover{text-decoration:underline}
+  .form-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:2rem}
+  .form-card h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;margin-bottom:1.5rem}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  .form-full{grid-column:1/-1}
+  .field{display:flex;flex-direction:column;gap:5px}
+  label{font-size:.85rem;font-weight:600;color:#374151}
+  input,select,textarea{padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:#111827;width:100%}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:#2563eb}
+  textarea{resize:vertical;min-height:100px}
+  .form-actions{display:flex;gap:1rem;margin-top:1.5rem}
+  .btn-primary{padding:12px 28px;background:#2563eb;color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem}
+  .btn-primary:hover{background:#1d4ed8}
+  .btn-cancel{padding:12px 28px;background:white;color:#374151;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem;text-decoration:none;display:inline-block}
+  .btn-cancel:hover{background:#f9fafb}
+</style>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    </div>
+    <span class="sidebar-logo-text">Studyly Admin</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="{% url 'adminpanel:dashboard' %}"    class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a href="{% url 'adminpanel:students' %}"     class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Students
+    </a>
+    <a href="{% url 'adminpanel:universities' %}" class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Universities
+    </a>
+    <a href="{% url 'adminpanel:scholarships' %}" class="sidebar-link active">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      Scholarships
+    </a>
+    <a href="{% url 'applications:list' %}" class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Applications
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="{% url 'users:logout' %}" class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+  </div>
+</aside>
+
+<div class="main-content">
+  <div class="top-bar">
+    <h1>{{ action }} Scholarship</h1>
+    <span class="admin-badge">Admin Panel</span>
+  </div>
+  <div class="content">
+    <a href="{% url 'adminpanel:scholarships' %}" class="back-link">← Back to Scholarships</a>
+
+    <div class="form-card">
+      <h2>Scholarship Details</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-grid">
+          <div class="field form-full">
+            <label>Title *</label>
+            <input type="text" name="title" value="{{ schol.title|default:'' }}" required placeholder="e.g. Fulbright Scholarship">
+          </div>
+          <div class="field">
+            <label>Provider</label>
+            <input type="text" name="provider" value="{{ schol.provider|default:'' }}" placeholder="e.g. U.S. Department of State">
+          </div>
+          <div class="field">
+            <label>University (optional)</label>
+            <select name="university">
+              <option value="">— None (Global) —</option>
+              {% for uni in universities %}
+                <option value="{{ uni.pk }}" {% if schol.university_id == uni.pk %}selected{% endif %}>{{ uni.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <label>Funding Type</label>
+            <select name="funding_type">
+              <option value="full"    {% if schol.funding_type == 'full'    %}selected{% endif %}>Full Funding</option>
+              <option value="partial" {% if schol.funding_type == 'partial' %}selected{% endif %}>Partial Funding</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <select name="category">
+              <option value="merit"    {% if schol.category == 'merit'    %}selected{% endif %}>Merit-Based</option>
+              <option value="need"     {% if schol.category == 'need'     %}selected{% endif %}>Need-Based</option>
+              <option value="sports"   {% if schol.category == 'sports'   %}selected{% endif %}>Sports</option>
+              <option value="research" {% if schol.category == 'research' %}selected{% endif %}>Research</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Amount Display</label>
+            <input type="text" name="amount_display" value="{{ schol.amount_display|default:'' }}" placeholder="e.g. Full Tuition + Living Expenses">
+          </div>
+          <div class="field">
+            <label>Amount (numeric)</label>
+            <input type="number" name="amount" value="{{ schol.amount|default:'' }}" step="0.01" placeholder="e.g. 50000">
+          </div>
+          <div class="field">
+            <label>Deadline *</label>
+            <input type="date" name="deadline" value="{{ schol.deadline|date:'Y-m-d'|default:'' }}" required>
+          </div>
+          <div class="field">
+            <label>Target Group</label>
+            <input type="text" name="target_group" value="{{ schol.target_group|default:'' }}" placeholder="e.g. Graduate Students">
+          </div>
+          <div class="field">
+            <label>Recipients Per Year</label>
+            <input type="text" name="recipients_per_year" value="{{ schol.recipients_per_year|default:'' }}" placeholder="e.g. 4,000">
+          </div>
+          <div class="field">
+            <label>Minimum GPA Required</label>
+            <input type="number" name="min_gpa_required" value="{{ schol.min_gpa_required|default:'' }}" step="0.1" min="0" max="4" placeholder="e.g. 3.5">
+          </div>
+          <div class="field">
+            <label>Minimum IELTS Required</label>
+            <input type="number" name="min_ielts_required" value="{{ schol.min_ielts_required|default:'' }}" step="0.5" min="0" max="9" placeholder="e.g. 6.5">
+          </div>
+          <div class="field form-full">
+            <label>Description *</label>
+            <textarea name="description" required placeholder="Describe the scholarship, eligibility criteria, and benefits…">{{ schol.description|default:'' }}</textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">{{ action }} Scholarship</button>
+          <a href="{% url 'adminpanel:scholarships' %}" class="btn-cancel">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
