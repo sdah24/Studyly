@@ -3,7 +3,7 @@
 
 {% block content %}
 <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;background:#f9fafb;">
-  <div style="max-width:440px;width:100%;">
+  <div style="max-width:480px;width:100%;">
 
     <div style="text-align:center;margin-bottom:2rem;">
       <a href="/" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;margin-bottom:1.25rem;">
@@ -26,7 +26,46 @@
       <form method="post" novalidate>
         {% csrf_token %}
 
+        {# ── Role picker (shown first, before other fields) ── #}
+        <div style="margin-bottom:1.75rem;">
+          <label style="display:block;font-weight:600;font-size:.9rem;color:#111827;margin-bottom:.75rem;">
+            I am joining as *
+          </label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+
+            <label for="role_student" style="cursor:pointer;">
+              <input type="radio" id="role_student" name="role" value="student"
+                     {% if not form.role.value or form.role.value == 'student' %}checked{% endif %}
+                     style="display:none;" onchange="updateRoleCards()">
+              <div id="card_student"
+                   style="border:2px solid #2563eb;border-radius:12px;padding:1rem;text-align:center;background:#eff6ff;transition:all .15s;">
+                <div style="font-size:1.75rem;margin-bottom:.4rem;">🎓</div>
+                <div style="font-weight:700;color:#1e40af;font-size:.95rem;">Student</div>
+                <div style="font-size:.78rem;color:#3b82f6;margin-top:.2rem;">Looking for universities</div>
+              </div>
+            </label>
+
+            <label for="role_consultant" style="cursor:pointer;">
+              <input type="radio" id="role_consultant" name="role" value="consultant"
+                     {% if form.role.value == 'consultant' %}checked{% endif %}
+                     style="display:none;" onchange="updateRoleCards()">
+              <div id="card_consultant"
+                   style="border:2px solid #e5e7eb;border-radius:12px;padding:1rem;text-align:center;background:#f9fafb;transition:all .15s;">
+                <div style="font-size:1.75rem;margin-bottom:.4rem;">🧑‍💼</div>
+                <div style="font-weight:700;color:#374151;font-size:.95rem;">Consultant</div>
+                <div style="font-size:.78rem;color:#6b7280;margin-top:.2rem;">Guiding students abroad</div>
+              </div>
+            </label>
+
+          </div>
+          {% if form.role.errors %}
+            <p style="color:#ef4444;font-size:.8rem;margin-top:.3rem;">{{ form.role.errors|join:", " }}</p>
+          {% endif %}
+        </div>
+
+        {# ── All other form fields ── #}
         {% for field in form %}
+          {% if field.html_name != 'role' %}
           <div style="margin-bottom:1.25rem;">
             <label style="display:block;font-weight:600;font-size:.9rem;color:#111827;margin-bottom:.5rem;">
               {{ field.label }}{% if field.field.required %} *{% endif %}
@@ -42,6 +81,7 @@
               <p style="color:#ef4444;font-size:.8rem;margin-top:.3rem;">{{ field.errors|join:", " }}</p>
             {% endif %}
           </div>
+          {% endif %}
         {% endfor %}
 
         <button type="submit" style="width:100%;padding:13px;background:#2563eb;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:1rem;cursor:pointer;margin-top:.5rem;">
@@ -56,4 +96,33 @@
 
   </div>
 </div>
+
+<script>
+function updateRoleCards() {
+  const studentChecked = document.getElementById('role_student').checked;
+
+  const cardStudent    = document.getElementById('card_student');
+  const cardConsultant = document.getElementById('card_consultant');
+
+  if (studentChecked) {
+    cardStudent.style.border    = '2px solid #2563eb';
+    cardStudent.style.background = '#eff6ff';
+    cardStudent.querySelector('div:nth-child(2)').style.color = '#1e40af';
+
+    cardConsultant.style.border    = '2px solid #e5e7eb';
+    cardConsultant.style.background = '#f9fafb';
+    cardConsultant.querySelector('div:nth-child(2)').style.color = '#374151';
+  } else {
+    cardConsultant.style.border    = '2px solid #2563eb';
+    cardConsultant.style.background = '#eff6ff';
+    cardConsultant.querySelector('div:nth-child(2)').style.color = '#1e40af';
+
+    cardStudent.style.border    = '2px solid #e5e7eb';
+    cardStudent.style.background = '#f9fafb';
+    cardStudent.querySelector('div:nth-child(2)').style.color = '#374151';
+  }
+}
+// Run once on page load to reflect any server-side selected value
+document.addEventListener('DOMContentLoaded', updateRoleCards);
+</script>
 {% endblock %}

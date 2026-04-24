@@ -7,7 +7,8 @@ class User(AbstractUser):
     Custom user extending Django's AbstractUser.
     AbstractUser already provides: username, email, password,
     first_name, last_name, is_staff, is_active, date_joined, etc.
-    We add role so we can distinguish student / admin / consultant.
+    Role is now selectable by the user on registration (student / consultant).
+    Admin is reserved for staff only.
     """
     ROLE_CHOICES = [
         ('student', 'Student'),
@@ -28,6 +29,9 @@ class User(AbstractUser):
 
     def is_consultant(self):
         return self.role == 'consultant'
+
+    def get_role_display_name(self):
+        return dict(self.ROLE_CHOICES).get(self.role, self.role)
 
 
 class Profile(models.Model):
@@ -91,3 +95,80 @@ class Profile(models.Model):
         if self.preferred_countries:
             return [c.strip() for c in self.preferred_countries.split(',')]
         return []
+
+
+class Message(models.Model):
+    """
+    Direct message between two users.
+    Supports any user ↔ user conversation (student ↔ student,
+    student ↔ consultant, consultant ↔ consultant, etc.)
+    """
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='sent_messages'
+    )
+    recipient = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='received_messages'
+    )
+    body = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"From {self.sender} → {self.recipient} at {self.created_at:%Y-%m-%d %H:%M}"
+
+    @classmethod
+    def get_conversation(cls, user_a, user_b):
+        """Return all messages exchanged between two users, ordered by time."""
+        return cls.objects.filter(
+            sender__in=[user_a, user_b],
+            recipient__in=[user_a, user_b]
+        ).order_by('created_at')
+
+    @classmethod
+    def get_inbox_threads(cls, user):
+        """
+        Return a list of dicts, one per unique conversation partner,
+        with the latest message and unread count.
+        """
+        from django.db.models import Q, Max
+        partners_qs = (
+            cls.objects
+            .filter(Q(sender=user) | Q(recipient=user))
+            .values_list('sender_id', 'recipient_id')
+        )
+        partner_ids = set()
+        for s, r in partners_qs:
+            other = r if s == user.pk else s
+            partner_ids.add(other)
+
+        threads = []
+        for pid in partner_ids:
+            other_user = User.objects.get(pk=pid)
+            last_msg = (
+                cls.objects
+                .filter(
+                    Q(sender=user, recipient=other_user) |
+                    Q(sender=other_user, recipient=user)
+                )
+                .order_by('-created_at')
+                .first()
+            )
+            unread = cls.objects.filter(
+                sender=other_user, recipient=user, is_read=False
+            ).count()
+            threads.append({
+                'partner': other_user,
+                'last_message': last_msg,
+                'unread_count': unread,
+            })
+
+        # Sort threads: most recent first
+        threads.sort(key=lambda t: t['last_message'].created_at, reverse=True)
+        return threads
