@@ -1,4 +1,7 @@
 {% load static %}
+{% extends "base.html" %}
+{% block nav_dashboard %}active{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,35 +95,6 @@
 </head>
 <body>
 
-<nav class="top-nav">
-  <div class="top-nav-inner">
-    <a href="{% url 'dashboard:dashboard' %}" class="logo">
-      <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
-      <span class="logo-text">Studyly</span>
-    </a>
-    <div class="nav-right">
-      <a href="{% url 'notifications:list' %}" class="bell-btn">
-        <i data-lucide="bell"></i>
-        <span class="bell-dot"></span>
-      </a>
-      <a href="{% url 'users:profile' %}" class="user-btn">
-        <div class="user-avatar"><i data-lucide="user"></i></div>
-        <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
-      </a>
-    </div>
-  </div>
-</nav>
-
-<div class="sec-nav">
-  <div class="sec-nav-inner">
-    <a href="{% url 'dashboard:dashboard' %}" class="nav-link"><i data-lucide="home"></i> Dashboard</a>
-    <a href="{% url 'universities:list' %}" class="nav-link"><i data-lucide="search"></i> Universities</a>
-    <a href="{% url 'scholarships:list' %}" class="nav-link"><i data-lucide="dollar-sign"></i> Scholarships</a>
-    <a href="{% url 'applications:list' %}" class="nav-link"><i data-lucide="clipboard-list"></i> Applications</a>
-    <a href="{% url 'notifications:list' %}" class="nav-link"><i data-lucide="bell"></i> Notifications</a>
-    <a href="{% url 'eligibility:check' %}" class="nav-link active"><i data-lucide="check-square"></i> Eligibility</a>
-  </div>
-</div>
 
 <main>
   <h1 class="page-title">Eligibility Assessment Results</h1>

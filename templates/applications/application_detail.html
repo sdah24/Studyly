@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-{% block title %}{{ app.university.name }} Application – Studyly{% endblock %}
+{% block nav_applications %}active{% endblock %}
 {% block content %}
+
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'DM Sans',sans-serif;background:#f9fafb;color:#111827}
@@ -52,29 +53,7 @@
   .info-row .val{font-weight:600;color:#111827}
 </style>
 
-<nav class="top-nav">
-  <div class="top-nav-inner">
-    <a href="{% url 'dashboard:dashboard' %}" class="logo">
-      <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-      <span class="logo-text">Studyly</span>
-    </a>
-    <div class="nav-right">
-      <div class="user-btn">
-        <div class="user-avatar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
-      </div>
-    </div>
-  </div>
-</nav>
-<div class="sec-nav">
-  <div class="sec-nav-inner">
-    <a href="{% url 'dashboard:dashboard' %}" class="nav-link">🏠 Dashboard</a>
-    <a href="{% url 'universities:list' %}"   class="nav-link">🔍 Universities</a>
-    <a href="{% url 'scholarships:list' %}"   class="nav-link">💰 Scholarships</a>
-    <a href="{% url 'applications:list' %}"   class="nav-link active">📋 Applications</a>
-    <a href="{% url 'notifications:list' %}"  class="nav-link">🔔 Notifications</a>
-  </div>
-</div>
+
 
 <main>
   <a href="{% url 'applications:list' %}" class="back-link">← Back to Applications</a>
