@@ -2,81 +2,382 @@
 {% block title %}My Profile – Studyly{% endblock %}
 
 {% block content %}
-<main style="max-width:860px;margin:0 auto;padding:2rem;">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; }
+  a { text-decoration: none; color: inherit; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 2rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
+  .field label { display: block; font-weight: 600; font-size: .875rem; color: #374151; margin-bottom: .4rem; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db; border-radius: 8px;
+    font-size: .95rem; font-family: 'DM Sans', sans-serif; color: #111827; outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: #2563eb; }
+  .field-full { grid-column: span 2; }
+  @media (max-width: 600px) { .field-full { grid-column: span 1; } }
+  .section-title { font-weight: 700; font-size: .95rem; color: #374151; margin: 1.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid #f3f4f6; grid-column: span 2; }
+  .btn-primary { padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .95rem; cursor: pointer; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-cancel { padding: 12px 28px; background: white; border: 1.5px solid #d1d5db; color: #374151; border-radius: 10px; font-weight: 600; font-size: .95rem; text-decoration: none; display: inline-block; }
+  .msg-success { background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; color: #15803d; font-size: .9rem; }
+  .msg-error { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; color: #991b1b; font-size: .9rem; }
 
-  <h1 style="font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;margin-bottom:.25rem;">My Profile</h1>
-  <p style="color:#4b5563;margin-bottom:2rem;">Update your academic information to improve eligibility matching</p>
+  /* ── Avatar row ── */
+  .avatar-row { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f3f4f6; }
+
+  .avatar-wrap {
+    position: relative; width: 72px; height: 72px; flex-shrink: 0;
+  }
+
+  /* Photo or fallback */
+  .avatar-img {
+    width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+    border: 2px solid #e5e7eb;
+    transition: opacity .2s;
+  }
+  .avatar-fallback {
+    width: 72px; height: 72px; background: #2563eb; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; font-weight: 700; color: white;
+  }
+
+  /* Camera upload badge */
+  .avatar-upload-label {
+    position: absolute; bottom: 0; right: 0;
+    width: 24px; height: 24px; background: #2563eb; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 2px solid white;
+    transition: background .15s, transform .15s;
+    z-index: 2;
+  }
+  .avatar-upload-label:hover { background: #1d4ed8; transform: scale(1.1); }
+  .avatar-upload-label svg { width: 12px; height: 12px; }
+  .avatar-upload-label input[type="file"] { display: none; }
+
+  /* Delete badge — top-right, hidden by default, shown via JS only */
+  .avatar-delete-btn {
+    position: absolute; top: 0; right: 0;
+    width: 20px; height: 20px; background: #ef4444; border-radius: 50%;
+    display: none; /* JS sets to flex when a photo exists */
+    align-items: center; justify-content: center;
+    border: 2px solid white; cursor: pointer;
+    transition: background .15s, transform .15s;
+    z-index: 2;
+  }
+  .avatar-delete-btn.visible { display: flex; }
+  .avatar-delete-btn:hover { background: #dc2626; transform: scale(1.1); }
+  .avatar-delete-btn svg { width: 8px; height: 8px; }
+
+  /* Spinner overlay during upload */
+  .avatar-spinner {
+    display: none;
+    position: absolute; inset: 0; border-radius: 50%;
+    background: rgba(255,255,255,.65);
+    align-items: center; justify-content: center;
+    z-index: 3;
+  }
+  .avatar-spinner.active { display: flex; }
+  .spinner-ring {
+    width: 28px; height: 28px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .avatar-info .name { font-weight: 700; font-size: 1.05rem; }
+  .avatar-info .email { color: #6b7280; font-size: .875rem; }
+  .avatar-info .role { color: #2563eb; font-size: .8rem; font-weight: 600; margin-top: 2px; }
+  .avatar-hint { font-size: .78rem; color: #9ca3af; margin-top: 4px; }
+
+  /* pending-upload banner */
+  .pending-banner {
+    display: none; align-items: center; gap: .5rem;
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 8px; padding: .5rem .75rem;
+    font-size: .82rem; color: #1d4ed8; margin-top: .5rem;
+  }
+  .pending-banner.show { display: flex; }
+  .pending-banner button {
+    margin-left: auto; background: none; border: none;
+    color: #6b7280; cursor: pointer; font-size: .85rem;
+    padding: 0; line-height: 1;
+  }
+  .pending-banner button:hover { color: #111827; }
+
+  /* ── Lightbox ── */
+  .lightbox {
+    display: none; position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,.75); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .lightbox.open { display: flex; animation: lbIn .18s ease; }
+  @keyframes lbIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+  .lightbox img {
+    max-width: min(420px, 90vw); max-height: 90vh;
+    border-radius: 14px; object-fit: contain;
+    box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  }
+  .lightbox-close {
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    width: 36px; height: 36px; background: rgba(255,255,255,.15);
+    border: none; border-radius: 50%; color: white; font-size: 1.2rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background .15s;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,.3); }
+  .avatar-wrap.has-photo .avatar-img { cursor: zoom-in; }
+  #avatarPreview[src]:not([src=""]) { cursor: zoom-in; }
+</style>
+
+<main>
+  <h1 class="page-title">My Profile</h1>
+  <p class="page-subtitle">Update your academic information to improve eligibility matching</p>
 
   {% if messages %}
     {% for msg in messages %}
-      <div style="background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;color:#15803d;font-size:.9rem;">{{ msg }}</div>
+      <div class="{% if msg.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">{{ msg }}</div>
     {% endfor %}
   {% endif %}
 
-  <div style="background:white;border:1px solid #e5e7eb;border-radius:14px;padding:2rem;">
+  <div class="card">
 
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid #f3f4f6;">
-      <div style="width:64px;height:64px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>
-      <div>
-        <div style="font-weight:700;font-size:1.1rem;">{{ request.user.get_full_name|default:request.user.username }}</div>
-        <div style="color:#6b7280;font-size:.9rem;">{{ request.user.email }}</div>
-        <div style="color:#2563eb;font-size:.8rem;font-weight:600;margin-top:2px;">{{ request.user.role|capfirst }}</div>
-      </div>
-    </div>
-
-    <form method="post" enctype="multipart/form-data" novalidate>
+    <form method="post" enctype="multipart/form-data" novalidate id="profileForm">
       {% csrf_token %}
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+      <!-- ── Avatar row ── -->
+      <div class="avatar-row">
+        <div class="avatar-wrap {% if profile.profile_picture %}has-photo{% endif %}" id="avatarWrap">
 
-        {% for field in form %}
-          <div style="{% if field.field.widget.attrs.rows %}grid-column:span 2;{% endif %}">
-            <label style="display:block;font-weight:600;font-size:.875rem;color:#374151;margin-bottom:.4rem;">
-              {{ field.label }}
-            </label>
-            {% if "Select" in field.field.widget|stringformat:"s" %}
-              <select name="{{ field.html_name }}" id="{{ field.id_for_label }}"
-                style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;background:white;outline:none;box-sizing:border-box;">
-                {% for val, label in field.field.choices %}
-                  <option value="{{ val }}" {% if field.value == val %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-              </select>
-            {% elif "Textarea" in field.field.widget|stringformat:"s" %}
-              <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}" rows="3"
-                style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;resize:vertical;">{{ field.value|default:'' }}</textarea>
-            {% else %}
-              <input
-                type="{{ field.field.widget.input_type }}"
-                name="{{ field.html_name }}"
-                id="{{ field.id_for_label }}"
-                value="{{ field.value|default:'' }}"
-                {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}
-                style="width:100%;padding:10px 14px;border:1.5px solid {% if field.errors %}#ef4444{% else %}#d1d5db{% endif %};border-radius:8px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:#111827;outline:none;box-sizing:border-box;"
-              >
-            {% endif %}
-            {% if field.errors %}
-              <p style="color:#ef4444;font-size:.8rem;margin-top:.3rem;">{{ field.errors|join:", " }}</p>
-            {% endif %}
-            {% if field.help_text %}
-              <p style="color:#9ca3af;font-size:.78rem;margin-top:.25rem;">{{ field.help_text }}</p>
-            {% endif %}
+          {% if profile.profile_picture %}
+            <img class="avatar-img" src="{{ profile.profile_picture.url }}" alt="Profile picture" id="avatarPreview">
+          {% else %}
+            <div class="avatar-fallback" id="avatarFallback">
+              {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+            </div>
+            <img class="avatar-img" src="" alt="" id="avatarPreview" style="display:none;">
+          {% endif %}
+
+          <!-- spinner -->
+          <div class="avatar-spinner" id="avatarSpinner">
+            <div class="spinner-ring"></div>
           </div>
-        {% endfor %}
+
+          <!-- camera badge: upload new photo -->
+          <label class="avatar-upload-label" title="Change photo">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <input type="file" name="profile_picture" accept="image/*" id="profilePicInput">
+          </label>
+
+          <!-- × badge: remove photo — .visible class controls display -->
+          <button type="button" class="avatar-delete-btn {% if profile.profile_picture %}visible{% endif %}" id="deletePicBtn" title="Remove photo">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+
+        </div><!-- /avatar-wrap -->
+
+        <div class="avatar-info">
+          <div class="name">{{ request.user.get_full_name|default:request.user.username }}</div>
+          <div class="email">{{ request.user.email }}</div>
+          <div class="role">{{ request.user.role|capfirst }}</div>
+          <div class="avatar-hint">Click photo to view full size · camera icon to change</div>
+          <!-- pending new-photo banner -->
+          <div class="pending-banner" id="pendingBanner">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span id="pendingName">New photo selected</span>
+            <button type="button" id="cancelPickBtn" title="Cancel">✕</button>
+          </div>
+        </div>
+      </div><!-- /avatar-row -->
+
+      <!-- hidden flag to signal removal to the server -->
+      <input type="hidden" name="remove_picture" id="removePictureFlag" value="">
+
+      <div class="field-grid">
+
+        <div class="section-title">Personal Information</div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="text" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+880...">
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date" name="date_of_birth" value="{{ form.date_of_birth.value|default:'' }}">
+        </div>
+        <div class="field field-full">
+          <label>Address</label>
+          <textarea name="address" rows="2" placeholder="Your address">{{ form.address.value|default:'' }}</textarea>
+        </div>
+
+        <div class="section-title">Academic Information</div>
+        <div class="field">
+          <label>GPA</label>
+          <input type="number" step="0.01" min="0" max="4" name="GPA" value="{{ form.GPA.value|default:'' }}" placeholder="e.g. 3.8">
+        </div>
+        <div class="field">
+          <label>Degree Level</label>
+          <select name="degree_level">
+            <option value="">-- Select --</option>
+            <option value="bachelor" {% if form.degree_level.value == 'bachelor' %}selected{% endif %}>Bachelor's</option>
+            <option value="master"   {% if form.degree_level.value == 'master'   %}selected{% endif %}>Master's</option>
+            <option value="phd"      {% if form.degree_level.value == 'phd'      %}selected{% endif %}>PhD</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>English Proficiency</label>
+          <select name="english_proficiency">
+            <option value="">-- Select --</option>
+            <option value="ielts" {% if form.english_proficiency.value == 'ielts' %}selected{% endif %}>IELTS</option>
+            <option value="toefl" {% if form.english_proficiency.value == 'toefl' %}selected{% endif %}>TOEFL</option>
+            <option value="none"  {% if form.english_proficiency.value == 'none'  %}selected{% endif %}>None</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>English Score</label>
+          <input type="number" step="0.5" name="english_score" value="{{ form.english_score.value|default:'' }}" placeholder="e.g. 7.5">
+        </div>
+        <div class="field">
+          <label>Work Experience (Years)</label>
+          <input type="number" min="0" name="work_experience_years" value="{{ form.work_experience_years.value|default:'0' }}">
+        </div>
+
+        <div class="section-title">Preferences</div>
+        <div class="field field-full">
+          <label>Preferred Countries</label>
+          <input type="text" name="preferred_countries" value="{{ form.preferred_countries.value|default:'' }}" placeholder="e.g. USA, UK, Germany">
+        </div>
+        <div class="field">
+          <label>Budget (USD/year)</label>
+          <input type="number" name="budget" value="{{ form.budget.value|default:'' }}" placeholder="e.g. 30000">
+        </div>
 
       </div>
 
       <div style="margin-top:2rem;display:flex;gap:.75rem;">
-        <button type="submit" style="padding:12px 28px;background:#2563eb;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;">
-          Save Changes
-        </button>
-        <a href="{% url 'dashboard:dashboard' %}" style="padding:12px 28px;background:white;border:2px solid #d1d5db;color:#374151;border-radius:10px;font-weight:600;font-size:.95rem;text-decoration:none;">
-          Cancel
-        </a>
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="{% url 'dashboard:dashboard' %}" class="btn-cancel">Cancel</a>
       </div>
-
     </form>
   </div>
 </main>
+
+<!-- Lightbox overlay -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" title="Close">✕</button>
+  <img id="lightboxImg" src="" alt="Profile photo">
+</div>
+
+<script>
+  const picInput      = document.getElementById('profilePicInput');
+  const preview       = document.getElementById('avatarPreview');
+  const fallback      = document.getElementById('avatarFallback');
+  const deleteBtn     = document.getElementById('deletePicBtn');
+  const removeFlag    = document.getElementById('removePictureFlag');
+  const pendingBanner = document.getElementById('pendingBanner');
+  const pendingName   = document.getElementById('pendingName');
+  const cancelBtn     = document.getElementById('cancelPickBtn');
+  const spinner       = document.getElementById('avatarSpinner');
+
+  /* ── Pick a new photo ── */
+  picInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    spinner.classList.add('active');
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      if (fallback) fallback.style.display = 'none';
+      deleteBtn.classList.add('visible');  // show × so they can cancel
+      document.getElementById('avatarWrap').classList.add('has-photo');
+      removeFlag.value = '';             // not deleting, just replacing
+      pendingName.textContent = file.name.length > 28 ? file.name.slice(0, 25) + '…' : file.name;
+      pendingBanner.classList.add('show');
+      spinner.classList.remove('active');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ── Cancel new pick (before saving) ── */
+  cancelBtn.addEventListener('click', function () {
+    picInput.value = '';
+    pendingBanner.classList.remove('show');
+    // Revert preview
+    {% if profile.profile_picture %}
+      preview.src = '{{ profile.profile_picture.url }}';
+      preview.style.display = 'block';
+    {% else %}
+      preview.src = '';
+      preview.style.display = 'none';
+      if (fallback) fallback.style.display = 'flex';
+      deleteBtn.classList.remove('visible');
+    {% endif %}
+  });
+
+  /* ── Delete existing photo ── */
+  deleteBtn.addEventListener('click', function () {
+    if (!confirm('Remove your profile photo?')) return;
+    removeFlag.value = '1';
+    // Swap to fallback immediately
+    preview.src = '';
+    preview.style.display = 'none';
+    if (fallback) {
+      fallback.style.display = 'flex';
+    } else {
+      // If fallback div doesn't exist (edge case), create it inline
+      const fb = document.createElement('div');
+      fb.className = 'avatar-fallback';
+      fb.id = 'avatarFallback';
+      fb.textContent = preview.closest('.avatar-wrap').dataset.initial || '?';
+      preview.closest('.avatar-wrap').insertBefore(fb, preview);
+    }
+    deleteBtn.classList.remove('visible');
+    picInput.value = '';
+    pendingBanner.classList.remove('show');
+    avatarWrap.classList.remove('has-photo');
+  });
+
+  /* ── Lightbox ── */
+  const lightbox    = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const avatarWrap  = document.getElementById('avatarWrap');
+
+  function openLightbox(src) {
+    lightboxImg.src = src;
+    lightbox.classList.add('open');
+  }
+
+  // Click on avatar image to open lightbox
+  preview.addEventListener('click', function () {
+    if (this.src && this.style.display !== 'none') openLightbox(this.src);
+  });
+
+  // Close on backdrop click or close button
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox || e.target.closest('.lightbox-close')) {
+      lightbox.classList.remove('open');
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') lightbox.classList.remove('open');
+  });
+
+  // Also update has-photo class when new photo picked
+  picInput.addEventListener('change', function () {}, true); // already handled above
+</script>
+
 {% endblock %}

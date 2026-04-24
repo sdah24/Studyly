@@ -35,7 +35,7 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = [
-            'phone_number', 'date_of_birth', 'address',
+            'profile_picture','phone_number', 'date_of_birth', 'address',
             'GPA', 'degree_level', 'english_proficiency',
             'english_score', 'work_experience_years',
             'preferred_countries', 'budget',
