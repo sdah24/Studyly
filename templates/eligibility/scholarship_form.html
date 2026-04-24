@@ -1,41 +1,4 @@
 
-          <div class="field">
-            <label>Category</label>
-            <select name="category">
-              <option value="merit"    {% if schol.category == 'merit'    %}selected{% endif %}>Merit-Based</option>
-              <option value="need"     {% if schol.category == 'need'     %}selected{% endif %}>Need-Based</option>
-              <option value="sports"   {% if schol.category == 'sports'   %}selected{% endif %}>Sports</option>
-              <option value="research" {% if schol.category == 'research' %}selected{% endif %}>Research</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Amount Display</label>
-            <input type="text" name="amount_display" value="{{ schol.amount_display|default:'' }}" placeholder="e.g. Full Tuition + Living Expenses">
-          </div>
-          <div class="field">
-            <label>Amount (numeric)</label>
-            <input type="number" name="amount" value="{{ schol.amount|default:'' }}" step="0.01" placeholder="e.g. 50000">
-          </div>
-          <div class="field">
-            <label>Deadline *</label>
-            <input type="date" name="deadline" value="{{ schol.deadline|date:'Y-m-d'|default:'' }}" required>
-          </div>
-          <div class="field">
-            <label>Target Group</label>
-            <input type="text" name="target_group" value="{{ schol.target_group|default:'' }}" placeholder="e.g. Graduate Students">
-          </div>
-          <div class="field">
-            <label>Recipients Per Year</label>
-            <input type="text" name="recipients_per_year" value="{{ schol.recipients_per_year|default:'' }}" placeholder="e.g. 4,000">
-          </div>
-          <div class="field">
-            <label>Minimum GPA Required</label>
-            <input type="number" name="min_gpa_required" value="{{ schol.min_gpa_required|default:'' }}" step="0.1" min="0" max="4" placeholder="e.g. 3.5">
-          </div>
-          <div class="field">
-            <label>Minimum IELTS Required</label>
-            <input type="number" name="min_ielts_required" value="{{ schol.min_ielts_required|default:'' }}" step="0.5" min="0" max="9" placeholder="e.g. 6.5">
-          </div>
           <div class="field form-full">
             <label>Description *</label>
             <textarea name="description" required placeholder="Describe the scholarship, eligibility criteria, and benefits…">{{ schol.description|default:'' }}</textarea>
