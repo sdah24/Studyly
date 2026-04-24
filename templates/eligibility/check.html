@@ -1,17 +1,8 @@
-{% load static %}
+
 {% extends "base.html" %}
 {% block nav_dashboard %}active{% endblock %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Eligibility Assessment – Studyly</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<style>
+    <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; -webkit-font-smoothing: antialiased; }
   a { text-decoration: none; color: inherit; }
@@ -92,8 +83,6 @@
   .btn-secondary { padding: 13px 32px; background: white; border: 2px solid #d1d5db; color: #374151; border-radius: 10px; font-weight: 600; transition: background .15s; }
   .btn-secondary:hover { background: #f9fafb; }
 </style>
-</head>
-<body>
 
 
 <main>
@@ -180,7 +169,4 @@
     <a href="{% url 'applications:create' %}" class="btn-secondary">Start Application</a>
   </div>
 </main>
-
-<script>lucide.createIcons();</script>
-</body>
-</html>
+{% endblock %}
