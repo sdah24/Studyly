@@ -1,36 +1,4 @@
 
-  <div class="content">
-    <a href="{% url 'adminpanel:scholarships' %}" class="back-link">← Back to Scholarships</a>
-
-    <div class="form-card">
-      <h2>Scholarship Details</h2>
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-grid">
-          <div class="field form-full">
-            <label>Title *</label>
-            <input type="text" name="title" value="{{ schol.title|default:'' }}" required placeholder="e.g. Fulbright Scholarship">
-          </div>
-          <div class="field">
-            <label>Provider</label>
-            <input type="text" name="provider" value="{{ schol.provider|default:'' }}" placeholder="e.g. U.S. Department of State">
-          </div>
-          <div class="field">
-            <label>University (optional)</label>
-            <select name="university">
-              <option value="">— None (Global) —</option>
-              {% for uni in universities %}
-                <option value="{{ uni.pk }}" {% if schol.university_id == uni.pk %}selected{% endif %}>{{ uni.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="field">
-            <label>Funding Type</label>
-            <select name="funding_type">
-              <option value="full"    {% if schol.funding_type == 'full'    %}selected{% endif %}>Full Funding</option>
-              <option value="partial" {% if schol.funding_type == 'partial' %}selected{% endif %}>Partial Funding</option>
-            </select>
-          </div>
           <div class="field">
             <label>Category</label>
             <select name="category">
