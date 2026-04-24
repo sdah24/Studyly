@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard – Studyly{% endblock %}
+{% block content %}
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#f9fafb;color:#111827;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  .sidebar{width:240px;background:#111827;color:white;padding:1.5rem 1rem;display:flex;flex-direction:column;min-height:100vh;position:fixed;top:0;left:0;z-index:200}
+  .sidebar-logo{display:flex;align-items:center;gap:10px;margin-bottom:2rem;padding:.5rem}
+  .sidebar-logo-icon{background:#2563eb;padding:8px;border-radius:10px;display:flex}
+  .sidebar-logo-icon svg{width:20px;height:20px;color:white}
+  .sidebar-logo-text{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700}
+  .sidebar-nav{flex:1;display:flex;flex-direction:column;gap:4px}
+  .sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:#9ca3af;font-weight:500;font-size:.9rem;transition:all .15s}
+  .sidebar-link:hover{background:rgba(255,255,255,.06);color:white}
+  .sidebar-link.active{background:#2563eb;color:white}
+  .sidebar-link svg{width:18px;height:18px}
+  .sidebar-footer{padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)}
+  .main-content{margin-left:240px;flex:1}
+  .top-bar{background:white;border-bottom:1px solid #e5e7eb;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+  .top-bar h1{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900}
+  .top-bar-right{display:flex;align-items:center;gap:12px}
+  .admin-badge{background:#eff6ff;color:#2563eb;padding:4px 12px;border-radius:20px;font-size:.8rem;font-weight:600}
+  .content{padding:2rem}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem}
+  .stat-card{background:white;border-radius:14px;padding:1.5rem;border:1px solid #e5e7eb}
+  .stat-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+  .stat-icon{width:48px;height:48px;background:#eff6ff;border-radius:12px;display:flex;align-items:center;justify-content:center}
+  .stat-icon svg{width:22px;height:22px;color:#2563eb}
+  .trend{display:flex;align-items:center;gap:4px;font-size:.8rem;font-weight:600}
+  .trend.up{color:#16a34a}
+  .trend svg{width:14px;height:14px}
+  .stat-label{font-size:.85rem;color:#6b7280;margin-bottom:.25rem}
+  .stat-val{font-family:'Fraunces',serif;font-size:2rem;font-weight:700}
+  .grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:2rem}
+  @media(max-width:900px){.grid-2-1{grid-template-columns:1fr}.sidebar{display:none}.main-content{margin-left:0}}
+  .card{background:white;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden}
+  .card-header{padding:1.25rem 1.5rem;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between}
+  .card-header h2{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700}
+  .card-header a{font-size:.85rem;color:#2563eb}
+  table{width:100%;border-collapse:collapse}
+  thead tr{background:#f9fafb}
+  th{padding:10px 20px;text-align:left;font-size:.75rem;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.04em}
+  td{padding:14px 20px;font-size:.9rem;border-bottom:1px solid #f3f4f6}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#f9fafb}
+  .status-pill{padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+  .status-incomplete{background:#fff7ed;color:#c2410c}
+  .status-submitted{background:#dbeafe;color:#1d4ed8}
+  .status-under_review{background:#fffbeb;color:#a16207}
+  .status-accepted{background:#dcfce7;color:#15803d}
+  .status-rejected{background:#fef2f2;color:#b91c1c}
+  .quick-actions-card{padding:1.5rem}
+  .quick-actions-card h3{font-weight:700;margin-bottom:1rem}
+  .qa-btn{width:100%;padding:12px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-bottom:.75rem;transition:all .15s;text-align:left;font-size:.9rem;display:block}
+  .qa-btn.primary{background:#2563eb;color:white;border:none}
+  .qa-btn.primary:hover{background:#1d4ed8}
+  .qa-btn.outline{background:white;color:#374151;border:1.5px solid #d1d5db}
+  .qa-btn.outline:hover{background:#f9fafb}
+  .system-card{background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:14px;padding:1.5rem;color:white;margin-top:1.5rem}
+  .system-card h3{font-weight:700;margin-bottom:.25rem}
+  .system-card p{color:#bfdbfe;font-size:.875rem;margin-bottom:1rem}
+  .system-row{display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.5rem}
+  .system-row span:last-child{color:#86efac}
+  .alert{padding:.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem}
+  .alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+</style>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    </div>
+    <span class="sidebar-logo-text">Studyly Admin</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="{% url 'adminpanel:dashboard' %}"    class="sidebar-link {% if active_sidebar == 'dashboard' %}active{% endif %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a href="{% url 'adminpanel:students' %}"     class="sidebar-link {% if active_sidebar == 'students' %}active{% endif %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Students
+    </a>
+    <a href="{% url 'adminpanel:universities' %}" class="sidebar-link {% if active_sidebar == 'universities' %}active{% endif %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Universities
+    </a>
+    <a href="{% url 'adminpanel:scholarships' %}" class="sidebar-link {% if active_sidebar == 'scholarships' %}active{% endif %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      Scholarships
+    </a>
+    <a href="{% url 'applications:list' %}"       class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Applications
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="{% url 'users:logout' %}" class="sidebar-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main-content">
+  <div class="top-bar">
+    <h1>Dashboard Overview</h1>
+    <div class="top-bar-right">
+      <span class="admin-badge">Admin Panel</span>
+      <span style="font-size:.9rem;color:#6b7280">{{ request.user.get_full_name|default:request.user.username }}</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-success">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Stat cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="trend up">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Active
+          </div>
+        </div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-val">{{ total_students }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="trend up">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Listed
+          </div>
+        </div>
+        <div class="stat-label">Universities</div>
+        <div class="stat-val">{{ total_universities }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="trend up">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Total
+          </div>
+        </div>
+        <div class="stat-label">Active Applications</div>
+        <div class="stat-val">{{ total_applications }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <div class="stat-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+        </div>
+        <div class="stat-label">Scholarships</div>
+        <div class="stat-val">{{ total_scholarships }}</div>
+      </div>
+    </div>
+
+    <!-- Recent Applications + Quick Actions -->
+    <div class="grid-2-1">
+      <div class="card">
+        <div class="card-header">
+          <h2>Recent Applications</h2>
+          <a href="{% url 'applications:list' %}">View All →</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>University</th>
+              <th>Program</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in recent_applications %}
+            <tr>
+              <td><strong>{{ app.user.get_full_name|default:app.user.username }}</strong></td>
+              <td>{{ app.university.name }}</td>
+              <td>{{ app.program.name|default:"—" }}</td>
+              <td><span class="status-pill status-{{ app.status }}">{{ app.get_status_display }}</span></td>
+              <td style="color:#9ca3af">{{ app.applied_date|date:"M j" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:2rem">No applications yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <div class="card quick-actions-card">
+          <h3>Quick Actions</h3>
+          <a href="{% url 'adminpanel:university_create' %}" class="qa-btn primary">+ Add New University</a>
+          <a href="{% url 'adminpanel:scholarship_create' %}" class="qa-btn outline">+ Create Scholarship</a>
+          <a href="{% url 'adminpanel:students' %}" class="qa-btn outline">Manage Students</a>
+        </div>
+        <div class="system-card">
+          <h3>System Status</h3>
+          <p>All systems operational</p>
+          <div class="system-row"><span>Database</span><span>✓ Online</span></div>
+          <div class="system-row"><span>Students</span><span>✓ {{ total_students }} active</span></div>
+          <div class="system-row"><span>Applications</span><span>✓ {{ total_applications }} total</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
