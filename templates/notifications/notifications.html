@@ -98,7 +98,10 @@
               {% if not notif.is_read %}<span class="unread-dot"></span>{% endif %}
             </div>
             <div class="notif-msg">{{ notif.message }}</div>
-            <div class="notif-time">{{ notif.created_at|timesince }} ago</div>
+            <div class="notif-time">{{ notif.created_at|timesince }} ago</div>{% if 'New message from' in notif.title %}
+  <a href="{% url 'users:conversation' notif.title|slice:'17:' %}"
+     style="font-size:.8rem;color:#2563eb;font-weight:600;">→ Reply</a>
+{% endif %}
           </div>
           <div class="notif-actions">
             {% if not notif.is_read %}

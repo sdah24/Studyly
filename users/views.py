@@ -135,6 +135,13 @@ def conversation_view(request, username):
                 recipient=other_user,
                 body=body,
             )
+            from notifications.models import Notification
+            Notification.objects.create(
+                user=other_user,
+                type='general',
+                title=f'New message from {request.user.username}',
+                message=body[:100],
+            )
         return redirect('users:conversation', username=username)
 
     conversation_messages = Message.get_conversation(request.user, other_user)
@@ -163,6 +170,13 @@ def new_conversation_view(request):
                     sender=request.user,
                     recipient=recipient,
                     body=body,
+                )
+                from notifications.models import Notification
+                Notification.objects.create(
+                    user=other_user,
+                    type='general',
+                    title=f'New message from {request.user.username}',
+                    message=body[:100],
                 )
                 return redirect('users:conversation', username=recipient_username)
 
