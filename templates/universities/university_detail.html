@@ -1,33 +1,35 @@
 {% extends "base.html" %}
 {% block nav_universities %}active{% endblock %}
 {% block content %}
-...
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; }
   a { text-decoration: none; color: inherit; }
-  .top-nav { background: white; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 100; }
-  .top-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-  .logo { display: flex; align-items: center; gap: 10px; }
-  .logo-icon { background: #2563eb; padding: 8px; border-radius: 10px; display: flex; }
-  .logo-text { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; }
-  .nav-right { display: flex; align-items: center; gap: 12px; }
-  .user-btn { display: flex; align-items: center; gap: 8px; padding: 6px 12px; }
-  .user-avatar { width: 32px; height: 32px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .user-name { font-size: .9rem; font-weight: 500; color: #374151; }
-  .sec-nav { background: white; border-bottom: 1px solid #e5e7eb; }
-  .sec-nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 4px; overflow-x: auto; }
-  .nav-link { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 2px solid transparent; color: #4b5563; font-weight: 500; font-size: .92rem; white-space: nowrap; }
-  .nav-link:hover { color: #111827; }
-  .nav-link.active { border-bottom-color: #2563eb; color: #2563eb; }
   main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
   .back-link { display: inline-flex; align-items: center; gap: 6px; color: #2563eb; font-size: .9rem; margin-bottom: 1.5rem; }
   .back-link:hover { text-decoration: underline; }
+
+  /* hero */
   .hero-card { background: white; border-radius: 16px; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 2rem; }
-  .hero-banner { height: 200px; background: linear-gradient(135deg, #dbeafe, #eff6ff); display: flex; align-items: center; justify-content: center; }
+  .hero-banner { height: 240px; position: relative; overflow: hidden; }
+  .hero-banner img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-banner-fallback { height: 240px; background: linear-gradient(135deg, #dbeafe, #eff6ff); display: flex; align-items: center; justify-content: center; }
   .rank-big { font-family: 'Fraunces', serif; font-size: 4rem; font-weight: 900; color: #2563eb; }
   .rank-label { color: #6b7280; font-size: .95rem; text-align: center; }
+  /* dark overlay + rank badge on top of image */
+  .hero-banner-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,.15) 0%, rgba(0,0,0,.5) 100%);
+    display: flex; align-items: flex-end; padding: 1.25rem 1.5rem;
+  }
+  .hero-rank-pill {
+    background: rgba(255,255,255,.15); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.3); border-radius: 10px;
+    padding: 6px 14px; color: white;
+    font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.1rem;
+  }
+
   .hero-body { padding: 2rem; }
   .hero-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
   .hero-top h1 { font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 900; margin-bottom: .5rem; }
@@ -39,14 +41,14 @@
   .apply-btn:hover { background: #1d4ed8; }
   .hero-desc { color: #4b5563; line-height: 1.7; margin-bottom: 2rem; }
   .quick-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; }
-  .qs-item { display: flex; align-items: flex-start; gap: 10px; }
   .qs-label { font-size: .8rem; color: #9ca3af; margin-bottom: 2px; }
   .qs-val { font-weight: 700; font-size: .95rem; }
+
   .content-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; }
   .col-2 { grid-column: span 2; }
   @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } .col-2 { grid-column: span 1; } }
   .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem; }
-  .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px; }
+  .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; }
   .card-header h2 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; }
   .program-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; background: #f9fafb; border-bottom: 1px solid #f3f4f6; }
   .program-item:last-child { border-bottom: none; }
@@ -73,49 +75,47 @@
   <a href="{% url 'universities:list' %}" class="back-link">← Back to Search</a>
 
   <div class="hero-card">
-    <div class="hero-banner">
-      <div>
-        <div class="rank-big">{{ university.ranking_display }}</div>
-        <div class="rank-label">World University Ranking</div>
+    {% if university.image %}
+      <div class="hero-banner">
+        <img src="{{ university.image.url }}" alt="{{ university.name }}">
+        <div class="hero-banner-overlay">
+          {% if university.ranking %}
+            <span class="hero-rank-pill">{{ university.ranking_display }} World Ranking</span>
+          {% endif %}
+        </div>
       </div>
-    </div>
+    {% else %}
+      <div class="hero-banner-fallback">
+        <div>
+          <div class="rank-big">{{ university.ranking_display }}</div>
+          <div class="rank-label">World University Ranking</div>
+        </div>
+      </div>
+    {% endif %}
+
     <div class="hero-body">
       <div class="hero-top">
         <div>
           <h1>{{ university.name }}</h1>
-          <div class="hero-loc">📍 {{ university.city }}{% if university.city %}, {% endif %}{{ university.country }}</div>
+          <div class="hero-loc">📍 {% if university.city %}{{ university.city }}, {% endif %}{{ university.country }}</div>
           {% if university.rating %}
-            <div class="rating-row">
-              <span class="star">★</span>
-              <span class="rating-val">{{ university.rating }}</span>
-            </div>
+            <div class="rating-row"><span class="star">★</span><span class="rating-val">{{ university.rating }}</span></div>
           {% endif %}
         </div>
         <a href="{% url 'applications:create' %}?university={{ university.pk }}" class="apply-btn">Apply Now</a>
       </div>
-      {% if university.description %}
-        <p class="hero-desc">{{ university.description }}</p>
-      {% endif %}
+      {% if university.description %}<p class="hero-desc">{{ university.description }}</p>{% endif %}
       <div class="quick-stats">
-        {% if university.established_year %}
-          <div class="qs-item"><div><div class="qs-label">Established</div><div class="qs-val">{{ university.established_year }}</div></div></div>
-        {% endif %}
-        {% if university.total_students %}
-          <div class="qs-item"><div><div class="qs-label">Students</div><div class="qs-val">{{ university.total_students }}</div></div></div>
-        {% endif %}
-        {% if university.tuition_display %}
-          <div class="qs-item"><div><div class="qs-label">Tuition</div><div class="qs-val">{{ university.tuition_display }}</div></div></div>
-        {% endif %}
-        {% if university.acceptance_rate %}
-          <div class="qs-item"><div><div class="qs-label">Acceptance</div><div class="qs-val">{{ university.acceptance_rate }}%</div></div></div>
-        {% endif %}
+        {% if university.established_year %}<div><div class="qs-label">Established</div><div class="qs-val">{{ university.established_year }}</div></div>{% endif %}
+        {% if university.total_students %}<div><div class="qs-label">Students</div><div class="qs-val">{{ university.total_students }}</div></div>{% endif %}
+        {% if university.tuition_display %}<div><div class="qs-label">Tuition</div><div class="qs-val">{{ university.tuition_display }}</div></div>{% endif %}
+        {% if university.acceptance_rate %}<div><div class="qs-label">Acceptance</div><div class="qs-val">{{ university.acceptance_rate }}%</div></div>{% endif %}
       </div>
     </div>
   </div>
 
   <div class="content-grid">
     <div class="col-2">
-
       {% if programs %}
         <div class="card">
           <div class="card-header"><h2>📚 Available Programs</h2></div>
@@ -125,9 +125,7 @@
                 <div class="program-name">{{ program.name }}</div>
                 {% if program.duration %}<div class="program-dur">{{ program.duration }}</div>{% endif %}
               </div>
-              {% if program.tuition_per_year %}
-                <span class="program-price">{{ program.tuition_per_year }}/year</span>
-              {% endif %}
+              {% if program.tuition_per_year %}<span class="program-price">{{ program.tuition_per_year }}/year</span>{% endif %}
             </div>
           {% endfor %}
         </div>
@@ -137,23 +135,16 @@
         <div class="card-header"><h2>🎓 Admission Requirements</h2></div>
         <div class="req-list">
           <div class="req-item"><div class="req-dot"></div><span>Bachelor's degree from accredited institution</span></div>
-          {% if university.min_gpa %}
-            <div class="req-item"><div class="req-dot"></div><span>Minimum GPA: {{ university.min_gpa }}</span></div>
-          {% endif %}
-          {% if university.min_ielts %}
-            <div class="req-item"><div class="req-dot"></div><span>Minimum IELTS: {{ university.min_ielts }}</span></div>
-          {% endif %}
+          {% if university.min_gpa %}<div class="req-item"><div class="req-dot"></div><span>Minimum GPA: {{ university.min_gpa }}</span></div>{% endif %}
+          {% if university.min_ielts %}<div class="req-item"><div class="req-dot"></div><span>Minimum IELTS: {{ university.min_ielts }}</span></div>{% endif %}
           <div class="req-item"><div class="req-dot"></div><span>Letters of recommendation (3)</span></div>
           <div class="req-item"><div class="req-dot"></div><span>Statement of Purpose</span></div>
           <div class="req-item"><div class="req-dot"></div><span>Resume/CV</span></div>
           {% if university.website %}
-            <div class="req-item"><div class="req-dot"></div>
-              <span>Visit <a href="{{ university.website }}" target="_blank" style="color:#2563eb;">official website</a> for full requirements</span>
-            </div>
+            <div class="req-item"><div class="req-dot"></div><span>Visit <a href="{{ university.website }}" target="_blank" style="color:#2563eb;">official website</a> for full requirements</span></div>
           {% endif %}
         </div>
       </div>
-
     </div>
 
     <div>
@@ -162,7 +153,6 @@
         <p>Find out if you meet the requirements for this university</p>
         <a href="{% url 'eligibility:check' %}?university={{ university.pk }}">Check Eligibility</a>
       </div>
-
       <div class="schol-card">
         <h3>Available Scholarships</h3>
         <p>{{ scholarships.count }} scholarship{{ scholarships.count|pluralize }} available</p>
