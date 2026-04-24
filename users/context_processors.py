@@ -1,5 +1,3 @@
-
-
 def unread_notifications(request):
     if request.user.is_authenticated:
         from notifications.models import Notification
