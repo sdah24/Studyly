@@ -23,7 +23,7 @@ class University(models.Model):
     established_year = models.IntegerField(blank=True, null=True)
     min_gpa = models.FloatField(blank=True, null=True, help_text="Minimum GPA required")
     min_ielts = models.FloatField(blank=True, null=True, help_text="Minimum IELTS score")
-
+    image = models.ImageField(upload_to='universities/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
