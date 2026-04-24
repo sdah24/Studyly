@@ -13,7 +13,6 @@
   .sidebar-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:#9ca3af;font-weight:500;font-size:.9rem;transition:all .15s}
   .sidebar-link:hover{background:rgba(255,255,255,.06);color:white}
   .sidebar-link.active{background:#2563eb;color:white}
-  .sidebar-link svg{width:18px;height:18px}
   .sidebar-footer{padding-top:1rem;border-top:1px solid rgba(255,255,255,.1)}
   .main-content{margin-left:240px;flex:1}
   .top-bar{background:white;border-bottom:1px solid #e5e7eb;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
@@ -26,6 +25,8 @@
   .search-input:focus{outline:none;border-color:#2563eb}
   .btn-blue{padding:9px 20px;background:#2563eb;color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.9rem}
   .btn-blue:hover{background:#1d4ed8}
+  .btn-promote{padding:6px 12px;background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.8rem;cursor:pointer}
+  .btn-promote:hover{background:#dcfce7}
   .card{background:white;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden}
   table{width:100%;border-collapse:collapse}
   thead tr{background:#f9fafb}
@@ -34,12 +35,13 @@
   tr:last-child td{border-bottom:none}
   tr:hover td{background:#f9fafb}
   .avatar{width:34px;height:34px;background:#2563eb;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;margin-right:10px;vertical-align:middle}
-  .role-pill{padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;background:#eff6ff;color:#1d4ed8}
   .empty-state{padding:3rem;text-align:center;color:#9ca3af}
   .stat-bar{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
-  .stat-chip{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:.75rem 1.25rem;font-size:.875rem}
+  .stat-chip{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:.75rem 1.25rem}
   .stat-chip strong{font-family:'Fraunces',serif;font-size:1.3rem;display:block}
   .stat-chip span{color:#6b7280;font-size:.8rem}
+  .alert{padding:.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem}
+  .alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
 </style>
 
 <aside class="sidebar">
@@ -86,6 +88,12 @@
   </div>
   <div class="content">
 
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-success">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
     <div class="stat-bar">
       <div class="stat-chip"><strong>{{ students|length }}</strong><span>Total Students</span></div>
     </div>
@@ -107,6 +115,7 @@
             <th>Degree</th>
             <th>English</th>
             <th>Joined</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -127,9 +136,15 @@
               {% endif %}
             </td>
             <td style="color:#9ca3af">{{ student.date_joined|date:"M j, Y" }}</td>
+            <td>
+              <form method="post" action="{% url 'adminpanel:promote_to_admin' student.pk %}" onsubmit="return confirm('Make {{ student.username }} an admin?')">
+                {% csrf_token %}
+                <button type="submit" class="btn-promote">Make Admin</button>
+              </form>
+            </td>
           </tr>
           {% empty %}
-          <tr><td colspan="6" class="empty-state">No students found.</td></tr>
+          <tr><td colspan="7" class="empty-state">No students found.</td></tr>
           {% endfor %}
         </tbody>
       </table>
