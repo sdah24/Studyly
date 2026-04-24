@@ -173,11 +173,12 @@ def new_conversation_view(request):
                 )
                 from notifications.models import Notification
                 Notification.objects.create(
-                    user=other_user,
+                    user=recipient,
                     type='general',
                     title=f'New message from {request.user.username}',
                     message=body[:100],
                 )
+
                 return redirect('users:conversation', username=recipient_username)
 
     return redirect('users:inbox')
