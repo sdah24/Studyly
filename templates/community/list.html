@@ -59,7 +59,7 @@
       <div class="user-card__actions">
         <a href="{% url 'community:profile' u.pk %}" class="btn btn--outline btn--sm">View Profile</a>
         {% if u.role != 'admin' %}
-        <a href="{% url 'messaging:conversation' u.pk %}" class="btn btn--primary btn--sm">
+        <a href="{% url 'users:conversation' u.username %}" class="btn btn--primary btn--sm">
           <i data-lucide="message-circle" style="width:14px;height:14px;"></i> Message
         </a>
         {% endif %}

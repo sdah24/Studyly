@@ -19,7 +19,7 @@
 
       {% if profile_user != request.user and profile_user.role != 'admin' %}
       <div class="profile-actions">
-        <a href="{% url 'messaging:conversation' profile_user.pk %}" class="btn btn--primary">
+        <a href="{% url 'users:conversation' profile_user.username %}" class="btn btn--primary">
           <i data-lucide="message-circle" style="width:15px;height:15px;"></i> Send Message
         </a>
       </div>
