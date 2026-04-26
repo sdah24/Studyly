@@ -22,3 +22,16 @@ class UserRegistrationTests(TestCase):
          })
         self.assertEqual(User.objects.filter(username='testuser').count(), 1)
         self.assertRedirects(response, reverse('users:login'))
+
+    def test_register_with_duplicate_username(self):
+            """TC-U02: Duplicate username shows form error, no new user created."""
+            User.objects.create_user(username='existing', password='pass@123')
+            count_before = User.objects.count()
+            response = self.client.post(self.register_url, {
+                'username': 'existing',
+                'email': 'new@example.com',
+                'password1': 'StrongPass@123',
+                'password2': 'StrongPass@123',
+            })
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(User.objects.count(), count_before)
