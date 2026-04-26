@@ -94,3 +94,12 @@ class UserLoginTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertNotIn('_auth_user_id', self.client.session)
+
+    def test_logout_clears_session(self):
+        """TC-U06: Logout clears session."""
+        self.client.login(username='loginuser', password='TestPass@123')
+        self.assertIn('_auth_user_id', self.client.session)
+        response = self.client.get(reverse('users:logout'))
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.assertEqual(response.status_code, 302)
+
