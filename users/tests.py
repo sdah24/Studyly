@@ -74,3 +74,14 @@ class UserLoginTests(TestCase):
         self.user = User.objects.create_user(
             username='loginuser', password='TestPass@123', role='student'
         )
+
+    def test_login_with_correct_credentials(self):
+        """TC-U04: Correct credentials → session created, redirect to dashboard."""
+        response = self.client.post(self.login_url, {
+            'username': 'loginuser',
+            'password': 'TestPass@123',
+        })
+        # Should redirect (302) after successful login
+        self.assertEqual(response.status_code, 302)
+        # User should now be logged in
+        self.assertTrue('_auth_user_id' in self.client.session)
