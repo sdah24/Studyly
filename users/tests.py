@@ -47,3 +47,14 @@ class UserRegistrationTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.count(), count_before)
+
+    def test_register_sets_role_student(self):
+        """TC-U10: Registration sets role=student by default."""
+        self.client.post(self.register_url, {
+            'username': 'studentuser',
+            'email': 'student@example.com',
+            'password1': 'StrongPass@123',
+            'password2': 'StrongPass@123',
+        })
+        user = User.objects.get(username='studentuser')
+        self.assertEqual(user.role, 'student')
