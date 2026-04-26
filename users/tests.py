@@ -143,3 +143,21 @@ class UserProfileViewTests(TestCase):
         self.client.login(username='profileuser', password='pass@123')
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, 200)
+
+    def test_profile_edit_saves_gpa(self):
+        """TC-U08: POST profile form saves GPA to Profile."""
+        from users.models import Profile
+        self.client.login(username='profileuser', password='pass@123')
+        response = self.client.post(self.profile_url, {
+            'gpa': '3.75',
+            'degree_level': 'bachelors',
+            'english_proficiency': 'ielts',
+            'english_score': '7.0',
+            'work_experience_years': '1',
+            'preferred_countries': 'USA',
+            'budget': '30000',
+            'phone_number': '+8801711000000',
+            'address': '123 Test St',
+        })
+        profile = Profile.objects.get(user=self.user)
+        self.assertEqual(float(profile.gpa), 3.75)
