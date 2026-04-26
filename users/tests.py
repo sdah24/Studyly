@@ -132,3 +132,9 @@ class UserProfileViewTests(TestCase):
         )
         self.profile_url = reverse('users:profile')
 
+    def test_profile_page_requires_login(self):
+        """TC-U09: Unauthenticated GET /users/profile/ → redirect to login."""
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/users/login', response.url)
+
