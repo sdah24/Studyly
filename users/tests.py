@@ -138,3 +138,9 @@ class UserProfileViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn('/users/login', response.url)
 
+    def test_profile_page_loads_when_authenticated(self):
+        """Authenticated GET /users/profile/ → 200."""
+        self.client.login(username='profileuser', password='pass@123')
+        response = self.client.get(self.profile_url)
+        self.assertEqual(response.status_code, 200)
+
