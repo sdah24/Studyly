@@ -102,3 +102,21 @@ class UserLoginTests(TestCase):
         response = self.client.get(reverse('users:logout'))
         self.assertNotIn('_auth_user_id', self.client.session)
         self.assertEqual(response.status_code, 302)
+
+
+class UserProfileSignalTests(TestCase):
+    """TC-U07"""
+
+    def test_profile_auto_created_on_register(self):
+        """TC-U07: Profile is auto-created when a User is saved."""
+        from users.models import Profile
+        user = User.objects.create_user(username='signaluser', password='pass@123')
+        self.assertTrue(Profile.objects.filter(user=user).exists())
+
+    def test_profile_is_one_to_one(self):
+        """Only one Profile per User."""
+        from users.models import Profile
+        user = User.objects.create_user(username='uniqueprofile', password='pass@123')
+        # Profile already created by signal; creating another should raise
+        with self.assertRaises(Exception):
+            Profile.objects.create(user=user)
