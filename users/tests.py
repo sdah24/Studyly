@@ -35,3 +35,15 @@ class UserRegistrationTests(TestCase):
             })
             self.assertEqual(response.status_code, 200)
             self.assertEqual(User.objects.count(), count_before)
+
+    def test_register_with_mismatched_passwords(self):
+        """TC-U03: Mismatched passwords → form error, user not created."""
+        count_before = User.objects.count()
+        response = self.client.post(self.register_url, {
+            'username': 'newuser',
+            'email': 'new@example.com',
+            'password1': 'StrongPass@123',
+            'password2': 'DifferentPass@456',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.count(), count_before)
