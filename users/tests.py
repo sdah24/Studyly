@@ -112,3 +112,11 @@ class UserProfileSignalTests(TestCase):
         from users.models import Profile
         user = User.objects.create_user(username='signaluser', password='pass@123')
         self.assertTrue(Profile.objects.filter(user=user).exists())
+
+    def test_profile_is_one_to_one(self):
+        """Only one Profile per User."""
+        from users.models import Profile
+        user = User.objects.create_user(username='uniqueprofile', password='pass@123')
+        # Profile already created by signal; creating another should raise
+        with self.assertRaises(Exception):
+            Profile.objects.create(user=user)
