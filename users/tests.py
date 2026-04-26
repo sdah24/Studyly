@@ -58,3 +58,8 @@ class UserRegistrationTests(TestCase):
         })
         user = User.objects.get(username='studentuser')
         self.assertEqual(user.role, 'student')
+
+    def test_register_page_loads(self):
+        """GET registration page returns 200."""
+        response = self.client.get(self.register_url)
+        self.assertEqual(response.status_code, 200)
