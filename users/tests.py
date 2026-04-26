@@ -74,3 +74,31 @@ class UserLoginTests(TestCase):
         self.user = User.objects.create_user(
             username='loginuser', password='TestPass@123', role='student'
         )
+
+    def test_login_with_correct_credentials(self):
+        """TC-U04: Correct credentials → session created, redirect to dashboard."""
+        response = self.client.post(self.login_url, {
+            'username': 'loginuser',
+            'password': 'TestPass@123',
+        })
+        # Should redirect (302) after successful login
+        self.assertEqual(response.status_code, 302)
+        # User should now be logged in
+        self.assertTrue('_auth_user_id' in self.client.session)
+
+    def test_login_with_wrong_password(self):
+        """TC-U05: Wrong password → error shown, no session."""
+        response = self.client.post(self.login_url, {
+            'username': 'loginuser',
+            'password': 'WrongPass@999',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+    def test_logout_clears_session(self):
+        """TC-U06: Logout clears session."""
+        self.client.login(username='loginuser', password='TestPass@123')
+        self.assertIn('_auth_user_id', self.client.session)
+        response = self.client.get(reverse('users:logout'))
+        self.assertNotIn('_auth_user_id', self.client.session)
+        self.assertEqual(response.status_code, 302)
