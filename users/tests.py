@@ -120,3 +120,14 @@ class UserProfileSignalTests(TestCase):
         # Profile already created by signal; creating another should raise
         with self.assertRaises(Exception):
             Profile.objects.create(user=user)
+
+
+class UserProfileViewTests(TestCase):
+    """TC-U08, TC-U09"""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='profileuser', password='pass@123', role='student'
+        )
+        self.profile_url = reverse('users:profile')
