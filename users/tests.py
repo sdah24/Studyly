@@ -85,3 +85,12 @@ class UserLoginTests(TestCase):
         self.assertEqual(response.status_code, 302)
         # User should now be logged in
         self.assertTrue('_auth_user_id' in self.client.session)
+
+    def test_login_with_wrong_password(self):
+        """TC-U05: Wrong password → error shown, no session."""
+        response = self.client.post(self.login_url, {
+            'username': 'loginuser',
+            'password': 'WrongPass@999',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('_auth_user_id', self.client.session)
