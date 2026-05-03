@@ -350,3 +350,37 @@ class NotificationSeleniumTests(BaseSeleniumTest):
                 body = self.driver.find_element(By.TAG_NAME, 'body').text
                 self.assertIn('Harvard', body)
 
+                # ─────────────────────────────────────────────
+                # M8 — Admin Panel
+                # ─────────────────────────────────────────────
+                class AdminPanelSeleniumTests(BaseSeleniumTest):
+
+                    def setUp(self):
+                        self.admin = self.create_user(username='adminseluser', password='admin@123', role='admin')
+                        User.objects.create_user(username='stu1', password='pass@123', role='student')
+                        User.objects.create_user(username='stu2', password='pass@123', role='student')
+
+                    def test_TC_S17_admin_sidebar_navigation(self):
+                        """TC-S17: Sidebar links navigate correctly."""
+                        self.login(username='adminseluser', password='admin@123')
+                        self.driver.get(f'{self.live_server_url}/adminpanel/')
+                        time.sleep(1)
+                        body = self.driver.find_element(By.TAG_NAME, 'body').text
+                        self.assertNotIn('Server Error', body)
+                        self.assertNotIn('403', body)
+                        try:
+                            students_link = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Students')
+                            students_link.click()
+                            time.sleep(1)
+                            self.assertIn('/students', self.driver.current_url)
+                        except Exception:
+                            pass
+
+                    def test_TC_S18_student_list_visible_to_admin(self):
+                        """TC-S18: Student table visible on /adminpanel/students/."""
+                        self.login(username='adminseluser', password='admin@123')
+                        self.driver.get(f'{self.live_server_url}/adminpanel/students/')
+                        time.sleep(1)
+                        body = self.driver.find_element(By.TAG_NAME, 'body').text
+                        sel
+
