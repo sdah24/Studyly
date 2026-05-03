@@ -104,3 +104,38 @@ class BaseSeleniumTest(LiveServerTestCase):
                 except Exception:
                     pass
                 self.assertNotIn('500', self.driver.title)
+
+    # ─────────────────────────────────────────────
+    # M2 — Universities
+    # ─────────────────────────────────────────────
+    class UniversitySeleniumTests(BaseSeleniumTest):
+
+        def setUp(self):
+            self.create_user(username='uniselusr')
+            University.objects.create(name='MIT', country='USA', city='Cambridge',
+                                      ranking=3, min_gpa=3.8, min_ielts=7.0)
+            University.objects.create(name='Oxford', country='UK', city='Oxford',
+                                      ranking=2, min_gpa=3.5, min_ielts=7.5)
+
+        def test_TC_S04_search_filters_list(self):
+            """TC-S04: Type 'MIT' in search → list shows MIT."""
+            self.login(username='uniselusr')
+            self.driver.get(f'{self.live_server_url}/universities/')
+            search_box = wait_for(self.driver, By.NAME, 'search')
+            search_box.send_keys('MIT')
+            search_box.submit()
+            time.sleep(1)
+            body = self.driver.find_element(By.TAG_NAME, 'body').text
+            self.assertIn('MIT', body)
+            self.assertNotIn('Oxford', body)
+
+        def test_TC_S05_click_university_opens_detail(self):
+            """TC-S05: Click Harvard card → detail page."""
+            self.login(username='uniselusr')
+            self.driver.get(f'{self.live_server_url}/universities/')
+            time.sleep(1)
+            mit_link = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'MIT')
+            mit_link.click()
+            time.sleep(1)
+            body = self.driver.find_element(By.TAG_NAME, 'body').text
+            self.assertIn('MIT', body)
