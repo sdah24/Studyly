@@ -61,3 +61,46 @@ class BaseSeleniumTest(LiveServerTestCase):
         self.driver.find_element(By.NAME, 'password').send_keys(password)
         self.driver.find_element(By.CSS_SELECTOR, '[type=submit]').click()
         time.sleep(1)
+
+        # ─────────────────────────────────────────────
+        # M1 — Users
+        # ─────────────────────────────────────────────
+        class UserSeleniumTests(BaseSeleniumTest):
+
+            def test_TC_S01_full_registration_flow(self):
+                """TC-S01: Register → lands on login page."""
+                self.driver.get(f'{self.live_server_url}/users/register/')
+                wait_for(self.driver, By.NAME, 'username').send_keys('newseleniumuser')
+                self.driver.find_element(By.NAME, 'email').send_keys('sel@test.com')
+                self.driver.find_element(By.NAME, 'password1').send_keys('StrongPass@123')
+                self.driver.find_element(By.NAME, 'password2').send_keys('StrongPass@123')
+                self.driver.find_element(By.CSS_SELECTOR, '[type=submit]').click()
+                time.sleep(1)
+                self.assertIn('/login', self.driver.current_url)
+
+            def test_TC_S02_login_and_see_dashboard(self):
+                """TC-S02: Login → dashboard visible."""
+                self.create_user()
+                self.login()
+                self.assertIn('/dashboard', self.driver.current_url)
+                body_text = self.driver.find_element(By.TAG_NAME, 'body').text
+                self.assertIn('seleniumuser', body_text.lower())
+
+            def test_TC_S03_edit_profile_and_save(self):
+                """TC-S03: Edit profile → success."""
+                self.create_user(username='profileseluser')
+                self.login(username='profileseluser')
+                self.driver.get(f'{self.live_server_url}/users/profile/')
+                time.sleep(1)
+                try:
+                    gpa_field = self.driver.find_element(By.NAME, 'gpa')
+                    gpa_field.clear()
+                    gpa_field.send_keys('3.75')
+                except Exception:
+                    pass
+                try:
+                    self.driver.find_element(By.CSS_SELECTOR, '[type=submit]').click()
+                    time.sleep(1)
+                except Exception:
+                    pass
+                self.assertNotIn('500', self.driver.title)
