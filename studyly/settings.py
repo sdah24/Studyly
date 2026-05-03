@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'dashboard',
     'adminpanel',
     'eligibility',
-    'community'
+    'community',
+   'selenium_tests'
 ]
 
 MIDDLEWARE = [
