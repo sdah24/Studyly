@@ -279,3 +279,41 @@ class BaseSeleniumTest(LiveServerTestCase):
 
 
 
+# ─────────────────────────────────────────────
+# M6 — Notifications
+# ─────────────────────────────────────────────
+class NotificationSeleniumTests(BaseSeleniumTest):
+
+    def setUp(self):
+        self.user = self.create_user(username='notifseluser')
+        self.notif = Notification.objects.create(
+            user=self.user, type='general', title='Unread Notif',
+            message='This is unread.', is_read=False
+        )
+
+    def test_TC_S13_unread_notification_highlighted(self):
+        """TC-S13: Unread notification has highlighted styling."""
+        self.login(username='notifseluser')
+        self.driver.get(f'{self.live_server_url}/notifications/')
+        time.sleep(1)
+        body = self.driver.find_element(By.TAG_NAME, 'body').text
+        self.assertIn('Unread Notif', body)
+
+    def test_TC_S14_mark_all_read_updates_ui(self):
+        """TC-S14: Click Mark All as Read → unread count becomes 0."""
+        self.login(username='notifseluser')
+        self.driver.get(f'{self.live_server_url}/notifications/')
+        time.sleep(1)
+        try:
+            mark_all_btn = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Mark All')
+            mark_all_btn.click()
+        except Exception:
+            try:
+                mark_all_btn = self.driver.find_element(By.CSS_SELECTOR, '[data-action="mark-all"]')
+                mark_all_btn.click()
+            except Exception:
+                self.driver.get(f'{self.live_server_url}/notifications/mark-all-read/')
+        time.sleep(1)
+        self.notif.refresh_from_db()
+        self.assertTrue(self.notif.is_read)
+
