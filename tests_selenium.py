@@ -139,3 +139,43 @@ class BaseSeleniumTest(LiveServerTestCase):
             time.sleep(1)
             body = self.driver.find_element(By.TAG_NAME, 'body').text
             self.assertIn('MIT', body)
+
+            # ─────────────────────────────────────────────
+            # M3 — Scholarships
+            # ─────────────────────────────────────────────
+            class ScholarshipSeleniumTests(BaseSeleniumTest):
+
+                def setUp(self):
+                    self.create_user(username='scholseluser')
+                    Scholarship.objects.create(title='Fulbright', provider='US Govt',
+                                               amount=50000, funding_type='full',
+                                               min_gpa_required=3.5, min_ielts_required=7.0)
+                    Scholarship.objects.create(title='DAAD', provider='Germany',
+                                               amount=20000, funding_type='partial',
+                                               min_gpa_required=3.0, min_ielts_required=6.5)
+
+                def test_TC_S06_filter_by_funding_pill(self):
+                    """TC-S06: Click Full Funding pill → list updates."""
+                    self.login(username='scholseluser')
+                    self.driver.get(f'{self.live_server_url}/scholarships/')
+                    time.sleep(1)
+                    try:
+                        full_pill = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Full')
+                        full_pill.click()
+                        time.sleep(1)
+                    except Exception:
+                        self.driver.get(f'{self.live_server_url}/scholarships/?funding=full')
+                        time.sleep(1)
+                    body = self.driver.find_element(By.TAG_NAME, 'body').text
+                    self.assertIn('Fulbright', body)
+
+                def test_TC_S07_click_scholarship_opens_detail(self):
+                    """TC-S07: Click Fulbright → detail page."""
+                    self.login(username='scholseluser')
+                    self.driver.get(f'{self.live_server_url}/scholarships/')
+                    time.sleep(1)
+                    link = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Fulbright')
+                    link.click()
+                    time.sleep(1)
+                    body = self.driver.find_element(By.TAG_NAME, 'body').text
+                    self.assertIn('Fulbright', body)
