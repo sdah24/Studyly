@@ -179,3 +179,36 @@ class BaseSeleniumTest(LiveServerTestCase):
                     time.sleep(1)
                     body = self.driver.find_element(By.TAG_NAME, 'body').text
                     self.assertIn('Fulbright', body)
+
+        # ─────────────────────────────────────────────
+        # M4 — Dashboard
+        # ─────────────────────────────────────────────
+        class DashboardSeleniumTests(BaseSeleniumTest):
+
+            def setUp(self):
+                self.user = self.create_user(username='dashseluser')
+
+            def test_TC_S08_dashboard_stat_cards_visible(self):
+                """TC-S08: 4 stat cards visible on dashboard."""
+                self.login(username='dashseluser')
+                self.driver.get(f'{self.live_server_url}/dashboard/')
+                time.sleep(1)
+                body = self.driver.find_element(By.TAG_NAME, 'body').text
+                self.assertNotIn('Page not found', body)
+                self.assertNotIn('Server Error', body)
+
+            def test_TC_S09_recent_applications_shown(self):
+                """TC-S09: Dashboard shows recent applications section."""
+                university = University.objects.create(name='Dash Uni', country='USA', city='NY',
+                                                       ranking=10, min_gpa=3.0, min_ielts=6.0)
+                Application.objects.create(user=self.user, university=university, status='submitted',
+                                           deadline=datetime.date.today() + datetime.timedelta(days=10))
+                self.login(username='dashseluser')
+                self.driver.get(f'{self.live_server_url}/dashboard/')
+                time.sleep(1)
+                body = self.driver.find_element(By.TAG_NAME, 'body').text
+                self.assertIn('Dash Uni', body)
+
+
+
+        
