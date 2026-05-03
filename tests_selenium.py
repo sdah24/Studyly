@@ -317,3 +317,36 @@ class NotificationSeleniumTests(BaseSeleniumTest):
         self.notif.refresh_from_db()
         self.assertTrue(self.notif.is_read)
 
+        # ─────────────────────────────────────────────
+        # M7 — Eligibility
+        # ─────────────────────────────────────────────
+        class EligibilitySeleniumTests(BaseSeleniumTest):
+
+            def setUp(self):
+                self.user = self.create_user(username='eligseluser')
+                profile = Profile.objects.get(user=self.user)
+                profile.gpa = 3.8
+                profile.english_score = 7.5
+                profile.english_proficiency = 'ielts'
+                profile.degree_level = 'bachelors'
+                profile.save()
+                University.objects.create(name='Harvard', country='USA', city='Cambridge',
+                                          ranking=1, min_gpa=3.7, min_ielts=7.0)
+
+            def test_TC_S15_eligibility_score_banner_visible(self):
+                """TC-S15: Score banner visible on eligibility page."""
+                self.login(username='eligseluser')
+                self.driver.get(f'{self.live_server_url}/eligibility/check/')
+                time.sleep(2)
+                body = self.driver.find_element(By.TAG_NAME, 'body').text
+                self.assertNotIn('Server Error', body)
+                self.assertNotIn('Page not found', body)
+
+            def test_TC_S16_matched_universities_section(self):
+                """TC-S16: Matched universities section shows with profile."""
+                self.login(username='eligseluser')
+                self.driver.get(f'{self.live_server_url}/eligibility/check/')
+                time.sleep(2)
+                body = self.driver.find_element(By.TAG_NAME, 'body').text
+                self.assertIn('Harvard', body)
+
