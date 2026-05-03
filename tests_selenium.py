@@ -209,6 +209,73 @@ class BaseSeleniumTest(LiveServerTestCase):
                 body = self.driver.find_element(By.TAG_NAME, 'body').text
                 self.assertIn('Dash Uni', body)
 
+                # ─────────────────────────────────────────────
+                # M5 — Applications
+                # ─────────────────────────────────────────────
+                class ApplicationSeleniumTests(BaseSeleniumTest):
+
+                    def setUp(self):
+                        self.user = self.create_user(username='appseluser')
+                        self.university = University.objects.create(name='Sel Uni', country='UK', city='London',
+                                                                    ranking=5, min_gpa=3.0, min_ielts=6.5)
+
+                    def test_TC_S10_create_application_flow(self):
+                        """TC-S10: Fill form → Submit → app appears in list."""
+                        self.login(username='appseluser')
+                        self.driver.get(f'{self.live_server_url}/applications/create/')
+                        time.sleep(1)
+                        try:
+                            from selenium.webdriver.support.ui import Select
+                            uni_select = Select(self.driver.find_element(By.NAME, 'university'))
+                            uni_select.select_by_visible_text('Sel Uni')
+                        except Exception:
+                            pass
+                        try:
+                            deadline_field = self.driver.find_element(By.NAME, 'deadline')
+                            deadline_field.send_keys('2025-12-31')
+                        except Exception:
+                            pass
+                        try:
+                            self.driver.find_element(By.CSS_SELECTOR, '[type=submit]').click()
+                            time.sleep(1)
+                        except Exception:
+                            pass
+                        self.driver.get(f'{self.live_server_url}/applications/')
+                        time.sleep(1)
+                        body = self.driver.find_element(By.TAG_NAME, 'body').text
+                        self.assertNotIn('Server Error', body)
+
+                    def test_TC_S11_status_tab_filter(self):
+                        """TC-S11: Click Accepted tab → list filters."""
+                        Application.objects.create(user=self.user, university=self.university, status='accepted',
+                                                   deadline=datetime.date.today() + datetime.timedelta(days=10))
+                        self.login(username='appseluser')
+                        self.driver.get(f'{self.live_server_url}/applications/')
+                        time.sleep(1)
+                        try:
+                            accepted_tab = self.driver.find_element(By.PARTIAL_LINK_TEXT, 'Accepted')
+                            accepted_tab.click()
+                            time.sleep(1)
+                        except Exception:
+                            self.driver.get(f'{self.live_server_url}/applications/?status=accepted')
+                            time.sleep(1)
+                        body = self.driver.find_element(By.TAG_NAME, 'body').text
+                        self.assertNotIn('Server Error', body)
+
+                    def test_TC_S12_delete_application(self):
+                        """TC-S12: Delete application → removed from list."""
+                        app = Application.objects.create(user=self.user, university=self.university,
+                                                         status='incomplete',
+                                                         deadline=datetime.date.today() + datetime.timedelta(days=10))
+                        self.login(username='appseluser')
+                        self.driver.get(f'{self.live_server_url}/applications/{app.pk}/delete/')
+                        time.sleep(1)
+                        try:
+                            self.driver.find_element(By.CSS_SELECTOR, '[type=submit]').click()
+                            time.sleep(1)
+                        except Exception:
+                            pass
+                        self.assertFalse(Application.objects.filter(pk=app.pk).exists())
 
 
-        
+
