@@ -9,11 +9,9 @@
   h1.page-title{font-family:'Fraunces',serif;font-size:1.8rem;font-weight:900;margin-bottom:.25rem}
   .page-subtitle{color:#4b5563;margin-bottom:2rem}
 
-  /* Status Notice */
   .status-notice{display:flex;align-items:center;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:.875rem 1.25rem;margin-bottom:2rem;font-size:.875rem;color:#1d4ed8}
   .status-notice svg{width:18px;height:18px;flex-shrink:0}
 
-  /* Progress bar */
   .progress-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:1.5rem;margin-bottom:1.5rem}
   .progress-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
   .progress-card-top h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700}
@@ -23,7 +21,6 @@
   .progress-fill{height:100%;border-radius:10px;background:#2563eb;transition:width .4s ease}
   .progress-label{font-size:.8rem;color:#6b7280;margin-top:.5rem}
 
-  /* Form cards */
   .form-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:1.75rem;margin-bottom:1.5rem}
   .form-card-title{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;margin-bottom:1.25rem;padding-bottom:.875rem;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;gap:8px}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
@@ -36,10 +33,8 @@
   textarea.form-input{resize:vertical;min-height:80px}
   .error-msg{font-size:.8rem;color:#dc2626;margin-top:3px}
 
-  /* Document upload slots */
   .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
   @media(max-width:580px){.doc-grid{grid-template-columns:1fr}}
-
   .doc-slot{border:2px dashed #d1d5db;border-radius:12px;padding:1.25rem;transition:all .2s;position:relative;background:#fafafa}
   .doc-slot.has-file{border-color:#2563eb;border-style:solid;background:#eff6ff}
   .doc-slot.has-file .doc-slot-icon{color:#2563eb}
@@ -48,44 +43,35 @@
   .doc-slot-name{font-weight:600;font-size:.9rem;color:#374151}
   .doc-slot-type{font-size:.75rem;color:#9ca3af;margin-top:1px}
 
-  /* Current file badge */
   .current-file{display:flex;align-items:center;gap:6px;background:#dbeafe;border-radius:6px;padding:5px 10px;margin-bottom:.75rem;font-size:.8rem;color:#1d4ed8;font-weight:500;word-break:break-all}
   .current-file svg{width:14px;height:14px;flex-shrink:0}
 
-  /* Custom file input */
   .file-upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px 14px;background:white;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:#374151;cursor:pointer;transition:all .15s;overflow:hidden}
   .file-upload-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
   .file-upload-btn svg{width:15px;height:15px;flex-shrink:0}
   .file-input-real{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 
-  /* Uploaded filename shown after JS pick */
   .picked-name{font-size:.78rem;color:#4b5563;margin-top:5px;text-align:center;display:none;word-break:break-all}
   .picked-name.visible{display:block}
 
-  /* Clear checkbox from Django */
   .clear-wrap{font-size:.78rem;color:#9ca3af;margin-top:4px;display:flex;align-items:center;gap:4px}
   .clear-wrap input{width:13px;height:13px;accent-color:#dc2626}
 
-  /* Messages */
   .alert{padding:.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem}
   .alert-error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
 
-  /* Actions */
-  .form-actions{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+  .form-actions{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;justify-content:flex-start}
   .btn-primary{padding:13px 32px;background:#2563eb;color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem;transition:background .15s}
   .btn-primary:hover{background:#1d4ed8}
   .btn-cancel{padding:13px 32px;background:white;color:#374151;border:1.5px solid #d1d5db;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.95rem;text-decoration:none;display:inline-block;transition:background .15s}
   .btn-cancel:hover{background:#f9fafb}
 </style>
 
-
-
 <main>
   <a href="{% url 'applications:list' %}" class="back-link">← Back to Applications</a>
   <h1 class="page-title">{{ title }}</h1>
   <p class="page-subtitle">{% if app %}Update your application details and documents{% else %}Add a university application and upload your documents{% endif %}</p>
 
-  <!-- Status info notice -->
   <div class="status-notice">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     <span>Your application status is set <strong>automatically</strong> — it becomes <strong>Submitted</strong> once all 6 documents are uploaded.</span>
@@ -98,15 +84,12 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <!-- Live progress bar (counts existing + newly picked files) -->
     {% if app %}
       {% with count=app.documents_submitted pct=app.progress_percent %}
       <div class="progress-card">
         <div class="progress-card-top">
           <h3>📎 Upload Progress</h3>
-          <div class="progress-count">
-            <span id="doc-count">{{ count }}</span> / 6 documents uploaded
-          </div>
+          <div class="progress-count"><span id="doc-count">{{ count }}</span> / 6 documents uploaded</div>
         </div>
         <div class="progress-bar">
           <div class="progress-fill" id="progress-fill" style="width:{{ pct }}%"></div>
@@ -131,23 +114,38 @@
 
     <!-- University & Program -->
     <div class="form-card">
-      <div class="form-card-title">
-        🏛️ University & Program
-      </div>
+      <div class="form-card-title">🏛️ University & Program</div>
       <div class="form-grid">
+
         <div class="field form-full">
           <label class="field-label" for="{{ form.university.id_for_label }}">University *</label>
           {{ form.university }}
           {% if form.university.errors %}<div class="error-msg">{{ form.university.errors.0 }}</div>{% endif %}
         </div>
+
         <div class="field form-full">
           <label class="field-label" for="{{ form.program.id_for_label }}">Program <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
           {{ form.program }}
-          <div id="program-hint" style="font-size:.8rem;color:#9ca3af;margin-top:4px;">
+          <div id="program-hint" style="font-size:.8rem;color:#9ca3af;margin-top:4px;{% if app and app.university_id %}display:none;{% endif %}">
             Select a university first to see its programs.
           </div>
           {% if form.program.errors %}<div class="error-msg">{{ form.program.errors.0 }}</div>{% endif %}
         </div>
+
+        <div class="field">
+          <label class="field-label" for="{{ form.deadline.id_for_label }}">Application Deadline</label>
+          {{ form.deadline }}
+          {% if form.deadline.errors %}<div class="error-msg">{{ form.deadline.errors.0 }}</div>{% endif %}
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="{{ form.notes.id_for_label }}">Notes</label>
+          {{ form.notes }}
+          {% if form.notes.errors %}<div class="error-msg">{{ form.notes.errors.0 }}</div>{% endif %}
+        </div>
+
+      </div>
+    </div>
 
     <!-- Document Uploads -->
     <div class="form-card">
@@ -155,7 +153,6 @@
         📄 Document Uploads
         <span style="font-size:.8rem;font-weight:400;color:#9ca3af;margin-left:auto">PDF, DOC, JPG, PNG accepted</span>
       </div>
-
       <div class="doc-grid">
 
         <!-- Personal Statement -->
@@ -164,7 +161,7 @@
             <div class="doc-slot-icon">📝</div>
             <div>
               <div class="doc-slot-name">Personal Statement</div>
-              <div class="doc-slot-type">SOP / Cover Letter</div>
+              <div class="doc-slot-type">PDF, DOC, JPG, PNG</div>
             </div>
           </div>
           {% if app and app.personal_statement %}
@@ -195,8 +192,8 @@
           <div class="doc-slot-top">
             <div class="doc-slot-icon">🎓</div>
             <div>
-              <div class="doc-slot-name">Academic Transcripts</div>
-              <div class="doc-slot-type">Official grade records</div>
+              <div class="doc-slot-name">Transcripts</div>
+              <div class="doc-slot-type">PDF, JPG, PNG</div>
             </div>
           </div>
           {% if app and app.transcripts %}
@@ -225,10 +222,10 @@
         <!-- Recommendations -->
         <div class="doc-slot {% if app and app.recommendations %}has-file{% endif %}" id="slot-recommendations">
           <div class="doc-slot-top">
-            <div class="doc-slot-icon">✉️</div>
+            <div class="doc-slot-icon">📨</div>
             <div>
-              <div class="doc-slot-name">Recommendation Letters</div>
-              <div class="doc-slot-type">From professors / employers</div>
+              <div class="doc-slot-name">Recommendations</div>
+              <div class="doc-slot-type">PDF, DOC, JPG, PNG</div>
             </div>
           </div>
           {% if app and app.recommendations %}
@@ -257,10 +254,10 @@
         <!-- English Test -->
         <div class="doc-slot {% if app and app.english_test %}has-file{% endif %}" id="slot-english_test">
           <div class="doc-slot-top">
-            <div class="doc-slot-icon">🌐</div>
+            <div class="doc-slot-icon">📊</div>
             <div>
-              <div class="doc-slot-name">English Test Score</div>
-              <div class="doc-slot-type">IELTS / TOEFL result</div>
+              <div class="doc-slot-name">English Test</div>
+              <div class="doc-slot-type">IELTS / TOEFL — PDF, JPG, PNG</div>
             </div>
           </div>
           {% if app and app.english_test %}
@@ -286,13 +283,13 @@
           {% if form.english_test.errors %}<div class="error-msg">{{ form.english_test.errors.0 }}</div>{% endif %}
         </div>
 
-        <!-- Financial Docs -->
+        <!-- Financial Documents -->
         <div class="doc-slot {% if app and app.financial_docs %}has-file{% endif %}" id="slot-financial_docs">
           <div class="doc-slot-top">
-            <div class="doc-slot-icon">💳</div>
+            <div class="doc-slot-icon">💰</div>
             <div>
               <div class="doc-slot-name">Financial Documents</div>
-              <div class="doc-slot-type">Bank statements / sponsorship</div>
+              <div class="doc-slot-type">Bank statements — PDF, JPG, PNG</div>
             </div>
           </div>
           {% if app and app.financial_docs %}
@@ -364,7 +361,6 @@
 </main>
 
 <script>
-  // Track which slots already have a server-side file
   const serverFiles = {
     personal_statement: {{ app.personal_statement|yesno:"true,false" }},
     transcripts:        {{ app.transcripts|yesno:"true,false" }},
@@ -374,7 +370,6 @@
     cv_resume:          {{ app.cv_resume|yesno:"true,false" }},
   };
 
-  // Track newly picked files
   const pickedFiles = {
     personal_statement: false,
     transcripts: false,
@@ -387,7 +382,6 @@
   function countDocs() {
     let count = 0;
     for (const key of Object.keys(serverFiles)) {
-      // Count if server has file AND not being cleared, OR new file picked
       const clearBox = document.getElementById(key + '-clear');
       const isCleared = clearBox && clearBox.checked;
       if ((serverFiles[key] && !isCleared) || pickedFiles[key]) count++;
@@ -398,9 +392,8 @@
   function updateProgress() {
     const count = countDocs();
     const pct   = Math.round((count / 6) * 100);
-    document.getElementById('doc-count').textContent    = count;
+    document.getElementById('doc-count').textContent     = count;
     document.getElementById('progress-fill').style.width = pct + '%';
-
     const label = document.getElementById('progress-label');
     if (count === 6) {
       label.textContent = '✅ All documents uploaded — status will be set to Submitted';
@@ -414,13 +407,11 @@
   }
 
   function handleFileChange(input) {
-    const slot     = input.dataset.slot;
-    const nameEl   = document.getElementById('picked-' + slot);
-    const slotEl   = document.getElementById('slot-' + slot);
-
+    const slot   = input.dataset.slot;
+    const nameEl = document.getElementById('picked-' + slot);
+    const slotEl = document.getElementById('slot-' + slot);
     if (input.files && input.files[0]) {
-      const fname = input.files[0].name;
-      nameEl.textContent = '📎 ' + fname;
+      nameEl.textContent = '📎 ' + input.files[0].name;
       nameEl.classList.add('visible');
       slotEl.classList.add('has-file');
       pickedFiles[slot] = true;
@@ -435,7 +426,7 @@
 
   document.querySelectorAll('[id$="-clear"]').forEach(cb => {
     cb.addEventListener('change', () => {
-      const slot  = cb.id.replace('-clear', '');
+      const slot   = cb.id.replace('-clear', '');
       const slotEl = document.getElementById('slot-' + slot);
       if (cb.checked) slotEl.classList.remove('has-file');
       else if (serverFiles[slot]) slotEl.classList.add('has-file');
@@ -443,16 +434,14 @@
     });
   });
 
-  // Init on page load
   updateProgress();
-    <script>
-  (function () {
-    const uniSelect  = document.getElementById('id_university');
-    const progSelect = document.getElementById('id_program');
-    const hint       = document.getElementById('program-hint');
 
-    // Save the currently selected program pk (edit mode)
-    const selectedProgram = "{{ app.program.pk|default:'' }}";
+  // University → Program dynamic loader
+  (function () {
+    const uniSelect     = document.getElementById('id_university');
+    const progSelect    = document.getElementById('id_program');
+    const hint          = document.getElementById('program-hint');
+    const selectedProg  = "{{ app.program.pk|default:'' }}";
 
     function fetchPrograms(universityPk, preselectPk) {
       if (!universityPk) {
@@ -460,19 +449,18 @@
         hint.style.display = 'block';
         return;
       }
-      fetch(`/universities/${universityPk}/programs/`)
+      fetch('/universities/' + universityPk + '/programs/')
         .then(r => r.json())
         .then(data => {
           progSelect.innerHTML = '<option value="">— Select a Program (optional) —</option>';
           if (data.programs.length === 0) {
-            progSelect.innerHTML += '<option disabled>No programs available</option>';
-            hint.textContent = 'No programs listed for this university yet.';
+            hint.textContent   = 'No programs listed for this university yet.';
             hint.style.display = 'block';
           } else {
             data.programs.forEach(p => {
               const opt = document.createElement('option');
-              opt.value = p.id;
-              opt.textContent = `${p.name} (${p.level_display})`;
+              opt.value       = p.id;
+              opt.textContent = p.name + ' (' + p.level_display + ')';
               if (String(p.id) === String(preselectPk)) opt.selected = true;
               progSelect.appendChild(opt);
             });
@@ -480,22 +468,19 @@
           }
         })
         .catch(() => {
-          hint.textContent = 'Could not load programs. Please try again.';
+          hint.textContent   = 'Could not load programs. Please try again.';
           hint.style.display = 'block';
         });
     }
 
-    // On university change
     uniSelect.addEventListener('change', function () {
       fetchPrograms(this.value, null);
     });
 
-    // On page load — if a university is already selected (edit mode or pre-fill)
     if (uniSelect.value) {
-      fetchPrograms(uniSelect.value, selectedProgram);
+      fetchPrograms(uniSelect.value, selectedProg);
     }
   })();
 </script>
-
 
 {% endblock %}
