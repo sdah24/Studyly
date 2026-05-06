@@ -143,34 +143,11 @@
         <div class="field form-full">
           <label class="field-label" for="{{ form.program.id_for_label }}">Program <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
           {{ form.program }}
+          <div id="program-hint" style="font-size:.8rem;color:#9ca3af;margin-top:4px;">
+            Select a university first to see its programs.
+          </div>
           {% if form.program.errors %}<div class="error-msg">{{ form.program.errors.0 }}</div>{% endif %}
         </div>
-        <div class="field">
-          <label class="field-label" for="{{ form.deadline.id_for_label }}">Application Deadline</label>
-          {{ form.deadline }}
-          {% if form.deadline.errors %}<div class="error-msg">{{ form.deadline.errors.0 }}</div>{% endif %}
-        </div>
-        <div class="field">
-          <label class="field-label">Current Status</label>
-          <div style="padding:10px 12px;background:#f3f4f6;border-radius:8px;font-size:.9rem;color:#374151;border:1.5px solid #e5e7eb">
-            {% if app %}
-              <span style="
-                padding:3px 10px;border-radius:20px;font-size:.8rem;font-weight:600;
-                background:{{ app.status_color.bg }};color:{{ app.status_color.color }}
-              ">{{ app.get_status_display }}</span>
-              <span style="font-size:.8rem;color:#9ca3af;margin-left:8px">auto-managed</span>
-            {% else %}
-              <span style="padding:3px 10px;border-radius:20px;font-size:.8rem;font-weight:600;background:#fff7ed;color:#c2410c">Incomplete</span>
-              <span style="font-size:.8rem;color:#9ca3af;margin-left:8px">auto-managed</span>
-            {% endif %}
-          </div>
-        </div>
-        <div class="field form-full">
-          <label class="field-label" for="{{ form.notes.id_for_label }}">Notes <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
-          {{ form.notes }}
-        </div>
-      </div>
-    </div>
 
     <!-- Document Uploads -->
     <div class="form-card">
