@@ -1,5 +1,6 @@
 from django import forms
 from .models import Application
+from universities.models import Program
 
 
 class ApplicationForm(forms.ModelForm):
@@ -11,17 +12,21 @@ class ApplicationForm(forms.ModelForm):
             'personal_statement', 'transcripts', 'recommendations',
             'english_test', 'financial_docs', 'cv_resume',
         ]
-        # NOTE: 'status' is intentionally excluded — set automatically by model.save()
         widgets = {
-            'university': forms.Select(attrs={'class': 'form-select'}),
-            'program':    forms.Select(attrs={'class': 'form-select'}),
-            'deadline':   forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
-            'notes':      forms.Textarea(attrs={
+            'university': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'id_university',
+            }),
+            'program': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'id_program',
+            }),
+            'deadline': forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
+            'notes': forms.Textarea(attrs={
                 'rows': 3,
                 'class': 'form-input',
                 'placeholder': 'Any notes about this application…'
             }),
-            # File fields — accept PDF and common image types
             'personal_statement': forms.ClearableFileInput(attrs={'accept': '.pdf,.doc,.docx,.jpg,.png', 'class': 'file-input'}),
             'transcripts':        forms.ClearableFileInput(attrs={'accept': '.pdf,.jpg,.png',            'class': 'file-input'}),
             'recommendations':    forms.ClearableFileInput(attrs={'accept': '.pdf,.doc,.docx,.jpg,.png', 'class': 'file-input'}),
@@ -37,7 +42,16 @@ class ApplicationForm(forms.ModelForm):
         self.fields['program'].required       = False
         self.fields['deadline'].required      = False
         self.fields['notes'].required         = False
-        # All document fields are optional individually
+
         for doc_field in ['personal_statement', 'transcripts', 'recommendations',
                           'english_test', 'financial_docs', 'cv_resume']:
             self.fields[doc_field].required = False
+
+        # If editing an existing application, show only that university's programs
+        if self.instance and self.instance.pk and self.instance.university_id:
+            self.fields['program'].queryset = Program.objects.filter(
+                university=self.instance.university
+            ).order_by('name')
+        else:
+            # New application — start with empty program list, JS will populate it
+            self.fields['program'].queryset = Program.objects.none()
