@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.db.models import Q
-from .models import University
+from .models import University, Program
 
 
 @login_required
 def university_list(request):
     universities = University.objects.all()
 
-    # Search
     query = request.GET.get('q', '')
     if query:
         universities = universities.filter(
@@ -17,7 +17,6 @@ def university_list(request):
             Q(country__icontains=query)
         )
 
-    # Country filter pill
     country_filter = request.GET.get('country', '')
     if country_filter == 'usa':
         universities = universities.filter(country__icontains='USA')
@@ -54,3 +53,19 @@ def university_detail(request, pk):
         'programs': programs,
         'scholarships': scholarships,
     })
+
+
+@login_required
+def university_programs(request, pk):
+    university = get_object_or_404(University, pk=pk)
+    programs = university.programs.all().order_by('name')
+    data = [
+        {
+            'id': p.pk,
+            'name': p.name,
+            'level': p.level,
+            'level_display': p.get_level_display(),
+        }
+        for p in programs
+    ]
+    return JsonResponse({'programs': data})
