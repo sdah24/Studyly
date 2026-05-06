@@ -9,7 +9,6 @@ class University(models.Model):
     ranking = models.IntegerField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
 
-    # Extra fields for UI
     tuition_display = models.CharField(
         max_length=100, blank=True, null=True,
         help_text="e.g. $54,000/yr"
@@ -40,17 +39,19 @@ class University(models.Model):
 
 class Program(models.Model):
     LEVEL_CHOICES = [
-        ('bachelor', "Bachelor's"),
-        ('master', "Master's"),
-        ('phd', 'PhD'),
+        ('bsc', 'BSc'),
+        ('msc', 'MSc'),
         ('mba', 'MBA'),
+        ('phd', 'PhD'),
+        ('diploma', 'Diploma'),
+        ('certificate', 'Certificate'),
     ]
 
     university = models.ForeignKey(
         University, on_delete=models.CASCADE, related_name='programs'
     )
     name = models.CharField(max_length=255)
-    level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='master')
+    level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='msc')
     duration = models.CharField(max_length=50, blank=True, null=True, help_text="e.g. 2 years")
     tuition_per_year = models.CharField(max_length=100, blank=True, null=True)
     requirements = models.TextField(blank=True, null=True)
