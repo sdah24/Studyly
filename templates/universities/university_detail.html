@@ -120,14 +120,17 @@
         <div class="card">
           <div class="card-header"><h2>📚 Available Programs</h2></div>
           {% for program in programs %}
-            <div class="program-item">
-              <div>
-                <div class="program-name">{{ program.name }}</div>
-                {% if program.duration %}<div class="program-dur">{{ program.duration }}</div>{% endif %}
-              </div>
-              {% if program.tuition_per_year %}<span class="program-price">{{ program.tuition_per_year }}/year</span>{% endif %}
-            </div>
-          {% endfor %}
+      <div class="program-item">
+        <div>
+          <div class="program-name">
+            {{ program.name }}
+            <span class="level-badge level-{{ program.level }}">{{ program.get_level_display }}</span>
+          </div>
+          {% if program.duration %}<div class="program-dur">{{ program.duration }}</div>{% endif %}
+        </div>
+        {% if program.tuition_per_year %}<span class="program-price">{{ program.tuition_per_year }}/year</span>{% endif %}
+      </div>
+    {% endfor %}
         </div>
       {% endif %}
 
