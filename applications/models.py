@@ -63,6 +63,14 @@ class Application(models.Model):
     )
 
     notes    = models.TextField(blank=True, null=True)
+    INTAKE_CHOICES = [
+        ('fall_2025', 'Fall 2025'),
+        ('spring_2026', 'Spring 2026'),
+        ('fall_2026', 'Fall 2026'),
+        ('spring_2027', 'Spring 2027'),
+        ('rolling', 'Rolling / Anytime'),
+    ]
+    intake_season = models.CharField(max_length=20, choices=INTAKE_CHOICES, null=True, blank=True)
     deadline = models.DateField(null=True, blank=True)
 
     applied_date = models.DateField(auto_now_add=True)

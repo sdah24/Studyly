@@ -8,7 +8,7 @@ class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
         fields = [
-            'university', 'program', 'deadline', 'notes',
+    'university', 'program', 'intake_season', 'deadline', 'notes',
             'personal_statement', 'transcripts', 'recommendations',
             'english_test', 'financial_docs', 'cv_resume',
         ]
@@ -21,7 +21,8 @@ class ApplicationForm(forms.ModelForm):
                 'class': 'form-select',
                 'id': 'id_program',
             }),
-            'deadline': forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
+            'intake_season': forms.Select(attrs={'class': 'form-select'}),
+'deadline': forms.DateInput(attrs={'type': 'date', 'class': 'form-input'}),
             'notes': forms.Textarea(attrs={
                 'rows': 3,
                 'class': 'form-input',

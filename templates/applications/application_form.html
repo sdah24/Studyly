@@ -132,9 +132,17 @@
           {% if form.program.errors %}<div class="error-msg">{{ form.program.errors.0 }}</div>{% endif %}
         </div>
 
+       <div class="field">
+          <label class="field-label" for="{{ form.intake_season.id_for_label }}">Intake Season</label>
+          {{ form.intake_season }}
+          <div style="font-size:.78rem;color:#9ca3af;margin-top:3px">Which semester are you targeting?</div>
+          {% if form.intake_season.errors %}<div class="error-msg">{{ form.intake_season.errors.0 }}</div>{% endif %}
+        </div>
+
         <div class="field">
-          <label class="field-label" for="{{ form.deadline.id_for_label }}">Application Deadline</label>
+          <label class="field-label" for="{{ form.deadline.id_for_label }}">Official Deadline</label>
           {{ form.deadline }}
+          <div style="font-size:.78rem;color:#9ca3af;margin-top:3px">University's cutoff date. Leave blank if unknown.</div>
           {% if form.deadline.errors %}<div class="error-msg">{{ form.deadline.errors.0 }}</div>{% endif %}
         </div>
 
