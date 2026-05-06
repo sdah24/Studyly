@@ -8,6 +8,7 @@ class University(models.Model):
     description = models.TextField(blank=True, null=True)
     ranking = models.IntegerField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
+    apply_url = models.URLField(blank=True, null=True, help_text="Direct application portal URL")
 
     tuition_display = models.CharField(
         max_length=100, blank=True, null=True,

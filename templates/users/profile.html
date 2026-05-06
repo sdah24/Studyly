@@ -229,6 +229,7 @@
           <label>Degree Level</label>
           <select name="degree_level">
             <option value="">-- Select --</option>
+            <option value="hsc"      {% if form.degree_level.value == 'hsc'      %}selected{% endif %}>HSC</option>
             <option value="bachelor" {% if form.degree_level.value == 'bachelor' %}selected{% endif %}>Bachelor's</option>
             <option value="master"   {% if form.degree_level.value == 'master'   %}selected{% endif %}>Master's</option>
             <option value="phd"      {% if form.degree_level.value == 'phd'      %}selected{% endif %}>PhD</option>

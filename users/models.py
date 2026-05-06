@@ -58,6 +58,7 @@ class Profile(models.Model):
     degree_level = models.CharField(
         max_length=50,
         choices=[
+            ('hsc', 'HSC'),
             ('bachelor', "Bachelor's"),
             ('master', "Master's"),
             ('phd', 'PhD'),

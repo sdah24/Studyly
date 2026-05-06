@@ -63,8 +63,24 @@ def check(request):
     # ── 1. GPA / Academic ─────────────────────────────────────────────────────
     gpa = profile.GPA
     degree = profile.get_degree_level_display() if profile.degree_level else None
+    degree_level = profile.degree_level
 
-    if gpa is not None:
+    # HSC students use a different GPA scale (out of 5.00)
+    is_hsc = degree_level == 'hsc'
+
+    if is_hsc:
+        # HSC — no GPA threshold logic, just confirm eligibility for BSc
+        criteria.append({
+            'icon': 'check-circle',
+            'icon_color': '#16a34a',
+            'title': 'Academic Qualifications',
+            'detail': f"HSC completed — eligible for Bachelor's (BSc) programs",
+            'badge': 'Passed',
+            'badge_bg': '#dcfce7',
+            'badge_color': '#15803d',
+        })
+        score_points += 20
+    elif gpa is not None:
         if gpa >= 3.5:
             criteria.append({
                 'icon': 'check-circle',
@@ -81,7 +97,7 @@ def check(request):
                 'icon': 'alert-circle',
                 'icon_color': '#ca8a04',
                 'title': 'Academic Qualifications',
-                'detail': f"{degree or 'Degree'} with {gpa:.2f} GPA (3.5+ preferred)',",
+                'detail': f"{degree or 'Degree'} with {gpa:.2f} GPA (3.5+ preferred)",
                 'badge': 'Needs Improvement',
                 'badge_bg': '#fffbeb',
                 'badge_color': '#a16207',
@@ -98,7 +114,8 @@ def check(request):
                 'badge_bg': '#fef2f2',
                 'badge_color': '#b91c1c',
             })
-            recommendations.append("Your GPA is below the minimum for most universities. Seek academic improvement or alternative entry paths.")
+            recommendations.append(
+                "Your GPA is below the minimum for most universities. Seek academic improvement or alternative entry paths.")
     else:
         criteria.append({
             'icon': 'x-circle',
@@ -304,12 +321,25 @@ def check(request):
     total_score = min(100, score_points)
 
     # ── Matched Universities ───────────────────────────────────────────────────
+    # Map degree level to eligible program levels
+    DEGREE_TO_PROGRAM_LEVELS = {
+        'hsc': ['bsc'],
+        'bachelor': ['msc', 'mba'],
+        'master': ['msc', 'mba', 'phd'],
+        'phd': ['phd'],
+    }
+    eligible_levels = DEGREE_TO_PROGRAM_LEVELS.get(degree_level) if degree_level else None
+
     all_universities = University.objects.all()
     matched_universities = []
     for uni in all_universities:
         gpa_ok = (uni.min_gpa is None) or (gpa is not None and gpa >= uni.min_gpa)
         ielts_ok = (uni.min_ielts is None) or (score is not None and score >= uni.min_ielts)
-        if gpa_ok and ielts_ok:
+        if eligible_levels is not None:
+            has_eligible_program = uni.programs.filter(level__in=eligible_levels).exists()
+        else:
+            has_eligible_program = True
+        if gpa_ok and ielts_ok and has_eligible_program:
             matched_universities.append(uni)
 
     # ── Matched Scholarships with % ───────────────────────────────────────────
