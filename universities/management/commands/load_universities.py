@@ -14,12 +14,13 @@ UNIVERSITIES = [
         "min_gpa": 3.5, "min_ielts": 7.0,
         "description": "Harvard University is a private Ivy League research university in Cambridge, Massachusetts. Established in 1636, it is the oldest institution of higher learning in the United States.",
         "website": "https://www.harvard.edu",
+        "apply_url": "https://college.harvard.edu/admissions/apply",
         "programs": [
-            {"name": "Master of Computer Science", "level": "master", "duration": "2 years", "tuition_per_year": "$54,000"},
+            {"name": "Master of Computer Science", "level": "msc", "duration": "2 years", "tuition_per_year": "$54,000"},
             {"name": "MBA", "level": "mba", "duration": "2 years", "tuition_per_year": "$73,440"},
-            {"name": "Master of Public Health", "level": "master", "duration": "1-2 years", "tuition_per_year": "$65,000"},
-            {"name": "Master of Education", "level": "master", "duration": "1 year", "tuition_per_year": "$52,000"},
-            {"name": "Master of Architecture", "level": "master", "duration": "2.5 years", "tuition_per_year": "$54,000"},
+            {"name": "Master of Public Health", "level": "msc", "duration": "1-2 years", "tuition_per_year": "$65,000"},
+            {"name": "Master of Education", "level": "msc", "duration": "1 year", "tuition_per_year": "$52,000"},
+            {"name": "Master of Architecture", "level": "msc", "duration": "2.5 years", "tuition_per_year": "$54,000"},
         ]
     },
     {
@@ -33,9 +34,10 @@ UNIVERSITIES = [
         "min_gpa": 3.5, "min_ielts": 7.5,
         "description": "The University of Oxford is a collegiate research university in Oxford, England. There is evidence of teaching as far back as 1096, making it the oldest university in the English-speaking world.",
         "website": "https://www.ox.ac.uk",
+        "apply_url": "https://www.ox.ac.uk/admissions/graduate/applying-to-oxford",
         "programs": [
-            {"name": "MSc in Computer Science", "level": "master", "duration": "1 year", "tuition_per_year": "£28,000"},
-            {"name": "MSc in Data Science", "level": "master", "duration": "1 year", "tuition_per_year": "£30,000"},
+            {"name": "MSc in Computer Science", "level": "msc", "duration": "1 year", "tuition_per_year": "£28,000"},
+            {"name": "MSc in Data Science", "level": "msc", "duration": "1 year", "tuition_per_year": "£30,000"},
             {"name": "MBA", "level": "mba", "duration": "1 year", "tuition_per_year": "£52,000"},
             {"name": "DPhil in Engineering", "level": "phd", "duration": "3-4 years", "tuition_per_year": "£26,000"},
         ]
@@ -51,9 +53,10 @@ UNIVERSITIES = [
         "min_gpa": 3.7, "min_ielts": 7.0,
         "description": "The Massachusetts Institute of Technology is a private land-grant research university in Cambridge, Massachusetts. MIT has played a key role in the development of modern technology and science.",
         "website": "https://www.mit.edu",
+        "apply_url": "https://apply.mitadmissions.org/portal/apply",
         "programs": [
-            {"name": "Master of Artificial Intelligence", "level": "master", "duration": "2 years", "tuition_per_year": "$55,000"},
-            {"name": "Master of Engineering", "level": "master", "duration": "1 year", "tuition_per_year": "$55,000"},
+            {"name": "Master of Artificial Intelligence", "level": "msc", "duration": "2 years", "tuition_per_year": "$55,000"},
+            {"name": "Master of Engineering", "level": "msc", "duration": "1 year", "tuition_per_year": "$55,000"},
             {"name": "PhD in Computer Science", "level": "phd", "duration": "4-6 years", "tuition_per_year": "$55,000"},
         ]
     },
@@ -68,10 +71,11 @@ UNIVERSITIES = [
         "min_gpa": 3.6, "min_ielts": 7.0,
         "description": "Stanford University is a private research university in Stanford, California. It is one of the world's leading research and teaching institutions, situated in the heart of Silicon Valley.",
         "website": "https://www.stanford.edu",
+        "apply_url": "https://gradadmissions.stanford.edu/apply",
         "programs": [
             {"name": "MBA", "level": "mba", "duration": "2 years", "tuition_per_year": "$56,000"},
-            {"name": "MS in Computer Science", "level": "master", "duration": "1-2 years", "tuition_per_year": "$56,000"},
-            {"name": "MS in AI", "level": "master", "duration": "1-2 years", "tuition_per_year": "$56,000"},
+            {"name": "MS in Computer Science", "level": "msc", "duration": "1-2 years", "tuition_per_year": "$56,000"},
+            {"name": "MS in AI", "level": "msc", "duration": "1-2 years", "tuition_per_year": "$56,000"},
         ]
     },
     {
@@ -85,8 +89,9 @@ UNIVERSITIES = [
         "min_gpa": 3.5, "min_ielts": 7.5,
         "description": "The University of Cambridge is a collegiate research university in Cambridge, United Kingdom. Founded in 1209, it is the world's third-oldest university in continuous operation.",
         "website": "https://www.cam.ac.uk",
+        "apply_url": "https://www.graduate.study.cam.ac.uk/applying",
         "programs": [
-            {"name": "MPhil in Advanced Computer Science", "level": "master", "duration": "1 year", "tuition_per_year": "£27,000"},
+            {"name": "MPhil in Advanced Computer Science", "level": "msc", "duration": "1 year", "tuition_per_year": "£27,000"},
             {"name": "PhD in Engineering", "level": "phd", "duration": "3-4 years", "tuition_per_year": "£25,000"},
             {"name": "MBA", "level": "mba", "duration": "1 year", "tuition_per_year": "£54,000"},
         ]
@@ -102,9 +107,10 @@ UNIVERSITIES = [
         "min_gpa": 3.3, "min_ielts": 7.0,
         "description": "ETH Zurich is a public research university in Zürich, Switzerland. It was founded in 1855 and is consistently ranked among the top universities in the world for science and technology.",
         "website": "https://ethz.ch",
+        "apply_url": "https://www.ethz.ch/en/studies/registration-application.html",
         "programs": [
-            {"name": "MSc in Computer Science", "level": "master", "duration": "2 years", "tuition_per_year": "CHF 1,500"},
-            {"name": "MSc in Data Science", "level": "master", "duration": "2 years", "tuition_per_year": "CHF 1,500"},
+            {"name": "MSc in Computer Science", "level": "msc", "duration": "2 years", "tuition_per_year": "CHF 1,500"},
+            {"name": "MSc in Data Science", "level": "msc", "duration": "2 years", "tuition_per_year": "CHF 1,500"},
             {"name": "PhD in Engineering", "level": "phd", "duration": "3-5 years", "tuition_per_year": "CHF 1,500"},
         ]
     },
