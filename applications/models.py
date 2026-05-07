@@ -62,7 +62,8 @@ class Application(models.Model):
         null=True, blank=True
     )
 
-    notes    = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    shared_with_consultant = models.BooleanField(default=False)
     INTAKE_CHOICES = [
         ('fall_2025', 'Fall 2025'),
         ('spring_2026', 'Spring 2026'),

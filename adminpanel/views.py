@@ -214,3 +214,76 @@ def scholarship_delete(request, pk):
         'object_name': schol.title, 'active_sidebar': 'scholarships',
         'cancel_url': 'adminpanel:scholarships',
     }))
+
+# ── Applications ───────────────────────────────────────────────────────────────
+@admin_required
+def application_list(request):
+    q    = request.GET.get('q', '').strip()
+    apps = Application.objects.select_related(
+        'user', 'university', 'program'
+    ).order_by('-applied_date')
+    if q:
+        apps = apps.filter(
+            Q(user__username__icontains=q) |
+            Q(user__first_name__icontains=q) |
+            Q(university__name__icontains=q)
+        )
+    return render(request, 'adminpanel/applications.html', admin_ctx({
+        'applications':    apps,
+        'q':               q,
+        'active_sidebar':  'applications',
+    }))
+
+
+@admin_required
+def application_detail(request, pk):
+    from django.db.models import Q as Qlocal
+    app = get_object_or_404(
+        Application.objects.select_related('user', 'university', 'program'),
+        pk=pk
+    )
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        # ── Status change ──
+        if action == 'update_status':
+            new_status = request.POST.get('status')
+            if new_status in dict(Application.STATUS_CHOICES):
+                app.status = new_status
+                app.save(update_fields=['status'])
+                messages.success(request, 'Application status updated.')
+                from notifications.models import Notification
+                Notification.objects.create(
+                    user=app.user,
+                    type='application_update',
+                    title=f'Your application status changed',
+                    message=f'Your application to {app.university.name} is now: {app.get_status_display()}.',
+                )
+
+        # ── Send message to student ──
+        elif action == 'send_message':
+            body = request.POST.get('body', '').strip()
+            if body:
+                from users.models import Message
+                Message.objects.create(
+                    sender=request.user,
+                    recipient=app.user,
+                    body=body,
+                )
+                from notifications.models import Notification
+                Notification.objects.create(
+                    user=app.user,
+                    type='general',
+                    title=f'Message from Admin regarding your {app.university.name} application',
+                    message=body[:200],
+                )
+                messages.success(request, f'Message sent to {app.user.get_full_name() or app.user.username}.')
+
+        return redirect('adminpanel:application_detail', pk=pk)
+
+    return render(request, 'adminpanel/application_detail.html', admin_ctx({
+        'app':            app,
+        'status_choices': Application.STATUS_CHOICES,
+        'active_sidebar': 'applications',
+    }))
