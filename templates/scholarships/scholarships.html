@@ -99,11 +99,58 @@
     </form>
   </div>
 
-  <p class="results-count">Showing <strong>{{ total }}</strong> scholarship{{ total|pluralize }}</p>
+  <p class="results-count">Showing <strong>{{ total }}</strong> scholarship{{ total|pluralize }}
+    {% if has_preferred %} — filtered by your preferred countries: <strong>{{ preferred_countries }}</strong>{% endif %}
+  </p>
 
-  {% if scholarships %}
+  {% if matched %}
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;">
+        <span style="font-size:1.1rem;">🎯</span>
+        <h2 style="font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;color:#111827;">Matched to Your Preferred Countries</h2>
+        <span style="padding:3px 10px;background:#dcfce7;color:#15803d;border-radius:20px;font-size:.78rem;font-weight:600;">{{ matched|length }} match{{ matched|length|pluralize:"es" }}</span>
+      </div>
+      <div class="schol-grid">
+        {% for s in matched %}
+          <a href="{% url 'scholarships:detail' s.pk %}" class="schol-card" style="border-color:#86efac;box-shadow:0 0 0 2px #dcfce7;">
+            <div class="schol-top">
+              <span style="font-size:1.2rem;">🏆</span>
+              {% if s.is_full_funding %}
+                <span class="badge badge-full">Full Scholarship</span>
+              {% else %}
+                <span class="badge badge-partial">Partial Scholarship</span>
+              {% endif %}
+              <span style="margin-left:auto;padding:3px 8px;background:#dcfce7;color:#15803d;border-radius:6px;font-size:.72rem;font-weight:700;">🎯 Country Match</span>
+            </div>
+            <div class="schol-name">{{ s.title }}</div>
+            <div class="schol-provider">{{ s.provider }}{% if s.university %} — {{ s.university.country }}{% endif %}</div>
+            <div class="schol-details">
+              {% if s.amount_display %}
+                <div class="schol-detail">💵 <span class="amount">{{ s.amount_display }}</span></div>
+              {% endif %}
+              <div class="schol-detail">📅 <span>Deadline: {{ s.deadline|date:"F j, Y" }}</span></div>
+              {% if s.target_group %}
+                <div class="schol-detail">👥 <span>{{ s.target_group }}</span></div>
+              {% endif %}
+            </div>
+            <div class="schol-footer">
+              <span>{% if s.recipients_per_year %}{{ s.recipients_per_year }}/year recipients{% endif %}</span>
+              <span class="check-btn">View Details</span>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if others %}
+    {% if matched %}
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;">
+        <h2 style="font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;color:#6b7280;">Other Scholarships</h2>
+      </div>
+    {% endif %}
     <div class="schol-grid">
-      {% for s in scholarships %}
+      {% for s in others %}
         <a href="{% url 'scholarships:detail' s.pk %}" class="schol-card">
           <div class="schol-top">
             <span style="font-size:1.2rem;">🏆</span>
@@ -131,7 +178,9 @@
         </a>
       {% endfor %}
     </div>
-  {% else %}
+  {% endif %}
+
+  {% if not matched and not others %}
     <div class="empty-state">
       <h3>No scholarships found</h3>
       <p>Try a different search term or filter.</p>
