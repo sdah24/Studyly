@@ -39,8 +39,20 @@ def scholarship_list(request):
     others = []
     if preferred:
         for s in scholarships:
+            # Primary: match via linked university's country
             country = s.university.country if s.university else None
-            if country and any(p.lower() in country.lower() or country.lower() in p.lower() for p in preferred):
+            country_match = country and any(
+                p.lower() in country.lower() or country.lower() in p.lower()
+                for p in preferred
+            )
+
+            # Fallback: match via scholarship title or provider text
+            text_match = not country_match and any(
+                p.lower() in s.title.lower() or p.lower() in s.provider.lower()
+                for p in preferred
+            )
+
+            if country_match or text_match:
                 matched.append(s)
             else:
                 others.append(s)
@@ -50,13 +62,13 @@ def scholarship_list(request):
     total = len(matched) + len(others)
 
     return render(request, 'scholarships/scholarships.html', {
-        'matched':        matched,
-        'others':         others,
-        'scholarships':   matched + others,  # kept for total count
-        'total':          total,
-        'query':          query,
-        'funding_filter': funding_filter,
-        'has_preferred':  bool(preferred),
+        'matched':           matched,
+        'others':            others,
+        'scholarships':      matched + others,  # kept for total count
+        'total':             total,
+        'query':             query,
+        'funding_filter':    funding_filter,
+        'has_preferred':     bool(preferred),
         'preferred_countries': ', '.join(preferred),
     })
 
