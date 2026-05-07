@@ -133,11 +133,9 @@ def _consultant_profile_view(request):
         messages.success(request, 'Profile updated successfully!')
         return redirect('users:profile')
 
-    from applications.models import Application
     assigned_students = User.objects.filter(
         profile__assigned_consultant=request.user
-    ) if hasattr(profile.__class__, 'assigned_consultant') else User.objects.none()
-
+    )
     return render(request, 'users/profile_consultant.html', {
         'profile': profile,
         'assigned_count': assigned_students.count(),

@@ -5,6 +5,7 @@ from .models import User, Profile
 
 class ProfileInline(admin.StackedInline):
     model = Profile
+    fk_name = 'user'
     can_delete = False
     verbose_name_plural = 'Profile'
 
