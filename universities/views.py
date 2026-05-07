@@ -59,6 +59,12 @@ def university_detail(request, pk):
 def university_programs(request, pk):
     university = get_object_or_404(University, pk=pk)
     programs = university.programs.all().order_by('name')
+
+    # Optional degree-level filter passed from the form
+    level = request.GET.get('level', '').strip()
+    if level:
+        programs = programs.filter(level=level)
+
     data = [
         {
             'id': p.pk,

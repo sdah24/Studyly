@@ -54,5 +54,15 @@ class ApplicationForm(forms.ModelForm):
                 university=self.instance.university
             ).order_by('name')
         else:
-            # New application — start with empty program list, JS will populate it
-            self.fields['program'].queryset = Program.objects.none()
+            # Allow any program — JS restricts by university, server validates via clean()
+            self.fields['program'].queryset = Program.objects.all()
+
+        def clean(self):
+            cleaned = super().clean()
+            university = cleaned.get('university')
+            program = cleaned.get('program')
+            if university and program and program.university != university:
+                self.add_error('program', 'This program does not belong to the selected university.')
+            if university and not program:
+                self.add_error('program', 'Please select a program for this university.')
+            return cleaned
