@@ -4,10 +4,61 @@ from django.db.models import Q
 from django.utils import timezone
 from .models import Scholarship
 
+# Common aliases for country names as stored in preferred_countries
+COUNTRY_ALIASES = {
+    'usa':           ['united states', 'u.s.', 'u.s.a', 'american', 'america'],
+    'uk':            ['united kingdom', 'u.k.', 'britain', 'british', 'england', 'great britain'],
+    'australia':     ['australian'],
+    'canada':        ['canadian'],
+    'germany':       ['german', 'deutschland', 'daad'],
+    'france':        ['french'],
+    'japan':         ['japanese', 'jasso'],
+    'china':         ['chinese', 'csc'],
+    'new zealand':   ['new zealander', 'nz'],
+    'netherlands':   ['dutch', 'holland'],
+    'sweden':        ['swedish'],
+    'norway':        ['norwegian'],
+    'switzerland':   ['swiss'],
+    'europe':        ['european', 'erasmus', 'eu '],
+    'commonwealth':  ['commonwealth secretariat'],
+}
+
+
+def _country_terms(preferred_country):
+    """Return all search terms for a given preferred country string."""
+    key = preferred_country.lower().strip()
+    terms = [key]
+    for canon, aliases in COUNTRY_ALIASES.items():
+        if key == canon or key in aliases:
+            terms.append(canon)
+            terms.extend(aliases)
+            break
+    if key in COUNTRY_ALIASES:
+        terms.extend(COUNTRY_ALIASES[key])
+    return list(set(terms))
+
+
+def _scholarship_text(s):
+    """All searchable text fields on a scholarship (lowercased)."""
+    parts = [s.title, s.provider]
+    if s.university:
+        parts.extend([s.university.country or '', s.university.name or ''])
+    return ' '.join(parts).lower()
+
+
+def _is_match(s, preferred):
+    """Return True if scholarship matches any preferred country."""
+    for p in preferred:
+        terms = _country_terms(p)
+        text = _scholarship_text(s)
+        if any(t in text for t in terms):
+            return True
+    return False
+
 
 @login_required
 def scholarship_list(request):
-    scholarships = Scholarship.objects.all()
+    scholarships = Scholarship.objects.select_related('university').all()
 
     # Search
     query = request.GET.get('q', '')
@@ -31,7 +82,7 @@ def scholarship_list(request):
     preferred = []
     try:
         profile = request.user.profile
-        preferred = profile.preferred_countries_list()  # returns a list
+        preferred = profile.preferred_countries_list()
     except Exception:
         pass
 
@@ -39,20 +90,7 @@ def scholarship_list(request):
     others = []
     if preferred:
         for s in scholarships:
-            # Primary: match via linked university's country
-            country = s.university.country if s.university else None
-            country_match = country and any(
-                p.lower() in country.lower() or country.lower() in p.lower()
-                for p in preferred
-            )
-
-            # Fallback: match via scholarship title or provider text
-            text_match = not country_match and any(
-                p.lower() in s.title.lower() or p.lower() in s.provider.lower()
-                for p in preferred
-            )
-
-            if country_match or text_match:
+            if _is_match(s, preferred):
                 matched.append(s)
             else:
                 others.append(s)
@@ -62,13 +100,13 @@ def scholarship_list(request):
     total = len(matched) + len(others)
 
     return render(request, 'scholarships/scholarships.html', {
-        'matched':           matched,
-        'others':            others,
-        'scholarships':      matched + others,  # kept for total count
-        'total':             total,
-        'query':             query,
-        'funding_filter':    funding_filter,
-        'has_preferred':     bool(preferred),
+        'matched':             matched,
+        'others':              others,
+        'scholarships':        matched + others,
+        'total':               total,
+        'query':               query,
+        'funding_filter':      funding_filter,
+        'has_preferred':       bool(preferred),
         'preferred_countries': ', '.join(preferred),
     })
 
