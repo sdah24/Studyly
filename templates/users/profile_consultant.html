@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Consultant Profile – Studyly{% endblock %}
+
+{% block content %}
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 2rem; margin-bottom: 1.5rem; }
+  .role-badge { display: inline-block; background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; border-radius: 20px; padding: .3rem .9rem; font-size: .8rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; margin-top: .4rem; }
+  .consultant-info { display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f3f4f6; }
+  .avatar-fallback { width: 72px; height: 72px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 700; color: white; flex-shrink: 0; }
+  .consultant-meta .name { font-weight: 700; font-size: 1.1rem; }
+  .consultant-meta .email { color: #6b7280; font-size: .875rem; margin-top: 2px; }
+  .assigned-badge { display: inline-flex; align-items: center; gap: .4rem; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 20px; padding: .3rem .9rem; font-size: .85rem; font-weight: 600; margin-top: .5rem; }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  @media (max-width: 600px) { .field-grid { grid-template-columns: 1fr; } }
+  .field label { display: block; font-weight: 600; font-size: .875rem; color: #374151; margin-bottom: .4rem; }
+  .field input, .field textarea { width: 100%; padding: 10px 14px; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: .95rem; font-family: 'DM Sans', sans-serif; color: #111827; outline: none; }
+  .field input:focus, .field textarea:focus { border-color: #2563eb; }
+  .field-full { grid-column: span 2; }
+  @media (max-width: 600px) { .field-full { grid-column: span 1; } }
+  .section-title { font-weight: 700; font-size: .95rem; color: #374151; margin: 1.5rem 0 1rem; padding-bottom: .5rem; border-bottom: 1px solid #f3f4f6; grid-column: span 2; }
+  .btn-primary { padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .95rem; cursor: pointer; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-cancel { padding: 12px 28px; background: white; border: 1.5px solid #d1d5db; color: #374151; border-radius: 10px; font-weight: 600; font-size: .95rem; text-decoration: none; display: inline-block; }
+  .msg-success { background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; color: #15803d; font-size: .9rem; }
+  .msg-error { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; color: #991b1b; font-size: .9rem; }
+</style>
+
+<main>
+  <h1 class="page-title">My Profile</h1>
+  <p class="page-subtitle">Manage your consultant account details</p>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="{% if msg.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card">
+
+    <!-- Identity row -->
+    <div class="consultant-info">
+      <div class="avatar-fallback">
+        {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+      </div>
+      <div class="consultant-meta">
+        <div class="name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="email">{{ request.user.email }}</div>
+        <span class="role-badge">Educational Consultant</span>
+        <div class="assigned-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          {{ assigned_count }} Assigned Student{{ assigned_count|pluralize }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Editable fields -->
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="field-grid">
+
+        <div class="section-title">Professional Details</div>
+
+        <div class="field field-full">
+          <label>Specialization</label>
+          <input type="text" name="specialization" value="{{ profile.specialization|default:'' }}" placeholder="e.g. UK Universities, MBA Programs, Scholarships">
+        </div>
+
+        <div class="section-title">Contact Information</div>
+
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="text" name="phone_number" value="{{ profile.phone_number|default:'' }}" placeholder="+880...">
+        </div>
+
+        <div class="field field-full">
+          <label>Address</label>
+          <textarea name="address" rows="2" placeholder="Your address">{{ profile.address|default:'' }}</textarea>
+        </div>
+
+      </div>
+
+      <div style="margin-top:2rem;display:flex;gap:.75rem;">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="{% url 'dashboard:dashboard' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
