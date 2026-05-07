@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Application Detail – Admin{% endblock %}
+{% block title %}Applications – Admin{% endblock %}
 {% block content %}
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -11,201 +11,193 @@
   .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;color:rgba(255,255,255,.7);font-size:.9rem;font-weight:500;transition:background .15s,color .15s}
   .sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.08);color:white}
   .main-area{flex:1;padding:2rem;min-width:0}
-  .back-link{display:inline-flex;align-items:center;gap:6px;color:#2563eb;font-size:.9rem;margin-bottom:1.5rem}
-  .back-link:hover{text-decoration:underline}
   .page-title{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:900;margin-bottom:.25rem}
-  .page-sub{color:#6b7280;font-size:.9rem;margin-bottom:2rem}
-  .card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:1.5rem;margin-bottom:1.5rem}
-  .card h2{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700;margin-bottom:1rem;color:#111827}
-  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  @media(max-width:700px){.grid-2{grid-template-columns:1fr}}
-  .info-row{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #f3f4f6;font-size:.9rem}
-  .info-row:last-child{border-bottom:none}
-  .info-row .lbl{color:#6b7280}
-  .info-row .val{font-weight:600;color:#111827}
-  .status-badge{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:.82rem;font-weight:600}
-  .doc-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid #f3f4f6;font-size:.9rem}
-  .doc-item:last-child{border-bottom:none}
-  .doc-pending{color:#9ca3af}
-  .doc-link{color:#2563eb;font-size:.82rem;font-weight:600}
-  .doc-link:hover{text-decoration:underline}
-  select.status-select{padding:9px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:#111827;outline:none}
-  select.status-select:focus{border-color:#2563eb}
-  .btn-blue{padding:10px 22px;background:#2563eb;color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.875rem;cursor:pointer}
+  .page-sub{color:#6b7280;font-size:.9rem;margin-bottom:1.5rem}
+  .search-row{display:flex;gap:.75rem;margin-bottom:1.5rem}
+  .search-input{flex:1;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none}
+  .search-input:focus{border-color:#2563eb}
+  .btn-blue{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.875rem;cursor:pointer}
   .btn-blue:hover{background:#1d4ed8}
-  .msg-textarea{width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;color:#111827;resize:vertical;min-height:100px;outline:none;box-sizing:border-box}
-  .msg-textarea:focus{border-color:#2563eb}
-  .msg-success{background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;color:#15803d;font-size:.9rem}
-  .msg-error{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;color:#991b1b;font-size:.9rem}
-  .student-avatar{width:48px;height:48px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:1.1rem;flex-shrink:0}
-  .student-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-  .student-name{font-weight:700;font-size:1rem}
-  .student-email{color:#6b7280;font-size:.85rem}
-  .hint{font-size:.82rem;color:#6b7280;margin-bottom:.75rem;line-height:1.5}
-  .prefill-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem}
-  .prefill-btn{padding:5px 12px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
-  .prefill-btn:hover{background:#dbeafe}
+  table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb}
+  th{text-align:left;padding:.75rem 1rem;font-size:.8rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;background:#f9fafb;border-bottom:1px solid #e5e7eb}
+  td{padding:.85rem 1rem;font-size:.9rem;border-bottom:1px solid #f3f4f6;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#fafafa}
+  .status-badge{display:inline-flex;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600}
+  .view-link{color:#2563eb;font-weight:600;font-size:.85rem}
+  .view-link:hover{text-decoration:underline}
+  .action-btns{display:flex;align-items:center;gap:.5rem}
+
+  /* Message button in row */
+  .msg-btn{padding:5px 12px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+  .msg-btn:hover{background:#dbeafe}
+
+  /* Modal backdrop */
+  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center}
+  .modal-backdrop.open{display:flex}
+  .modal{background:white;border-radius:16px;padding:1.75rem;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.18);position:relative}
+  .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:#9ca3af;font-size:1.2rem;line-height:1}
+  .modal-close:hover{color:#111827}
+  .modal-title{font-family:'Fraunces',serif;font-weight:900;font-size:1.15rem;color:#111827;margin-bottom:.25rem}
+  .modal-sub{font-size:.83rem;color:#6b7280;margin-bottom:1.25rem;line-height:1.5}
+  .modal-sub strong{color:#111827}
+
+  /* Prefill chips */
+  .prefill-btns{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.85rem}
+  .prefill-chip{padding:4px 10px;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .prefill-chip:hover{background:#dbeafe;color:#2563eb;border-color:#bfdbfe}
+
+  .modal-textarea{width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;color:#111827;resize:vertical;min-height:100px;outline:none;box-sizing:border-box}
+  .modal-textarea:focus{border-color:#2563eb}
+  .modal-actions{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem}
+  .btn-cancel{padding:9px 18px;border:1.5px solid #e5e7eb;border-radius:8px;background:white;color:#374151;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:.875rem}
+  .btn-cancel:hover{background:#f9fafb}
 </style>
 
 <div class="admin-wrap">
   <aside class="sidebar">
     <div class="sidebar-logo">Studyly Admin</div>
-    <a href="{% url 'adminpanel:dashboard' %}"        class="sidebar-link {% if active_sidebar == 'dashboard' %}active{% endif %}">Dashboard</a>
-    <a href="{% url 'adminpanel:students' %}"          class="sidebar-link {% if active_sidebar == 'students' %}active{% endif %}">Students</a>
-    <a href="{% url 'adminpanel:universities' %}"      class="sidebar-link {% if active_sidebar == 'universities' %}active{% endif %}">Universities</a>
-    <a href="{% url 'adminpanel:scholarships' %}"      class="sidebar-link {% if active_sidebar == 'scholarships' %}active{% endif %}">Scholarships</a>
-    <a href="{% url 'adminpanel:application_list' %}"  class="sidebar-link {% if active_sidebar == 'applications' %}active{% endif %}">Applications</a>
+    <a href="{% url 'adminpanel:dashboard' %}"       class="sidebar-link {% if active_sidebar == 'dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'adminpanel:students' %}"         class="sidebar-link {% if active_sidebar == 'students' %}active{% endif %}">Students</a>
+    <a href="{% url 'adminpanel:universities' %}"     class="sidebar-link {% if active_sidebar == 'universities' %}active{% endif %}">Universities</a>
+    <a href="{% url 'adminpanel:scholarships' %}"     class="sidebar-link {% if active_sidebar == 'scholarships' %}active{% endif %}">Scholarships</a>
+    <a href="{% url 'adminpanel:application_list' %}" class="sidebar-link {% if active_sidebar == 'applications' %}active{% endif %}">Applications</a>
   </aside>
 
   <div class="main-area">
-    <a href="{% url 'adminpanel:application_list' %}" class="back-link">← Back to Applications</a>
-    <div class="page-title">Application Detail</div>
-    <p class="page-sub">Review documents, update status, and message the student directly.</p>
+    <div class="page-title">Applications</div>
+    <p class="page-sub">Review and manage all student applications.</p>
 
-    {% if messages %}
-      {% for msg in messages %}
-        <div class="{% if msg.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
+    <form method="get" class="search-row">
+      <input type="text" name="q" class="search-input" placeholder="Search by student or university…" value="{{ q }}">
+      <button type="submit" class="btn-blue">Search</button>
+    </form>
 
-    <div class="grid-2">
-
-      <!-- LEFT -->
-      <div>
-
-        <!-- Student -->
-        <div class="card">
-          <h2>👤 Student</h2>
-          <div class="student-row">
-            <div class="student-avatar">
-              {{ app.user.first_name|first|upper|default:app.user.username|first|upper }}
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>University</th>
+          <th>Program</th>
+          <th>Status</th>
+          <th>Docs</th>
+          <th>Applied</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+        <tr>
+          <td>{{ app.user.get_full_name|default:app.user.username }}</td>
+          <td>{{ app.university.name }}</td>
+          <td>{{ app.program.name|default:"—" }}</td>
+          <td>
+            {% with color=app.status_color %}
+              <span class="status-badge" style="background:{{ color.bg }};color:{{ color.color }};">
+                {{ app.get_status_display }}
+              </span>
+            {% endwith %}
+          </td>
+          <td>{{ app.documents_submitted }}/{{ app.total_documents }}</td>
+          <td>{{ app.applied_date|date:"M d, Y" }}</td>
+          <td>
+            <div class="action-btns">
+              <a href="{% url 'adminpanel:application_detail' app.pk %}" class="view-link">View →</a>
+              <button
+                type="button"
+                class="msg-btn"
+                onclick="openMsgModal(
+                  '{{ app.pk }}',
+                  '{{ app.user.get_full_name|default:app.user.username|escapejs }}',
+                  '{{ app.university.name|escapejs }}'
+                )">✉️ Message</button>
             </div>
-            <div>
-              <div class="student-name">{{ app.user.get_full_name|default:app.user.username }}</div>
-              <div class="student-email">{{ app.user.email }}</div>
-            </div>
-          </div>
-          <div class="info-row"><span class="lbl">Username</span><span class="val">{{ app.user.username }}</span></div>
-          <div class="info-row"><span class="lbl">GPA</span><span class="val">{{ app.user.profile.GPA|default:"—" }}</span></div>
-          <div class="info-row"><span class="lbl">Degree Level</span><span class="val">{{ app.user.profile.get_degree_level_display|default:"—" }}</span></div>
-          <div class="info-row"><span class="lbl">English Score</span><span class="val">{{ app.user.profile.english_score|default:"—" }}</span></div>
-        </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:2rem;">No applications found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        <!-- Application info -->
-        <div class="card">
-          <h2>ℹ️ Application Info</h2>
-          <div class="info-row"><span class="lbl">University</span><span class="val">{{ app.university.name }}</span></div>
-          <div class="info-row"><span class="lbl">Program</span><span class="val">{{ app.program.name|default:"—" }}</span></div>
-          <div class="info-row"><span class="lbl">Intake</span><span class="val">{{ app.get_intake_season_display|default:"—" }}</span></div>
-          <div class="info-row"><span class="lbl">Deadline</span><span class="val">{{ app.deadline|date:"F j, Y"|default:"Not set" }}</span></div>
-          <div class="info-row"><span class="lbl">Applied On</span><span class="val">{{ app.applied_date|date:"F j, Y" }}</span></div>
-          <div class="info-row">
-            <span class="lbl">Status</span>
-            <span class="val">
-              {% with color=app.status_color %}
-                <span class="status-badge" style="background:{{ color.bg }};color:{{ color.color }};">{{ app.get_status_display }}</span>
-              {% endwith %}
-            </span>
-          </div>
-          <div class="info-row"><span class="lbl">Documents</span><span class="val">{{ app.documents_submitted }}/{{ app.total_documents }}</span></div>
-        </div>
+<!-- ✉️ Message Modal -->
+<div class="modal-backdrop" id="msgModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeMsgModal()">✕</button>
+    <div class="modal-title">✉️ Message Student</div>
+    <p class="modal-sub" id="modal-sub-text"></p>
 
-        <!-- Update status -->
-        <div class="card">
-          <h2>🔄 Update Status</h2>
-          <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="update_status">
-            <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
-              <select name="status" class="status-select">
-                {% for val, label in status_choices %}
-                  <option value="{{ val }}" {% if app.status == val %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-              </select>
-              <button type="submit" class="btn-blue">Update</button>
-            </div>
-          </form>
-        </div>
+    <!-- Quick prefill chips -->
+    <div class="prefill-btns" id="prefill-btns"></div>
 
+    <form method="post" id="msgForm">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="send_message">
+      <textarea
+        name="body"
+        id="modal-body"
+        class="modal-textarea"
+        placeholder="Write your message…"></textarea>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="closeMsgModal()">Cancel</button>
+        <button type="submit" class="btn-blue">Send Message</button>
       </div>
-
-      <!-- RIGHT -->
-      <div>
-
-        <!-- Documents with download links -->
-        <div class="card">
-          <h2>📄 Documents</h2>
-          <div class="doc-item">
-            <span>Personal Statement</span>
-            {% if app.personal_statement %}<a href="{{ app.personal_statement.url }}" class="doc-link" target="_blank">⬇ Download</a>
-            {% else %}<span class="doc-pending">Pending</span>{% endif %}
-          </div>
-          <div class="doc-item">
-            <span>Transcripts</span>
-            {% if app.transcripts %}<a href="{{ app.transcripts.url }}" class="doc-link" target="_blank">⬇ Download</a>
-            {% else %}<span class="doc-pending">Pending</span>{% endif %}
-          </div>
-          <div class="doc-item">
-            <span>Recommendations</span>
-            {% if app.recommendations %}<a href="{{ app.recommendations.url }}" class="doc-link" target="_blank">⬇ Download</a>
-            {% else %}<span class="doc-pending">Pending</span>{% endif %}
-          </div>
-          <div class="doc-item">
-            <span>English Test</span>
-            {% if app.english_test %}<a href="{{ app.english_test.url }}" class="doc-link" target="_blank">⬇ Download</a>
-            {% else %}<span class="doc-pending">Pending</span>{% endif %}
-          </div>
-          <div class="doc-item">
-            <span>Financial Docs</span>
-            {% if app.financial_docs %}<a href="{{ app.financial_docs.url }}" class="doc-link" target="_blank">⬇ Download</a>
-            {% else %}<span class="doc-pending">Pending</span>{% endif %}
-          </div>
-          <div class="doc-item">
-            <span>CV / Resume</span>
-            {% if app.cv_resume %}<a href="{{ app.cv_resume.url }}" class="doc-link" target="_blank">⬇ Download</a>
-            {% else %}<span class="doc-pending">Pending</span>{% endif %}
-          </div>
-        </div>
-
-        <!-- Message student -->
-        <div class="card">
-          <h2>✉️ Message Student</h2>
-          <p class="hint">
-            This message will be sent to
-            <strong>{{ app.user.get_full_name|default:app.user.username }}</strong>'s
-            inbox and reference their <strong>{{ app.university.name }}</strong> application.
-          </p>
-
-          <!-- Quick prefill buttons -->
-          <div class="prefill-btns">
-            <button type="button" class="prefill-btn" onclick="prefill('Your personal statement for {{ app.university.name }} needs more detail about your academic background.')">Personal Statement</button>
-            <button type="button" class="prefill-btn" onclick="prefill('Please upload your academic transcripts for your {{ app.university.name }} application.')">Missing Transcripts</button>
-            <button type="button" class="prefill-btn" onclick="prefill('Your {{ app.university.name }} application has been reviewed and is now under consideration.')">Under Review</button>
-            <button type="button" class="prefill-btn" onclick="prefill('Congratulations! Your application to {{ app.university.name }} has been accepted.')">Accepted</button>
-            <button type="button" class="prefill-btn" onclick="prefill('Unfortunately your application to {{ app.university.name }} was not successful this time.')">Rejected</button>
-          </div>
-
-          <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="send_message">
-            <textarea name="body" id="msg-body" class="msg-textarea"
-              placeholder="Write a message to {{ app.user.get_full_name|default:app.user.username }} about this application…"></textarea>
-            <div style="margin-top:.75rem;">
-              <button type="submit" class="btn-blue">Send Message</button>
-            </div>
-          </form>
-        </div>
-
-      </div>
-    </div>
+    </form>
   </div>
 </div>
 
 <script>
-  function prefill(text) {
-    document.getElementById('msg-body').value = text;
-    document.getElementById('msg-body').focus();
+  function openMsgModal(appPk, studentName, universityName) {
+    // Point the form POST to the correct application_detail URL
+    document.getElementById('msgForm').action = '/adminpanel/applications/' + appPk + '/';
+
+    // Update subtitle
+    document.getElementById('modal-sub-text').innerHTML =
+      'Sending to <strong>' + studentName + '</strong> regarding their <strong>' + universityName + '</strong> application.';
+
+    // Build prefill chips dynamically
+    var chips = [
+      ['Personal Statement', 'Your personal statement for ' + universityName + ' needs more detail about your academic background.'],
+      ['Missing Transcripts', 'Please upload your academic transcripts for your ' + universityName + ' application.'],
+      ['Under Review',        'Your ' + universityName + ' application has been reviewed and is now under consideration.'],
+      ['Accepted',            'Congratulations! Your application to ' + universityName + ' has been accepted.'],
+      ['Rejected',            'Unfortunately your application to ' + universityName + ' was not successful this time.'],
+    ];
+    var container = document.getElementById('prefill-btns');
+    container.innerHTML = '';
+    chips.forEach(function(c) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'prefill-chip';
+      btn.textContent = c[0];
+      btn.onclick = function() {
+        document.getElementById('modal-body').value = c[1];
+        document.getElementById('modal-body').focus();
+      };
+      container.appendChild(btn);
+    });
+
+    // Clear previous message and open
+    document.getElementById('modal-body').value = '';
+    document.getElementById('msgModal').classList.add('open');
+    document.getElementById('modal-body').focus();
   }
+
+  function closeMsgModal() {
+    document.getElementById('msgModal').classList.remove('open');
+  }
+
+  // Close on backdrop click
+  document.getElementById('msgModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMsgModal();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMsgModal();
+  });
 </script>
 
 {% endblock %}
