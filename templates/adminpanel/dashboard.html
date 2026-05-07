@@ -91,7 +91,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
       Scholarships
     </a>
-    <a href="{% url 'applications:list' %}"       class="sidebar-link">
+  <a href="{% url 'adminpanel:application_list' %}" class="sidebar-link {% if active_sidebar == 'applications' %}active{% endif %}">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       Applications
     </a>
@@ -179,16 +179,17 @@
       <div class="card">
         <div class="card-header">
           <h2>Recent Applications</h2>
-          <a href="{% url 'applications:list' %}">View All →</a>
+          <a href="{% url 'adminpanel:application_list' %}">View All →</a>
         </div>
         <table>
           <thead>
             <tr>
-              <th>Student</th>
+             <th>Student</th>
               <th>University</th>
               <th>Program</th>
               <th>Status</th>
               <th>Date</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -199,6 +200,14 @@
               <td>{{ app.program.name|default:"—" }}</td>
               <td><span class="status-pill status-{{ app.status }}">{{ app.get_status_display }}</span></td>
               <td style="color:#9ca3af">{{ app.applied_date|date:"M j" }}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:.5rem;">
+                  <a href="{% url 'adminpanel:application_detail' app.pk %}" style="color:#2563eb;font-weight:600;font-size:.82rem;">View →</a>
+                  <button type="button"
+                    style="padding:4px 10px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"
+                    onclick="openMsgModal('{{ app.pk }}','{{ app.user.get_full_name|default:app.user.username|escapejs }}','{{ app.university.name|escapejs }}')">✉️ Msg</button>
+                </div>
+              </td>
             </tr>
             {% empty %}
             <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:2rem">No applications yet.</td></tr>
@@ -226,4 +235,67 @@
 
   </div>
 </div>
+<!-- ✉️ Message Modal -->
+<div id="msgModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:16px;padding:1.75rem;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.18);position:relative;">
+    <button onclick="closeMsgModal()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:#9ca3af;font-size:1.2rem;">✕</button>
+    <div style="font-family:'Fraunces',serif;font-weight:900;font-size:1.15rem;color:#111827;margin-bottom:.25rem;">✉️ Message Student</div>
+    <p id="modal-sub-text" style="font-size:.83rem;color:#6b7280;margin-bottom:1.25rem;line-height:1.5;"></p>
+    <div id="prefill-btns" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.85rem;"></div>
+    <form method="post" id="msgForm">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="send_message">
+      <textarea name="body" id="modal-body"
+        style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;color:#111827;resize:vertical;min-height:100px;outline:none;box-sizing:border-box;"
+        placeholder="Write your message…"></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem;">
+        <button type="button" onclick="closeMsgModal()"
+          style="padding:9px 18px;border:1.5px solid #e5e7eb;border-radius:8px;background:white;color:#374151;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;">Cancel</button>
+        <button type="submit"
+          style="padding:9px 18px;background:#2563eb;color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;">Send Message</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openMsgModal(appPk, studentName, universityName) {
+    document.getElementById('msgForm').action = '/adminpanel/applications/' + appPk + '/';
+    document.getElementById('modal-sub-text').innerHTML =
+      'Sending to <strong>' + studentName + '</strong> regarding their <strong>' + universityName + '</strong> application.';
+    var chips = [
+      ['Personal Statement', 'Your personal statement for ' + universityName + ' needs more detail about your academic background.'],
+      ['Missing Transcripts', 'Please upload your academic transcripts for your ' + universityName + ' application.'],
+      ['Under Review',        'Your ' + universityName + ' application has been reviewed and is now under consideration.'],
+      ['Accepted',            'Congratulations! Your application to ' + universityName + ' has been accepted.'],
+      ['Rejected',            'Unfortunately your application to ' + universityName + ' was not successful this time.'],
+    ];
+    var container = document.getElementById('prefill-btns');
+    container.innerHTML = '';
+    chips.forEach(function(c) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = c[0];
+      btn.style.cssText = 'padding:4px 10px;background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;border-radius:6px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:DM Sans,sans-serif;';
+      btn.onclick = function() {
+        document.getElementById('modal-body').value = c[1];
+        document.getElementById('modal-body').focus();
+      };
+      container.appendChild(btn);
+    });
+    document.getElementById('modal-body').value = '';
+    var modal = document.getElementById('msgModal');
+    modal.style.display = 'flex';
+    document.getElementById('modal-body').focus();
+  }
+  function closeMsgModal() {
+    document.getElementById('msgModal').style.display = 'none';
+  }
+  document.getElementById('msgModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMsgModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeMsgModal();
+  });
+</script>
 {% endblock %}
