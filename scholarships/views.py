@@ -27,20 +27,43 @@ def scholarship_list(request):
     elif funding_filter == 'open':
         scholarships = scholarships.filter(deadline__gte=timezone.now().date())
 
-    total = scholarships.count()
+    # ── Country match ──────────────────────────────────────────────
+    preferred = []
+    try:
+        profile = request.user.profile
+        preferred = profile.preferred_countries_list()  # returns a list
+    except Exception:
+        pass
+
+    matched = []
+    others = []
+    if preferred:
+        for s in scholarships:
+            country = s.university.country if s.university else None
+            if country and any(p.lower() in country.lower() or country.lower() in p.lower() for p in preferred):
+                matched.append(s)
+            else:
+                others.append(s)
+    else:
+        others = list(scholarships)
+
+    total = len(matched) + len(others)
 
     return render(request, 'scholarships/scholarships.html', {
-        'scholarships': scholarships,
-        'total': total,
-        'query': query,
+        'matched':        matched,
+        'others':         others,
+        'scholarships':   matched + others,  # kept for total count
+        'total':          total,
+        'query':          query,
         'funding_filter': funding_filter,
+        'has_preferred':  bool(preferred),
+        'preferred_countries': ', '.join(preferred),
     })
 
 
 @login_required
 def scholarship_detail(request, pk):
     scholarship = get_object_or_404(Scholarship, pk=pk)
-
     return render(request, 'scholarships/scholarship_detail.html', {
         'scholarship': scholarship,
     })
