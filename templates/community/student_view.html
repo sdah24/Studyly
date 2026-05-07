@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ student.get_full_name|default:student.username }} – Files{% endblock %}
+{% block content %}
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#f9fafb;color:#111827}
+  a{text-decoration:none;color:inherit}
+  main{max-width:900px;margin:0 auto;padding:2rem}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:#2563eb;font-size:.9rem;margin-bottom:1.5rem}
+  .back-link:hover{text-decoration:underline}
+  h1{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:900;margin-bottom:.25rem}
+  .sub{color:#6b7280;font-size:.9rem;margin-bottom:2rem}
+  .card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:1.5rem;margin-bottom:1.5rem}
+  .card-title{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:700;margin-bottom:.25rem}
+  .card-sub{color:#6b7280;font-size:.85rem;margin-bottom:1rem}
+  .doc-item{display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid #f3f4f6;font-size:.9rem}
+  .doc-item:last-child{border-bottom:none}
+  .doc-link{color:#2563eb;font-weight:600;font-size:.85rem}
+  .doc-link:hover{text-decoration:underline}
+  .doc-pending{color:#9ca3af;font-size:.85rem}
+  .status-badge{display:inline-flex;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600}
+  .empty{text-align:center;color:#9ca3af;padding:3rem 1rem;font-size:.95rem}
+  .msg-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#2563eb;color:white;border-radius:8px;font-weight:600;font-size:.875rem}
+  .msg-btn:hover{background:#1d4ed8}
+</style>
+
+<main>
+  <a href="{% url 'community:list' %}" class="back-link">← Back to Community</a>
+
+  <h1>{{ student.get_full_name|default:student.username }}</h1>
+  <p class="sub">{{ student.email }} · Shared applications and documents</p>
+
+  <div style="margin-bottom:1.5rem;">
+    <a href="{% url 'users:conversation' student.username %}" class="msg-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Message {{ student.first_name|default:student.username }}
+    </a>
+  </div>
+
+  {% if shared_apps %}
+    {% for app in shared_apps %}
+    <div class="card">
+      <div class="card-title">{{ app.university.name }}</div>
+      <div class="card-sub">
+        {{ app.program.name|default:"No program" }} ·
+        {% with color=app.status_color %}
+          <span class="status-badge" style="background:{{ color.bg }};color:{{ color.color }};">{{ app.get_status_display }}</span>
+        {% endwith %}
+        · {{ app.documents_submitted }}/{{ app.total_documents }} docs
+      </div>
+
+      <div class="doc-item"><span>Personal Statement</span>
+        {% if app.personal_statement %}<a href="{{ app.personal_statement.url }}" class="doc-link" target="_blank">⬇ Download</a>
+        {% else %}<span class="doc-pending">Not uploaded</span>{% endif %}
+      </div>
+      <div class="doc-item"><span>Transcripts</span>
+        {% if app.transcripts %}<a href="{{ app.transcripts.url }}" class="doc-link" target="_blank">⬇ Download</a>
+        {% else %}<span class="doc-pending">Not uploaded</span>{% endif %}
+      </div>
+      <div class="doc-item"><span>Recommendations</span>
+        {% if app.recommendations %}<a href="{{ app.recommendations.url }}" class="doc-link" target="_blank">⬇ Download</a>
+        {% else %}<span class="doc-pending">Not uploaded</span>{% endif %}
+      </div>
+      <div class="doc-item"><span>English Test</span>
+        {% if app.english_test %}<a href="{{ app.english_test.url }}" class="doc-link" target="_blank">⬇ Download</a>
+        {% else %}<span class="doc-pending">Not uploaded</span>{% endif %}
+      </div>
+      <div class="doc-item"><span>Financial Docs</span>
+        {% if app.financial_docs %}<a href="{{ app.financial_docs.url }}" class="doc-link" target="_blank">⬇ Download</a>
+        {% else %}<span class="doc-pending">Not uploaded</span>{% endif %}
+      </div>
+      <div class="doc-item"><span>CV / Resume</span>
+        {% if app.cv_resume %}<a href="{{ app.cv_resume.url }}" class="doc-link" target="_blank">⬇ Download</a>
+        {% else %}<span class="doc-pending">Not uploaded</span>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty">This student hasn't shared any applications with you yet.</div>
+  {% endif %}
+</main>
+{% endblock %}
