@@ -86,7 +86,15 @@ class Profile(models.Model):
     )
 
     # Consultant-specific
+    # Consultant-specific
     specialization = models.CharField(max_length=255, blank=True, null=True)
+    assigned_consultant = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='assigned_students',
+        limit_choices_to={'role': 'consultant'},
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
