@@ -56,12 +56,27 @@
         <p class="user-meta"><i data-lucide="globe" style="width:13px;height:13px;"></i> {{ u.profile.preferred_countries }}</p>
         {% endif %}
       </div>
-      <div class="user-card__actions">
+ <div class="user-card__actions">
         <a href="{% url 'community:profile' u.pk %}" class="btn btn--outline btn--sm">View Profile</a>
-        {% if u.role != 'admin' %}
-        <a href="{% url 'users:conversation' u.username %}" class="btn btn--primary btn--sm">
-          <i data-lucide="message-circle" style="width:14px;height:14px;"></i> Message
-        </a>
+        {% if request.user.role == 'student' and u.role == 'consultant' %}
+          {% with status=existing_requests|get_item:u.pk %}
+            {% if status == 'accepted' %}
+              <span class="btn btn--success btn--sm">✓ Connected</span>
+            {% elif status == 'pending' %}
+              <span class="btn btn--muted btn--sm">⏳ Pending</span>
+            {% elif status == 'rejected' %}
+              <span class="btn btn--muted btn--sm">✗ Rejected</span>
+            {% else %}
+              <form method="post" action="{% url 'community:request_consultant' u.pk %}" style="margin:0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--primary btn--sm">Request Guidance</button>
+              </form>
+            {% endif %}
+          {% endwith %}
+        {% elif u.role != 'admin' %}
+          <a href="{% url 'users:conversation' u.username %}" class="btn btn--primary btn--sm">
+            <i data-lucide="message-circle" style="width:14px;height:14px;"></i> Message
+          </a>
         {% endif %}
       </div>
     </div>
