@@ -458,31 +458,47 @@
 
   updateProgress();
 
-  // University → Program dynamic loader
+
+// University + Degree Level → Program dynamic loader
   (function () {
     const uniSelect     = document.getElementById('id_university');
+    const levelSelect   = document.getElementById('id_degree_level_filter');
     const progSelect    = document.getElementById('id_program');
     const hint          = document.getElementById('program-hint');
     const selectedProg  = "{{ app.program.pk|default:'' }}";
 
-    function fetchPrograms(universityPk, preselectPk) {
-      if (!universityPk) {
-        progSelect.innerHTML = '<option value="">— Select a Program (optional) —</option>';
-        hint.style.display = 'block';
+    function resetPrograms(message) {
+      progSelect.innerHTML = '<option value="">— Select a Program —</option>';
+      hint.textContent     = message;
+      hint.style.display   = 'block';
+    }
+
+    function fetchPrograms(preselectPk) {
+      const uniPk  = uniSelect.value;
+      const level  = levelSelect.value;
+
+      if (!uniPk) {
+        resetPrograms('Select a university first.');
         return;
       }
-      fetch('/universities/' + universityPk + '/programs/')
+      if (!level) {
+        resetPrograms('Select a degree level to see programs.');
+        return;
+      }
+
+      const url = '/universities/' + uniPk + '/programs/?level=' + level;
+      fetch(url)
         .then(r => r.json())
         .then(data => {
-          progSelect.innerHTML = '<option value="">— Select a Program (optional) —</option>';
+          progSelect.innerHTML = '<option value="">— Select a Program —</option>';
           if (data.programs.length === 0) {
-            hint.textContent   = 'No programs listed for this university yet.';
+            hint.textContent   = 'No ' + levelSelect.options[levelSelect.selectedIndex].text + ' programs at this university.';
             hint.style.display = 'block';
           } else {
             data.programs.forEach(p => {
-              const opt = document.createElement('option');
+              const opt       = document.createElement('option');
               opt.value       = p.id;
-              opt.textContent = p.name + ' (' + p.level_display + ')';
+              opt.textContent = p.name;
               if (String(p.id) === String(preselectPk)) opt.selected = true;
               progSelect.appendChild(opt);
             });
@@ -495,12 +511,14 @@
         });
     }
 
-    uniSelect.addEventListener('change', function () {
-      fetchPrograms(this.value, null);
-    });
+    uniSelect.addEventListener('change',   () => fetchPrograms(null));
+    levelSelect.addEventListener('change', () => fetchPrograms(null));
 
-    if (uniSelect.value) {
-      fetchPrograms(uniSelect.value, selectedProg);
+    // On edit: university and level already set — load matching programs
+    if (uniSelect.value && levelSelect.value) {
+      fetchPrograms(selectedProg);
+    } else if (uniSelect.value) {
+      resetPrograms('Now select a degree level to see programs.');
     }
   })();
 </script>
