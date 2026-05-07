@@ -108,5 +108,26 @@
       {% endif %}
     </div>
   </div>
+{# ── Consultant sharing ── #}
+  {% if request.user.profile.assigned_consultant %}
+  <div class="card" style="margin-top:1.5rem;">
+    <h2>🤝 Consultant Access</h2>
+    <p style="font-size:.9rem;color:#4b5563;margin-bottom:1rem;">
+      Your consultant <strong>{{ request.user.profile.assigned_consultant.get_full_name|default:request.user.profile.assigned_consultant.username }}</strong>
+      {% if app.shared_with_consultant %}
+        currently <span style="color:#15803d;font-weight:600;">has access</span> to this application's documents.
+      {% else %}
+        does <span style="color:#9ca3af;font-weight:600;">not</span> have access to this application yet.
+      {% endif %}
+    </p>
+    <form method="post" action="{% url 'community:share_application' app.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="{% if app.shared_with_consultant %}btn-outline{% else %}btn-blue{% endif %}">
+        {% if app.shared_with_consultant %}Revoke Consultant Access{% else %}Share with Consultant{% endif %}
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
 </main>
 {% endblock %}
