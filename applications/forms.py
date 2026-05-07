@@ -39,10 +39,10 @@ class ApplicationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['university'].empty_label = '— Select a University —'
-        self.fields['program'].empty_label    = '— Select a Program (optional) —'
-        self.fields['program'].required       = False
-        self.fields['deadline'].required      = False
-        self.fields['notes'].required         = False
+        self.fields['program'].empty_label = '— Select a Program —'
+        self.fields['program'].required = True
+        self.fields['deadline'].required = False
+        self.fields['notes'].required = False
 
         for doc_field in ['personal_statement', 'transcripts', 'recommendations',
                           'english_test', 'financial_docs', 'cv_resume']:
