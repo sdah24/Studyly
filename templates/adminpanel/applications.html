@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Applications – Admin{% endblock %}
+{% block content %}
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#f9fafb;color:#111827}
+  a{text-decoration:none;color:inherit}
+  .admin-wrap{display:flex;min-height:100vh}
+  .sidebar{width:240px;background:#1e293b;color:white;padding:1.5rem 0;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .sidebar-logo{padding:0 1.25rem 1.5rem;font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:white;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:1rem}
+  .sidebar-link{display:flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;color:rgba(255,255,255,.7);font-size:.9rem;font-weight:500;transition:background .15s,color .15s}
+  .sidebar-link:hover,.sidebar-link.active{background:rgba(255,255,255,.08);color:white}
+  .main-area{flex:1;padding:2rem;min-width:0}
+  .page-title{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:900;margin-bottom:.25rem}
+  .page-sub{color:#6b7280;font-size:.9rem;margin-bottom:1.5rem}
+  .search-row{display:flex;gap:.75rem;margin-bottom:1.5rem}
+  .search-input{flex:1;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none}
+  .search-input:focus{border-color:#2563eb}
+  .btn-blue{padding:10px 20px;background:#2563eb;color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.875rem;cursor:pointer}
+  .btn-blue:hover{background:#1d4ed8}
+  table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb}
+  th{text-align:left;padding:.75rem 1rem;font-size:.8rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;background:#f9fafb;border-bottom:1px solid #e5e7eb}
+  td{padding:.85rem 1rem;font-size:.9rem;border-bottom:1px solid #f3f4f6;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#fafafa}
+  .status-badge{display:inline-flex;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600}
+  .view-link{color:#2563eb;font-weight:600;font-size:.85rem}
+  .view-link:hover{text-decoration:underline}
+</style>
+
+<div class="admin-wrap">
+  <aside class="sidebar">
+    <div class="sidebar-logo">Studyly Admin</div>
+    <a href="{% url 'adminpanel:dashboard' %}"       class="sidebar-link {% if active_sidebar == 'dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'adminpanel:students' %}"         class="sidebar-link {% if active_sidebar == 'students' %}active{% endif %}">Students</a>
+    <a href="{% url 'adminpanel:universities' %}"     class="sidebar-link {% if active_sidebar == 'universities' %}active{% endif %}">Universities</a>
+    <a href="{% url 'adminpanel:scholarships' %}"     class="sidebar-link {% if active_sidebar == 'scholarships' %}active{% endif %}">Scholarships</a>
+    <a href="{% url 'adminpanel:application_list' %}" class="sidebar-link {% if active_sidebar == 'applications' %}active{% endif %}">Applications</a>
+  </aside>
+
+  <div class="main-area">
+    <div class="page-title">Applications</div>
+    <p class="page-sub">Review and manage all student applications.</p>
+
+    <form method="get" class="search-row">
+      <input type="text" name="q" class="search-input" placeholder="Search by student or university…" value="{{ q }}">
+      <button type="submit" class="btn-blue">Search</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>University</th>
+          <th>Program</th>
+          <th>Status</th>
+          <th>Docs</th>
+          <th>Applied</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+        <tr>
+          <td>{{ app.user.get_full_name|default:app.user.username }}</td>
+          <td>{{ app.university.name }}</td>
+          <td>{{ app.program.name|default:"—" }}</td>
+          <td>
+            {% with color=app.status_color %}
+              <span class="status-badge" style="background:{{ color.bg }};color:{{ color.color }};">
+                {{ app.get_status_display }}
+              </span>
+            {% endwith %}
+          </td>
+          <td>{{ app.documents_submitted }}/{{ app.total_documents }}</td>
+          <td>{{ app.applied_date|date:"M d, Y" }}</td>
+          <td><a href="{% url 'adminpanel:application_detail' app.pk %}" class="view-link">View →</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:2rem;">No applications found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
