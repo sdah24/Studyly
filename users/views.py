@@ -60,11 +60,18 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    role = request.user.role
+    if role == 'admin':
+        return _admin_profile_view(request)
+    elif role == 'consultant':
+        return _consultant_profile_view(request)
+    return _student_profile_view(request)
+
+
+def _student_profile_view(request):
     profile = request.user.profile
 
     if request.method == 'POST':
-
-        # ── Handle photo removal ──────────────────────────────────────
         if request.POST.get('remove_picture') == '1':
             if profile.profile_picture:
                 old_path = profile.profile_picture.path
@@ -74,7 +81,6 @@ def profile_view(request):
                     os.remove(old_path)
                 messages.success(request, 'Profile photo removed.')
             return redirect('users:profile')
-        # ─────────────────────────────────────────────────────────────
 
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -82,7 +88,6 @@ def profile_view(request):
                 old_path = profile.profile_picture.path
                 if os.path.isfile(old_path):
                     os.remove(old_path)
-
             form.save()
             messages.success(request, 'Profile updated successfully!')
             return redirect('users:profile')
@@ -96,6 +101,47 @@ def profile_view(request):
         'profile': profile,
     })
 
+
+def _admin_profile_view(request):
+    from users.models import User
+    from universities.models import University
+    from scholarships.models import Scholarship
+    from applications.models import Application
+
+    stats = {
+        'total_users':         User.objects.count(),
+        'total_students':      User.objects.filter(role='student').count(),
+        'total_consultants':   User.objects.filter(role='consultant').count(),
+        'total_universities':  University.objects.count(),
+        'total_scholarships':  Scholarship.objects.count(),
+        'total_applications':  Application.objects.count(),
+    }
+    return render(request, 'users/profile_admin.html', {'stats': stats})
+
+
+def _consultant_profile_view(request):
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        specialization = request.POST.get('specialization', '').strip()
+        phone_number   = request.POST.get('phone_number', '').strip()
+        address        = request.POST.get('address', '').strip()
+        profile.specialization = specialization
+        profile.phone_number   = phone_number or None
+        profile.address        = address or None
+        profile.save(update_fields=['specialization', 'phone_number', 'address'])
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('users:profile')
+
+    from applications.models import Application
+    assigned_students = User.objects.filter(
+        profile__assigned_consultant=request.user
+    ) if hasattr(profile.__class__, 'assigned_consultant') else User.objects.none()
+
+    return render(request, 'users/profile_consultant.html', {
+        'profile': profile,
+        'assigned_count': assigned_students.count(),
+    })
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  MESSAGING VIEWS
