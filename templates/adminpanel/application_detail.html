@@ -46,3 +46,14 @@
   .prefill-btn{padding:5px 12px;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
   .prefill-btn:hover{background:#dbeafe}
 </style>
+
+<div class="admin-wrap">
+  <aside class="sidebar">
+    <div class="sidebar-logo">Studyly Admin</div>
+    <a href="{% url 'adminpanel:dashboard' %}"        class="sidebar-link {% if active_sidebar == 'dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'adminpanel:students' %}"          class="sidebar-link {% if active_sidebar == 'students' %}active{% endif %}">Students</a>
+    <a href="{% url 'adminpanel:universities' %}"      class="sidebar-link {% if active_sidebar == 'universities' %}active{% endif %}">Universities</a>
+    <a href="{% url 'adminpanel:scholarships' %}"      class="sidebar-link {% if active_sidebar == 'scholarships' %}active{% endif %}">Scholarships</a>
+    <a href="{% url 'adminpanel:application_list' %}"  class="sidebar-link {% if active_sidebar == 'applications' %}active{% endif %}">Applications</a>
+  </aside>
+
