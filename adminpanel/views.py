@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 from users.models import User
 from universities.models import University
 from scholarships.models import Scholarship
 from applications.models import Application
-
 
 # ── Role guard ─────────────────────────────────────────────────────────────────
 def admin_required(view_func):
