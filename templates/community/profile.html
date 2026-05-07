@@ -17,12 +17,39 @@
       <p class="profile-username">@{{ profile_user.username }}</p>
       <span class="role-badge role-badge--{{ profile_user.role }}">{{ profile_user.get_role_display }}</span>
 
-      {% if profile_user != request.user and profile_user.role != 'admin' %}
+   {% if profile_user != request.user and profile_user.role != 'admin' %}
       <div class="profile-actions">
-        <a href="{% url 'users:conversation' profile_user.username %}" class="btn btn--primary">
+        <a href="{% url 'users:conversation' profile_user.username %}" class="btn btn--primary" style="margin-bottom:.6rem;">
           <i data-lucide="message-circle" style="width:15px;height:15px;"></i> Send Message
         </a>
+
+        {% if request.user.role == 'student' and profile_user.role == 'consultant' %}
+          {% if consultant_request %}
+            {% if consultant_request.status == 'accepted' %}
+              <div class="conn-status conn-status--accepted">✓ Connected — guidance active</div>
+              <a href="{% url 'community:list' %}" class="btn btn--outline" style="margin-top:.5rem;width:100%;justify-content:center;">View My Connections</a>
+            {% elif consultant_request.status == 'pending' %}
+              <div class="conn-status conn-status--pending">⏳ Request sent — awaiting response</div>
+            {% elif consultant_request.status == 'rejected' %}
+              <div class="conn-status conn-status--rejected">✗ Request was declined</div>
+            {% endif %}
+          {% else %}
+            <form method="post" action="{% url 'community:request_consultant' profile_user.pk %}" style="margin-top:.5rem;">
+              {% csrf_token %}
+              <textarea name="note" placeholder="Add a note (optional)…" style="width:100%;padding:8px 10px;border:1.5px solid #d1d5db;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;resize:none;min-height:64px;outline:none;margin-bottom:.5rem;box-sizing:border-box;"></textarea>
+              <button type="submit" class="btn btn--primary" style="width:100%;justify-content:center;">Request Guidance</button>
+            </form>
+          {% endif %}
+        {% endif %}
+
+        {% if request.user.role == 'consultant' and profile_user.role == 'student' %}
+          <a href="{% url 'community:student_view' profile_user.pk %}" class="btn btn--outline" style="margin-top:.5rem;width:100%;justify-content:center;">
+            View Shared Files
+          </a>
+        {% endif %}
+
       </div>
+      {% endif %}
       {% endif %}
 
       <!-- Meta info -->

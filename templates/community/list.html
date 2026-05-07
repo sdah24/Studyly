@@ -33,6 +33,33 @@
       <a href="?q={{ query }}&role=consultant" class="pill {% if role_filter == 'consultant' %}pill--active{% endif %}">Consultants ({{ consultants_count }})</a>
     </div>
   </div>
+<!-- Pending requests (consultant only) -->
+  {% if request.user.role == 'consultant' and pending_incoming %}
+  <div class="pending-banner">
+    <h3>⏳ Pending Guidance Requests ({{ pending_incoming|length }})</h3>
+    {% for cr in pending_incoming %}
+    <div class="request-row">
+      <div class="request-info">
+        <strong>{{ cr.student.get_full_name|default:cr.student.username }}</strong> · @{{ cr.student.username }}
+        {% if cr.note %}<div class="request-note">"{{ cr.note }}"</div>{% endif %}
+      </div>
+      <div class="request-actions">
+        <form method="post" action="{% url 'community:respond_request' cr.pk %}" style="margin:0;display:inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="accept">
+          <button type="submit" class="btn--accept">Accept</button>
+        </form>
+        <form method="post" action="{% url 'community:respond_request' cr.pk %}" style="margin:0;display:inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="reject">
+          <button type="submit" class="btn--reject">Reject</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
 
   <!-- Results -->
   {% if users %}
