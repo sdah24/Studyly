@@ -87,9 +87,10 @@ class Profile(models.Model):
 
     # Consultant-specific
     # Consultant-specific
+    # Consultant-specific
     specialization = models.CharField(max_length=255, blank=True, null=True)
     assigned_consultant = models.ForeignKey(
-        'self',
+        'users.User',
         on_delete=models.SET_NULL,
         null=True, blank=True,
         related_name='assigned_students',
