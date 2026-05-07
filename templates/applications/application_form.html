@@ -117,17 +117,31 @@
       <div class="form-card-title">🏛️ University & Program</div>
       <div class="form-grid">
 
-        <div class="field form-full">
+   <div class="field form-full">
           <label class="field-label" for="{{ form.university.id_for_label }}">University *</label>
           {{ form.university }}
           {% if form.university.errors %}<div class="error-msg">{{ form.university.errors.0 }}</div>{% endif %}
         </div>
 
         <div class="field form-full">
-          <label class="field-label" for="{{ form.program.id_for_label }}">Program <span style="font-weight:400;color:#9ca3af">(optional)</span></label>
+          <label class="field-label">Degree Level *</label>
+          <select id="id_degree_level_filter" class="form-select">
+            <option value="">— Select Degree Level —</option>
+            <option value="bsc"         {% if app and app.program.level == 'bsc'         %}selected{% endif %}>Bachelor's (BSc)</option>
+            <option value="msc"         {% if app and app.program.level == 'msc'         %}selected{% endif %}>Master's (MSc)</option>
+            <option value="mba"         {% if app and app.program.level == 'mba'         %}selected{% endif %}>MBA</option>
+            <option value="phd"         {% if app and app.program.level == 'phd'         %}selected{% endif %}>PhD</option>
+            <option value="diploma"     {% if app and app.program.level == 'diploma'     %}selected{% endif %}>Diploma</option>
+            <option value="certificate" {% if app and app.program.level == 'certificate' %}selected{% endif %}>Certificate</option>
+          </select>
+          <div style="font-size:.78rem;color:#9ca3af;margin-top:3px">Select degree level first to filter programs.</div>
+        </div>
+
+        <div class="field form-full">
+          <label class="field-label" for="{{ form.program.id_for_label }}">Program *</label>
           {{ form.program }}
-          <div id="program-hint" style="font-size:.8rem;color:#9ca3af;margin-top:4px;{% if app and app.university_id %}display:none;{% endif %}">
-            Select a university first to see its programs.
+          <div id="program-hint" style="font-size:.8rem;color:#9ca3af;margin-top:4px;">
+            Select a university and degree level first.
           </div>
           {% if form.program.errors %}<div class="error-msg">{{ form.program.errors.0 }}</div>{% endif %}
         </div>
