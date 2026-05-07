@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Admin Profile – Studyly{% endblock %}
+
+{% block content %}
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f9fafb; color: #111827; }
+  main { max-width: 860px; margin: 0 auto; padding: 2rem; }
+  h1.page-title { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 900; margin-bottom: .25rem; }
+  .page-subtitle { color: #4b5563; margin-bottom: 2rem; }
+  .card { background: white; border-radius: 14px; border: 1px solid #e5e7eb; padding: 2rem; margin-bottom: 1.5rem; }
+  .role-badge { display: inline-block; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; border-radius: 20px; padding: .3rem .9rem; font-size: .8rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; margin-top: .4rem; }
+  .admin-info { display: flex; align-items: center; gap: 1.25rem; }
+  .avatar-fallback { width: 72px; height: 72px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 700; color: white; flex-shrink: 0; }
+  .admin-meta .name { font-weight: 700; font-size: 1.1rem; }
+  .admin-meta .email { color: #6b7280; font-size: .875rem; margin-top: 2px; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+  @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+  .stat-card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem 1rem; text-align: center; }
+  .stat-card .stat-value { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: #2563eb; }
+  .stat-card .stat-label { font-size: .8rem; color: #6b7280; margin-top: .25rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .section-title { font-weight: 700; font-size: .95rem; color: #374151; margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 1px solid #f3f4f6; }
+</style>
+
+<main>
+  <h1 class="page-title">Admin Profile</h1>
+  <p class="page-subtitle">System overview and account details</p>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div style="background:{% if msg.tags == 'success' %}#dcfce7{% else %}#fee2e2{% endif %};border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;color:{% if msg.tags == 'success' %}#15803d{% else %}#991b1b{% endif %};font-size:.9rem;">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Identity card -->
+  <div class="card">
+    <div class="admin-info">
+      <div class="avatar-fallback">
+        {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+      </div>
+      <div class="admin-meta">
+        <div class="name">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div class="email">{{ request.user.email }}</div>
+        <span class="role-badge">Administrator</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- System stats -->
+  <div class="card">
+    <div class="section-title">Platform Overview</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_students }}</div>
+        <div class="stat-label">Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_consultants }}</div>
+        <div class="stat-label">Consultants</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_universities }}</div>
+        <div class="stat-label">Universities</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_scholarships }}</div>
+        <div class="stat-label">Scholarships</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_applications }}</div>
+        <div class="stat-label">Applications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ stats.total_users }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
